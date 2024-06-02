@@ -1,18 +1,17 @@
-import { ReactNode } from "react";
-
-// @mui material components
+import React, { ReactNode, useState } from "react";
 import { Theme } from "@mui/material/styles";
-
-// Material Dashboard 2 PRO React TS components
 import { Checkbox, MenuItem, Select } from "@mui/material";
 import MDBox from "components/MDBox";
 
-// Declaring prop types for DataTableBodyCell
 interface Props {
   children: ReactNode;
   noBorder?: boolean;
   align?: "left" | "right" | "center";
-  cell?: any;
+  cell?: {
+    column: { id: string };
+    value: string;
+    row: { values: { id: number } };
+  };
   editRows?: number[];
   onEditRow?: (row: number) => void;
 }
@@ -21,42 +20,56 @@ const statuses = ["PENDING", "IN PROGRESS", "SUCCESSFUL", "APPROVED", "FAILED"];
 
 function DataTableBodyCell({
   noBorder,
-  align,
+  align = "left",
   children,
   cell,
-  editRows,
-  onEditRow,
+  editRows = [],
+  onEditRow = () => {},
 }: Props): JSX.Element {
+  const [rowStatuses, setRowStatuses] = useState<{ [key: number]: string }>({});
+
+  const handleStatusChange = (rowId: number, newStatus: string) => {
+    setRowStatuses((prevStatuses) => ({
+      ...prevStatuses,
+      [rowId]: newStatus,
+    }));
+  };
+
   const renderData = () => {
-    const editable = editRows?.includes(cell?.row?.values?.id) || false;
+    if (!cell) return children;
 
-    if (cell?.column?.id === "edit") {
-      return (
-        <Checkbox
-          size="small"
-          sx={{ padding: 0 }}
-          checked={editable}
-          onChange={() => onEditRow(cell?.row?.values?.id)}
-        />
-      );
+    const editable = editRows.includes(cell.row.values.id);
+
+    switch (cell.column.id) {
+      case "edit":
+        return (
+          <Checkbox
+            size="small"
+            sx={{ padding: 0 }}
+            checked={editable}
+            onChange={() => onEditRow(cell.row.values.id)}
+          />
+        );
+      case "status":
+        return editable ? (
+          <Select
+            value={rowStatuses[cell.row.values.id] || cell.value}
+            onChange={(event) =>
+              handleStatusChange(cell.row.values.id, event.target.value as string)
+            }
+          >
+            {statuses.map((status) => (
+              <MenuItem key={status} value={status}>
+                {status}
+              </MenuItem>
+            ))}
+          </Select>
+        ) : (
+          children
+        );
+      default:
+        return children;
     }
-
-    if (editable && cell?.column?.id === "status") {
-      return (
-        <Select
-          value={cell?.value}
-          // onChange={handleChange}
-        >
-          {statuses.map((status) => (
-            <MenuItem key={status} value={status}>
-              {status}
-            </MenuItem>
-          ))}
-        </Select>
-      );
-    }
-
-    return children;
   };
 
   return (
@@ -82,7 +95,6 @@ function DataTableBodyCell({
   );
 }
 
-// Declaring default props for DataTableBodyCell
 DataTableBodyCell.defaultProps = {
   noBorder: false,
   align: "left",

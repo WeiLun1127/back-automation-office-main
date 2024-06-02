@@ -35,12 +35,13 @@ const Transactions = () => {
   const [tableData, setTableData] = useState([]);
   const [editRows, setEditRows] = useState([]);
   const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Fetching data from http://localhost:8080/transactions.json");
-        const data = await axios.get<Transaction[]>("http://192.168.68.104/transactions.json");
+        console.log("Fetching data from http://192.168.68.111/transactions.json");
+        const data = await axios.get<Transaction[]>("http://192.168.68.111/transactions.json");
         console.log("Data fetched successfully:", data.data);
         const newData = data.data.map((row, index) => ({
           ...row,
@@ -104,6 +105,14 @@ const Transactions = () => {
         color="error"
         title="Something went wrong. Please try again later."
         close={() => setError(false)}
+      />
+
+      <MDSnackbar
+        open={success}
+        fontSize="small"
+        color="success"
+        title="Success"
+        close={() => setSuccess(false)}
       />
     </DashboardLayout>
   );
