@@ -45,6 +45,7 @@ interface Props {
   noEndBorder?: boolean;
   editRows?: number[];
   onEditRow?: (row: number) => void;
+  onStatusChange?: (row: number, status: string) => void;
 }
 
 function DataTable({
@@ -59,6 +60,7 @@ function DataTable({
   noEndBorder,
   editRows,
   onEditRow,
+  onStatusChange,
 }: Props): JSX.Element {
   let defaultValue: any;
   let entries: any[];
@@ -268,6 +270,7 @@ function DataTable({
                     cell={cell}
                     editRows={editRows}
                     onEditRow={onEditRow}
+                    onStatusChange={onStatusChange}
                   >
                     {cell.render("Cell")}
                   </DataTableBodyCell>

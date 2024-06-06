@@ -34,14 +34,16 @@ type Transaction = {
 const Transactions = () => {
   const [tableData, setTableData] = useState([]);
   const [editRows, setEditRows] = useState([]);
+  const [statusChange, setStatusChange] = useState([]);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Fetching data from http://192.168.68.111/transactions.json");
-        const data = await axios.get<Transaction[]>("http://192.168.68.111/transactions.json");
+        // console.log("Fetching data from http://192.168.68.111/transactions.json");
+        console.log("Fetching data from http://localhost:3001/transactions");
+        const data = await axios.get<Transaction[]>("http://localhost:3001/transactions");
         console.log("Data fetched successfully:", data.data);
         const newData = data.data.map((row, index) => ({
           ...row,
@@ -62,10 +64,41 @@ const Transactions = () => {
   const onEditRow = (rowId: number) => {
     if (editRows.includes(rowId)) {
       setEditRows(editRows.filter((editRow) => editRow !== rowId));
+      setStatusChange(statusChange.filter((change) => change.rowId !== rowId));
       return;
     }
 
     setEditRows([...editRows, rowId]);
+  };
+
+  const onStatusChange = (rowId: number, newStatus: string) => {
+    // If the row is already in the statusChange array, update the status
+    const updatedStatusChange = statusChange.map((change) =>
+      change.rowId === rowId ? { ...change, newStatus } : change
+    );
+
+    // If the row is not in the statusChange array, add it
+    if (!statusChange.some((change) => change.rowId === rowId)) {
+      updatedStatusChange.push({ rowId, newStatus });
+    }
+
+    setStatusChange(updatedStatusChange);
+  };
+
+  const onSaveRow = async (rowData: Transaction) => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:3001/transactions/${rowData.transaction_id}`,
+        {
+          status: statusChange.find((change) => change.rowId === rowData.id)?.newStatus,
+        }
+      );
+      console.log("Response Payload:", response.data);
+      setSuccess(true);
+    } catch (error) {
+      console.error("Error", error);
+      setError(true);
+    }
   };
 
   return (
@@ -83,7 +116,12 @@ const Transactions = () => {
                   accessor: "save",
                   Cell: ({ row }: { row: any }) =>
                     editRows.includes(row.original.id) ? (
-                      <IconButton aria-label="save" onClick={() => console.log("Saving...")}>
+                      <IconButton
+                        aria-label="save"
+                        onClick={() => {
+                          onSaveRow(row.original);
+                        }}
+                      >
                         <SaveIcon />
                       </IconButton>
                     ) : null,
@@ -95,6 +133,7 @@ const Transactions = () => {
             canFilter
             editRows={editRows}
             onEditRow={onEditRow}
+            onStatusChange={onStatusChange}
           />
         </Card>
       </MDBox>

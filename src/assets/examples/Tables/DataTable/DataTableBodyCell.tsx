@@ -14,6 +14,7 @@ interface Props {
   };
   editRows?: number[];
   onEditRow?: (row: number) => void;
+  onStatusChange?: (row: number, status: string) => void;
 }
 
 const statuses = ["PENDING", "IN PROGRESS", "SUCCESSFUL", "APPROVED", "FAILED"];
@@ -25,6 +26,7 @@ function DataTableBodyCell({
   cell,
   editRows = [],
   onEditRow = () => {},
+  onStatusChange = () => {},
 }: Props): JSX.Element {
   const [rowStatuses, setRowStatuses] = useState<{ [key: number]: string }>({});
 
@@ -33,6 +35,7 @@ function DataTableBodyCell({
       ...prevStatuses,
       [rowId]: newStatus,
     }));
+    onStatusChange(rowId, newStatus);
   };
 
   const renderData = () => {
