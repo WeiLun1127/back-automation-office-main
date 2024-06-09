@@ -47,7 +47,7 @@ const Transactions = () => {
         console.log("Data fetched successfully:", data.data);
         const newData = data.data.map((row, index) => ({
           ...row,
-          transaction_id: row.id.toString(), // Assuming transaction_id is a string representation of the id
+          transaction_id: row.id.toString(),
           id: index + 1,
         }));
 
@@ -87,14 +87,22 @@ const Transactions = () => {
 
   const onSaveRow = async (rowData: Transaction) => {
     try {
+      const newStatus = statusChange.find((change) => change.rowId === rowData.id)?.newStatus;
       const response = await axios.patch(
         `http://localhost:3001/transactions/${rowData.transaction_id}`,
-        {
-          status: statusChange.find((change) => change.rowId === rowData.id)?.newStatus,
-        }
+        { status: newStatus }
       );
       console.log("Response Payload:", response.data);
+
+      // Update the local state with the new status
+      setTableData((prevTableData) =>
+        prevTableData.map((data) =>
+          data.id === rowData.id ? { ...data, status: newStatus } : data
+        )
+      );
+
       setSuccess(true);
+      setEditRows(editRows.filter((editRow) => editRow !== rowData.id));
     } catch (error) {
       console.error("Error", error);
       setError(true);
