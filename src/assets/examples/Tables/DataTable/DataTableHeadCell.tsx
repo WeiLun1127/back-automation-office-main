@@ -78,10 +78,6 @@ function DataTableHeadCell({
 
             {sorted && (
               <MDBox
-                // position="absolute"
-                // top={0}
-                // right={align !== "right" ? "16px" : 0}
-                // left={align === "right" ? "-5px" : "unset"}
                 sx={({ typography: { size } }: any) => ({
                   fontSize: size.lg,
                 })}

@@ -43,7 +43,9 @@ const Transactions = () => {
       try {
         // console.log("Fetching data from http://192.168.68.111/transactions.json");
         console.log("Fetching data from http://localhost:3001/transactions");
-        const data = await axios.get<Transaction[]>("http://localhost:3001/transactions");
+        const data = await axios.get<Transaction[]>("http://localhost:3001/transactions", {
+          timeout: 10000,
+        });
         console.log("Data fetched successfully:", data.data);
         const newData = data.data.map((row, index) => ({
           ...row,

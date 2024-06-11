@@ -185,6 +185,60 @@ function DataTable({
 
   return (
     <TableContainer sx={{ boxShadow: "none" }}>
+      {editRows && editRows.length > 0 && (
+        <>
+          <MDBox p={3}>
+            <MDTypography variant="title">Selected Rows</MDTypography>
+          </MDBox>
+          <MDBox component="thead">
+            {headerGroups.map((headerGroup, key) => (
+              <TableRow key={key} {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column: any, key: any) => (
+                  <DataTableHeadCell
+                    key={key}
+                    {...column.getHeaderProps(isSorted && column.getSortByToggleProps())}
+                    width={column.width ? column.width : "auto"}
+                    align={column.align ? column.align : "left"}
+                    sorted={setSortedValue(column)}
+                    column={column}
+                  >
+                    {column.render("Header")}
+                  </DataTableHeadCell>
+                ))}
+              </TableRow>
+            ))}
+          </MDBox>
+          <TableBody {...getTableBodyProps()}>
+            {page.map((row, key) => {
+              prepareRow(row);
+              // Check if the row is checked
+              const isChecked = editRows && editRows.includes(row.index + 1);
+              // Render the row only if it is checked
+              if (isChecked) {
+                return (
+                  <TableRow key={key} {...row.getRowProps()}>
+                    {row.cells.map((cell: any, key: any) => (
+                      <DataTableBodyCell
+                        key={key}
+                        noBorder={noEndBorder && rows.length - 1 === key}
+                        align={cell.column.align ? cell.column.align : "left"}
+                        {...cell.getCellProps()}
+                        cell={cell}
+                        editRows={editRows}
+                        onEditRow={onEditRow}
+                        onStatusChange={onStatusChange}
+                      >
+                        {cell.render("Cell")}
+                      </DataTableBodyCell>
+                    ))}
+                  </TableRow>
+                );
+              }
+              return null; // Skip rendering the row if it is not checked
+            })}
+          </TableBody>
+        </>
+      )}
       {showEntriesPerPage || canSearch ? (
         <MDBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
           {entriesPerPage && (
@@ -235,7 +289,6 @@ function DataTable({
           )}
         </MDBox>
       ) : null}
-
       <Table {...getTableProps()}>
         <MDBox component="thead">
           {headerGroups.map((headerGroup, key) => (
@@ -259,28 +312,31 @@ function DataTable({
         <TableBody {...getTableBodyProps()}>
           {page.map((row, key) => {
             prepareRow(row);
-            return (
-              <TableRow key={key} {...row.getRowProps()}>
-                {row.cells.map((cell: any, key: any) => (
-                  <DataTableBodyCell
-                    key={key}
-                    noBorder={noEndBorder && rows.length - 1 === key}
-                    align={cell.column.align ? cell.column.align : "left"}
-                    {...cell.getCellProps()}
-                    cell={cell}
-                    editRows={editRows}
-                    onEditRow={onEditRow}
-                    onStatusChange={onStatusChange}
-                  >
-                    {cell.render("Cell")}
-                  </DataTableBodyCell>
-                ))}
-              </TableRow>
-            );
+
+            const isChecked = editRows && editRows.includes(row.index + 1);
+            if (!isChecked) {
+              return (
+                <TableRow key={key} {...row.getRowProps()}>
+                  {row.cells.map((cell: any, key: any) => (
+                    <DataTableBodyCell
+                      key={key}
+                      noBorder={noEndBorder && rows.length - 1 === key}
+                      align={cell.column.align ? cell.column.align : "left"}
+                      {...cell.getCellProps()}
+                      cell={cell}
+                      editRows={editRows}
+                      onEditRow={onEditRow}
+                      onStatusChange={onStatusChange}
+                    >
+                      {cell.render("Cell")}
+                    </DataTableBodyCell>
+                  ))}
+                </TableRow>
+              );
+            }
           })}
         </TableBody>
       </Table>
-
       <MDBox
         display="flex"
         flexDirection={{ xs: "column", sm: "row" }}
