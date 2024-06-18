@@ -183,9 +183,12 @@ function DataTable({
     }
   };
 
+  // Filter selected rows across all pages
+  const selectedRows = rows.filter((row) => editRows && editRows.includes(row.index + 1));
+
   return (
     <TableContainer sx={{ boxShadow: "none" }}>
-      {editRows && editRows.length > 0 && (
+      {selectedRows.length > 0 && (
         <>
           <MDBox p={3}>
             <MDTypography variant="title">Selected Rows</MDTypography>
@@ -209,32 +212,26 @@ function DataTable({
             ))}
           </MDBox>
           <TableBody {...getTableBodyProps()}>
-            {page.map((row, key) => {
+            {selectedRows.map((row, key) => {
               prepareRow(row);
-              // Check if the row is checked
-              const isChecked = editRows && editRows.includes(row.index + 1);
-              // Render the row only if it is checked
-              if (isChecked) {
-                return (
-                  <TableRow key={key} {...row.getRowProps()}>
-                    {row.cells.map((cell: any, key: any) => (
-                      <DataTableBodyCell
-                        key={key}
-                        noBorder={noEndBorder && rows.length - 1 === key}
-                        align={cell.column.align ? cell.column.align : "left"}
-                        {...cell.getCellProps()}
-                        cell={cell}
-                        editRows={editRows}
-                        onEditRow={onEditRow}
-                        onStatusChange={onStatusChange}
-                      >
-                        {cell.render("Cell")}
-                      </DataTableBodyCell>
-                    ))}
-                  </TableRow>
-                );
-              }
-              return null; // Skip rendering the row if it is not checked
+              return (
+                <TableRow key={key} {...row.getRowProps()}>
+                  {row.cells.map((cell: any, key: any) => (
+                    <DataTableBodyCell
+                      key={key}
+                      noBorder={noEndBorder && rows.length - 1 === key}
+                      align={cell.column.align ? cell.column.align : "left"}
+                      {...cell.getCellProps()}
+                      cell={cell}
+                      editRows={editRows}
+                      onEditRow={onEditRow}
+                      onStatusChange={onStatusChange}
+                    >
+                      {cell.render("Cell")}
+                    </DataTableBodyCell>
+                  ))}
+                </TableRow>
+              );
             })}
           </TableBody>
         </>
