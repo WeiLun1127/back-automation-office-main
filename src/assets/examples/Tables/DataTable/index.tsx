@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAsyncDebounce, useGlobalFilter, usePagination, useSortBy, useTable } from "react-table";
 
 // @mui material components
+import ClearButton from "@mui/icons-material/Clear";
 import Autocomplete from "@mui/material/Autocomplete";
 import Icon from "@mui/material/Icon";
 import Table from "@mui/material/Table";
@@ -18,8 +19,10 @@ import MDPagination from "components/MDPagination";
 import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 PRO React TS examples components
+import { IconButton, InputAdornment } from "@mui/material";
 import DataTableBodyCell from "assets/examples/Tables/DataTable/DataTableBodyCell";
 import DataTableHeadCell from "assets/examples/Tables/DataTable/DataTableHeadCell";
+import MDDatePicker from "components/MDDatePicker";
 
 // Declaring props types for DataTable
 interface Props {
@@ -31,7 +34,6 @@ interface Props {
       };
   showEntriesPerPage?: boolean;
   canSearch?: boolean;
-  canFilter?: boolean;
   showTotalEntries?: boolean;
   table: {
     columns: { [key: string]: any }[];
@@ -46,13 +48,19 @@ interface Props {
   editRows?: number[];
   onEditRow?: (row: number) => void;
   onStatusChange?: (row: number, status: string) => void;
+  currencyOptions?: string[];
+  selectedCurrency?: string;
+  handleCurrencyChange?: (value: string) => void;
+  selectedCreatedDate?: string;
+  handleCreatedDateChange?: (value: string) => void;
+  selectedUpdatedDate?: string;
+  handleUpdatedDateChange?: (value: string) => void;
 }
 
 function DataTable({
   entriesPerPage,
   showEntriesPerPage,
   canSearch,
-  canFilter,
   showTotalEntries,
   table,
   pagination,
@@ -61,6 +69,13 @@ function DataTable({
   editRows,
   onEditRow,
   onStatusChange,
+  currencyOptions,
+  selectedCurrency,
+  handleCurrencyChange,
+  selectedCreatedDate,
+  handleCreatedDateChange,
+  selectedUpdatedDate,
+  handleUpdatedDateChange,
 }: Props): JSX.Element {
   let defaultValue: any;
   let entries: any[];
@@ -258,7 +273,7 @@ function DataTable({
           )}
 
           {canSearch && (
-            <MDBox width="12rem" ml="auto">
+            <MDBox width="12rem" ml="auto" mr={2}>
               <MDInput
                 placeholder="Search..."
                 value={search}
@@ -268,22 +283,80 @@ function DataTable({
                   setSearch(search);
                   onSearchChange(currentTarget.value);
                 }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Icon>search</Icon>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </MDBox>
           )}
 
-          {/* Filter box */}
-          {canFilter && (
-            <Autocomplete
-              disableClearable
-              value={selectedFilter}
-              options={filterOptions}
-              onChange={(event, newValue) => handleFilterChange(newValue)}
-              size="small"
-              sx={{ width: "10rem", marginLeft: 2 }}
-              renderInput={(params) => <MDInput {...params} placeholder="Filter by..." />}
-            />
-          )}
+          {/* Filter by Currency */}
+          <Autocomplete
+            disableClearable
+            value={selectedCurrency}
+            options={currencyOptions}
+            onChange={(event, newValue) => handleCurrencyChange(newValue)}
+            size="small"
+            sx={{ width: "10rem", marginRight: 2 }}
+            renderInput={(params) => (
+              <MDInput
+                {...params}
+                placeholder="Currency"
+                styles={{
+                  ".MuiOutlinedInput-root.MuiInputBase-sizeSmall": {
+                    paddingTop: "8px",
+                    paddingBottom: "8px",
+                  },
+                }}
+              />
+            )}
+          />
+
+          {/* Filter by Created Date */}
+          <MDDatePicker
+            input={{
+              value: selectedCreatedDate,
+              placeholder: "Created Date",
+              size: "small",
+              sx: { width: "10rem", marginRight: 2 },
+              InputProps: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton size="small" onClick={() => handleCreatedDateChange(null)}>
+                      <ClearButton />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+            value={selectedCreatedDate}
+            onChange={([date]: any) => handleCreatedDateChange(date)}
+          />
+
+          {/* Filter by Updated Date */}
+          <MDDatePicker
+            input={{
+              value: selectedUpdatedDate,
+              placeholder: "Updated Date",
+              size: "small",
+              sx: { width: "10rem" },
+              InputProps: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton size="small" onClick={() => handleCreatedDateChange(null)}>
+                      <ClearButton />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+            value={selectedUpdatedDate}
+            onChange={([date]: any) => handleUpdatedDateChange(date)}
+          />
         </MDBox>
       ) : null}
       <Table {...getTableProps()}>
