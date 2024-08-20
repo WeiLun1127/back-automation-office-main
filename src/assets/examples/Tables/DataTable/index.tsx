@@ -178,26 +178,6 @@ function DataTable({
     entriesEnd = pageSize * (pageIndex + 1);
   }
 
-  // Filter options for created by and uploaded by
-  const filterOptions = ["Created By", "Uploaded By", "Cancel"];
-
-  // State to manage the selected filter option
-  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
-
-  // Function to handle filter change
-  const handleFilterChange = (value: string | null) => {
-    // Check if the value is "Cancel", indicating the user wants to cancel the selection
-    if (value === "Cancel") {
-      setSelectedFilter(null); // Cancel the selection by setting selectedFilter to null
-      // Optionally, you can perform additional actions here, such as clearing the filter data
-      // clearFilterData();
-    } else {
-      setSelectedFilter(value); // Set selectedFilter to the chosen option
-      // Here you can implement the logic to filter data based on the selected option
-      // filterData(value);
-    }
-  };
-
   // Filter selected rows across all pages
   const selectedRows = rows.filter((row) => editRows && editRows.includes(row.index + 1));
 
@@ -229,6 +209,7 @@ function DataTable({
           <TableBody {...getTableBodyProps()}>
             {selectedRows.map((row, key) => {
               prepareRow(row);
+              console.log("row", row.getRowProps());
               return (
                 <TableRow key={key} {...row.getRowProps()}>
                   {row.cells.map((cell: any, key: any) => (
@@ -334,7 +315,7 @@ function DataTable({
               },
             }}
             value={selectedCreatedDate}
-            onChange={([date]: any) => handleCreatedDateChange("")}
+            onChange={([date]: any) => handleCreatedDateChange(date)}
           />
 
           {/* Filter by Updated Date */}
@@ -347,7 +328,7 @@ function DataTable({
               InputProps: {
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton size="small" onClick={() => handleCreatedDateChange(null)}>
+                    <IconButton size="small" onClick={() => handleUpdatedDateChange("")}>
                       <ClearButton />
                     </IconButton>
                   </InputAdornment>

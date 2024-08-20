@@ -134,25 +134,14 @@ const Transactions = () => {
     createdDate: string,
     updatedDate: string
   ) => {
-    let filteredData = data;
-
-    if (currency) {
-      filteredData = filteredData.filter((row) => row.currency === currency);
-    }
-
-    if (createdDate) {
-      filteredData = filteredData.filter((row) =>
-        dayjs(row.created_date).isSame(createdDate, "day")
-      );
-    }
-
-    if (updatedDate) {
-      filteredData = filteredData.filter((row) =>
-        dayjs(row.updated_date).isSame(updatedDate, "day")
-      );
-    }
-
-    return filteredData;
+    // filter by OR condition
+    return data.filter((row) => {
+      if (!currency && !createdDate && !updatedDate) return true;
+      if (currency && row.currency === currency) return true;
+      if (createdDate && dayjs(row.created_date).isSame(createdDate, "day")) return true;
+      if (updatedDate && dayjs(row.updated_date).isSame(updatedDate, "day")) return true;
+      return false;
+    });
   };
 
   const handleCurrencyChange = (value: string) => {
