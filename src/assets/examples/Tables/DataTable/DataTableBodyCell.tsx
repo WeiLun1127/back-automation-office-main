@@ -1,7 +1,7 @@
-import React, { ReactNode, useState } from "react";
-import { Theme } from "@mui/material/styles";
 import { Checkbox, MenuItem, Select } from "@mui/material";
+import { Theme } from "@mui/material/styles";
 import MDBox from "components/MDBox";
+import { ReactNode, useState } from "react";
 
 interface Props {
   children: ReactNode;
@@ -20,7 +20,7 @@ interface Props {
 const statuses = ["PENDING", "IN PROGRESS", "SUCCESSFUL", "APPROVED", "FAILED"];
 
 function DataTableBodyCell({
-  noBorder,
+  noBorder = false,
   align = "left",
   children,
   cell,
@@ -97,10 +97,5 @@ function DataTableBodyCell({
     </MDBox>
   );
 }
-
-DataTableBodyCell.defaultProps = {
-  noBorder: false,
-  align: "left",
-};
 
 export default DataTableBodyCell;

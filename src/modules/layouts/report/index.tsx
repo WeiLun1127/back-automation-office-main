@@ -44,8 +44,8 @@ const Transactions = () => {
 
   // filter state
   const [selectedCurrency, setSelectedCurrency] = useState<string | null>(null);
-  const [selectedCreatedDate, setSelectedCreatedDate] = useState<string | null>(null);
-  const [selectedUpdatedDate, setSelectedUpdatedDate] = useState<string | null>(null);
+  const [selectedCreatedDate, setSelectedCreatedDate] = useState("");
+  const [selectedUpdatedDate, setSelectedUpdatedDate] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {

@@ -47,13 +47,13 @@ interface Props extends SnackbarProps {
 }
 
 function MDSnackbar({
-  color,
+  color = "info",
   icon,
   title,
   dateTime,
   content,
   close,
-  bgWhite,
+  bgWhite = false,
   ...rest
 }: Props): JSX.Element {
   const [controller] = useMaterialUIController();
@@ -175,11 +175,5 @@ function MDSnackbar({
     </Snackbar>
   );
 }
-
-// Setting default values for the props of MDSnackbar
-MDSnackbar.defaultProps = {
-  bgWhite: false,
-  color: "info",
-};
 
 export default MDSnackbar;

@@ -58,14 +58,14 @@ interface Props {
 }
 
 function DataTable({
-  entriesPerPage,
-  showEntriesPerPage,
-  canSearch,
-  showTotalEntries,
+  entriesPerPage = { defaultValue: 10, entries: [5, 10, 15, 20, 25] },
+  showEntriesPerPage = true,
+  canSearch = false,
+  showTotalEntries = true,
   table,
-  pagination,
-  isSorted,
-  noEndBorder,
+  pagination = { variant: "gradient", color: "info" },
+  isSorted = true,
+  noEndBorder = false,
   editRows,
   onEditRow,
   onStatusChange,
@@ -326,7 +326,7 @@ function DataTable({
               InputProps: {
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton size="small" onClick={() => handleCreatedDateChange(null)}>
+                    <IconButton size="small" onClick={() => handleCreatedDateChange("")}>
                       <ClearButton />
                     </IconButton>
                   </InputAdornment>
@@ -334,7 +334,7 @@ function DataTable({
               },
             }}
             value={selectedCreatedDate}
-            onChange={([date]: any) => handleCreatedDateChange(date)}
+            onChange={([date]: any) => handleCreatedDateChange("")}
           />
 
           {/* Filter by Updated Date */}
@@ -459,16 +459,5 @@ function DataTable({
     </TableContainer>
   );
 }
-
-// Declaring default props for DataTable
-DataTable.defaultProps = {
-  entriesPerPage: { defaultValue: 10, entries: ["5", "10", "15", "20", "25"] },
-  showEntriesPerPage: true,
-  canSearch: false,
-  showTotalEntries: true,
-  pagination: { variant: "gradient", color: "info" },
-  isSorted: true,
-  noEndBorder: false,
-};
 
 export default DataTable;

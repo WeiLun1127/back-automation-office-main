@@ -30,7 +30,7 @@ interface Props {
   [key: string]: any;
 }
 
-function MDDatePicker({ input, ...rest }: Props): JSX.Element {
+function MDDatePicker({ input = {}, ...rest }: Props): JSX.Element {
   return (
     <Flatpickr
       {...rest}
@@ -40,9 +40,5 @@ function MDDatePicker({ input, ...rest }: Props): JSX.Element {
     />
   );
 }
-
-MDDatePicker.defaultProps = {
-  input: {},
-};
 
 export default MDDatePicker;

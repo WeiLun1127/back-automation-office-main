@@ -1,13 +1,13 @@
-import { useEffect, useState, ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 // react-router-dom components
-import { useLocation, NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 // @mui material components
-import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-import Link from "@mui/material/Link";
 import Icon from "@mui/material/Icon";
+import Link from "@mui/material/Link";
+import List from "@mui/material/List";
 
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
@@ -15,8 +15,8 @@ import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 PRO React TS examples components
 import SidenavCollapse from "./SidenavCollapse";
-import SidenavList from "./SidenavList";
 import SidenavItem from "./SidenavItem";
+import SidenavList from "./SidenavList";
 
 // Custom styles for the Sidenav
 import SidenavRoot from "./SidenavRoot";
@@ -24,10 +24,10 @@ import sidenavLogoLabel from "./styles/sidenav";
 
 // Material Dashboard 2 PRO React context
 import {
-  useMaterialUIController,
   setMiniSidenav,
   setTransparentSidenav,
   setWhiteSidenav,
+  useMaterialUIController,
 } from "context";
 
 // Declaring props types for Sidenav
@@ -51,7 +51,7 @@ interface Props {
   [key: string]: any;
 }
 
-function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Element {
+function Sidenav({ color = "info", brand, brandName, routes, ...rest }: Props): JSX.Element {
   const [openCollapse, setOpenCollapse] = useState<boolean | string>(false);
   const [openNestedCollapse, setOpenNestedCollapse] = useState<boolean | string>(false);
   const [controller, dispatch] = useMaterialUIController();
@@ -298,11 +298,5 @@ function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Eleme
     </SidenavRoot>
   );
 }
-
-// Declaring default props for Sidenav
-Sidenav.defaultProps = {
-  color: "info",
-  brand: "",
-};
 
 export default Sidenav;

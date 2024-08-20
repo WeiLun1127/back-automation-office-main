@@ -2,16 +2,16 @@ import { ReactNode } from "react";
 
 // @mui material components
 import Collapse from "@mui/material/Collapse";
+import Icon from "@mui/material/Icon";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import Icon from "@mui/material/Icon";
 import { Theme } from "@mui/material/styles";
 
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
 
 // Custom styles for the SidenavItem
-import { item, itemContent, itemArrow } from "./styles/sidenavItem";
+import { item, itemArrow, itemContent } from "./styles/sidenavItem";
 
 // Material Dashboard 2 PRO React TS contexts
 import { useMaterialUIController } from "context";
@@ -27,7 +27,15 @@ interface Props {
   [key: string]: any;
 }
 
-function SidenavItem({ color, name, active, nested, children, open, ...rest }: Props): JSX.Element {
+function SidenavItem({
+  color = "info",
+  name,
+  active = false,
+  nested = false,
+  children,
+  open = false,
+  ...rest
+}: Props): JSX.Element {
   const [controller] = useMaterialUIController();
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode } = controller;
 
@@ -73,14 +81,5 @@ function SidenavItem({ color, name, active, nested, children, open, ...rest }: P
     </>
   );
 }
-
-// Declaring default props for SidenavItem
-SidenavItem.defaultProps = {
-  color: "info",
-  active: false,
-  nested: false,
-  children: false,
-  open: false,
-};
 
 export default SidenavItem;

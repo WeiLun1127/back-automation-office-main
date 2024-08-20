@@ -50,7 +50,7 @@ interface Props {
   isMini?: boolean;
 }
 
-function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
+function DashboardNavbar({ absolute = false, light = false, isMini = false }: Props): JSX.Element {
   const [navbarType, setNavbarType] = useState<
     "fixed" | "absolute" | "relative" | "static" | "sticky"
   >();
@@ -145,12 +145,5 @@ function DashboardNavbar({ absolute, light, isMini }: Props): JSX.Element {
     </AppBar>
   );
 }
-
-// Declaring default props for DashboardNavbar
-DashboardNavbar.defaultProps = {
-  absolute: false,
-  light: false,
-  isMini: false,
-};
 
 export default DashboardNavbar;

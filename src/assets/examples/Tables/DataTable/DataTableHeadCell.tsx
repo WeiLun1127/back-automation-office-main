@@ -35,10 +35,10 @@ interface Props {
 }
 
 function DataTableHeadCell({
-  width,
+  width = "auto",
   children,
-  sorted,
-  align,
+  sorted = "none",
+  align = "left",
   column,
   ...rest
 }: Props): JSX.Element {
@@ -106,12 +106,5 @@ function DataTableHeadCell({
     </MDBox>
   );
 }
-
-// Declaring default props for DataTableHeadCell
-DataTableHeadCell.defaultProps = {
-  width: "auto",
-  sorted: "none",
-  align: "left",
-};
 
 export default DataTableHeadCell;

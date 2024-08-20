@@ -35,7 +35,7 @@ interface Props {
   [key: string]: any;
 }
 
-function Breadcrumbs({ icon, title, route, light }: Props): JSX.Element {
+function Breadcrumbs({ icon, title, route, light = false }: Props): JSX.Element {
   const routes: string[] | any = route.slice(0, -1);
 
   return (
@@ -95,10 +95,5 @@ function Breadcrumbs({ icon, title, route, light }: Props): JSX.Element {
     </MDBox>
   );
 }
-
-// Declaring default props for Breadcrumbs
-Breadcrumbs.defaultProps = {
-  light: false,
-};
 
 export default Breadcrumbs;
