@@ -1,13 +1,12 @@
-import SaveIcon from "@mui/icons-material/Save";
 import { Card, IconButton } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
 import DataTable from "assets/examples/Tables/DataTable";
-import axios from "axios";
 import MDBox from "components/MDBox";
 import MDSnackbar from "components/MDSnackbar";
-import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 const tableColumns = [
   { Header: "", accessor: "edit", width: "1%" },
@@ -21,8 +20,6 @@ const tableColumns = [
   { Header: "status", accessor: "status", width: "15%" },
 ];
 
-const currencyOptions = ["MYR", "THB", "VND", "IDR", "INR", "KRW", "JPN", "SGD", "MMK", "Cancel"];
-
 type Transaction = {
   id: number;
   transaction_id: string;
@@ -35,23 +32,16 @@ type Transaction = {
 };
 
 const Transactions = () => {
-  const [transactions, setTransactions] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [editRows, setEditRows] = useState([]);
   const [statusChange, setStatusChange] = useState([]);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // filter state
-  const [selectedCurrency, setSelectedCurrency] = useState<string | null>(null);
-  const [selectedCreatedDate, setSelectedCreatedDate] = useState("");
-  const [selectedUpdatedDate, setSelectedUpdatedDate] = useState("");
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // console.log("Fetching data from http://192.168.68.114/transactions.json");
-        console.log("Fetching data from http://localhost:3001/transactions");
+        console.log("Fetching data from http://18.138.168.43:10300/api/json/transactions.json");
         const data = await axios.get<Transaction[]>(
           "http://18.138.168.43:10300/api/json/transactions.json",
           {
@@ -65,7 +55,6 @@ const Transactions = () => {
           id: index + 1,
         }));
 
-        setTransactions(newData);
         setTableData(newData);
       } catch (error) {
         console.error("error", error);
@@ -124,67 +113,6 @@ const Transactions = () => {
     }
   };
 
-  const formatDate = (date: string) => {
-    return dayjs(date).format("YYYY-MM-DD");
-  };
-
-  const filterData = (
-    data: Transaction[],
-    currency: string,
-    createdDate: string,
-    updatedDate: string
-  ) => {
-    // filter by OR condition
-    return data.filter((row) => {
-      if (!currency && !createdDate && !updatedDate) return true;
-      if (currency && row.currency === currency) return true;
-      if (createdDate && dayjs(row.created_date).isSame(createdDate, "day")) return true;
-      if (updatedDate && dayjs(row.updated_date).isSame(updatedDate, "day")) return true;
-      return false;
-    });
-  };
-
-  const handleCurrencyChange = (value: string) => {
-    if (value === "Cancel") {
-      setSelectedCurrency(null);
-      const filteredData = filterData(transactions, null, selectedCreatedDate, selectedUpdatedDate);
-      setTableData(filteredData);
-      return;
-    }
-
-    const filteredData = filterData(transactions, value, selectedCreatedDate, selectedUpdatedDate);
-    setTableData(filteredData);
-    setSelectedCurrency(value);
-  };
-
-  const handleCreatedDateChange = (value: string) => {
-    if (!value) {
-      setSelectedCreatedDate("");
-      const filteredData = filterData(transactions, selectedCurrency, null, selectedUpdatedDate);
-      setTableData(filteredData);
-      return;
-    }
-
-    const date = formatDate(value);
-    setSelectedCreatedDate(date);
-    const filteredData = filterData(transactions, selectedCurrency, date, selectedUpdatedDate);
-    setTableData(filteredData);
-  };
-
-  const handleUpdatedDateChange = (value: string) => {
-    if (!value) {
-      setSelectedUpdatedDate("");
-      const filteredData = filterData(transactions, selectedCurrency, selectedCreatedDate, null);
-      setTableData(filteredData);
-      return;
-    }
-
-    const date = formatDate(value);
-    setSelectedUpdatedDate(date);
-    const filteredData = filterData(transactions, selectedCurrency, selectedCreatedDate, date);
-    setTableData(filteredData);
-  };
-
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -214,16 +142,10 @@ const Transactions = () => {
               rows: tableData,
             }}
             canSearch
+            canFilter
             editRows={editRows}
             onEditRow={onEditRow}
             onStatusChange={onStatusChange}
-            currencyOptions={currencyOptions}
-            selectedCurrency={selectedCurrency}
-            handleCurrencyChange={handleCurrencyChange}
-            selectedCreatedDate={selectedCreatedDate}
-            handleCreatedDateChange={handleCreatedDateChange}
-            selectedUpdatedDate={selectedUpdatedDate}
-            handleUpdatedDateChange={handleUpdatedDateChange}
           />
         </Card>
       </MDBox>
