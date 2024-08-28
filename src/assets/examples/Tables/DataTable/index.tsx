@@ -19,23 +19,26 @@ import DataTableHeadCell from "assets/examples/Tables/DataTable/DataTableHeadCel
 
 import FilterListIcon from "@mui/icons-material/FilterList";
 import Button from "@mui/material/Button";
+import dayjs from "dayjs";
 
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
+import ClearButton from "@mui/icons-material/Clear";
 import CloseIcon from "@mui/icons-material/Close";
-import IconButton from "@mui/material/IconButton";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Box from "@mui/material/Box";
+import Checkbox from "@mui/material/Checkbox";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 import MDDatePicker from "components/MDDatePicker";
-import ClearButton from "@mui/icons-material/Clear";
-import InputAdornment from "@mui/material/InputAdornment";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+
+const currencyOptions = ["MYR", "THB", "VND", "IDR", "INR", "KRW", "JPN", "SGD", "MMK"];
 
 interface Props {
   entriesPerPage?:
@@ -62,55 +65,51 @@ interface Props {
   onEditRow?: (row: number) => void;
   onStatusChange?: (row: number, status: string) => void;
   //Filter Properties
-  currencyOptions?: string[];
-  selectedCurrency?: string[];
-  handleCurrencyChange?: (value: string[]) => void;
-  selectedCreatedDate?: string;
-  handleCreatedDateChange?: (value: string) => void;
-  selectedUpdatedDate?: string;
-  handleUpdatedDateChange?: (value: string) => void;
   roleOptions?: string[];
   selectedRole?: string[];
   handleRoleChange?: (value: string[]) => void;
   statusOptions?: string[];
   selectedStatus?: string;
   handleStatusChange?: (value: string) => void;
+  applyFilters?: ({
+    selectedCreatedDate,
+    selectedUpdatedDate,
+    selectedCurrencyOptions,
+  }: {
+    selectedCreatedDate: string;
+    selectedUpdatedDate: string;
+    selectedCurrencyOptions: string[];
+  }) => void;
 }
 
 function DataTable({
-  entriesPerPage,
-  showEntriesPerPage,
+  entriesPerPage = { defaultValue: 10, entries: [5, 10, 15, 20, 25] },
+  showEntriesPerPage = true,
   canSearch,
   canFilter,
-  showTotalEntries,
+  showTotalEntries = true,
   table,
-  pagination,
-  isSorted,
-  noEndBorder,
+  pagination = { variant: "gradient", color: "info" },
+  isSorted = true,
+  noEndBorder = false,
   editRows,
   onEditRow,
   onStatusChange,
   //Filter Properties
-  currencyOptions = ["MYR", "THB", "VND", "IDR", "INR", "KRW", "JPN", "SGD", "MMK"],
-  selectedCurrency = [],
-  handleCurrencyChange,
-  selectedCreatedDate,
-  handleCreatedDateChange,
-  selectedUpdatedDate,
-  handleUpdatedDateChange,
   roleOptions = ["Account Provider", "Merchant", "Reseller"],
   selectedRole = [],
   handleRoleChange,
   statusOptions = ["SUCCESSFULL", "PENDING", "APPROVED", "IN PROGRESS", "FAILED"],
   selectedStatus,
   handleStatusChange,
+  applyFilters,
 }: Props): JSX.Element {
   let defaultValue: any;
   let entries: any[];
 
   if (entriesPerPage) {
-    defaultValue = entriesPerPage.defaultValue ? entriesPerPage.defaultValue : "10";
-    entries = entriesPerPage.entries ? entriesPerPage.entries : ["10", "25", "50", "100"];
+    defaultValue = entriesPerPage.defaultValue ? entriesPerPage.defaultValue : 10;
+    entries = entriesPerPage.entries ? entriesPerPage.entries : [10, 25, 50, 100];
   }
 
   const columns = useMemo<any>(() => table.columns, [table]);
@@ -198,13 +197,15 @@ function DataTable({
   // State to manage the selected filter option
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedCurrencyOptions, setSelectedCurrencyOptions] =
-    useState<string[]>(selectedCurrency);
   const [dialogExpanded, setDialogExpanded] = useState(false);
   const [selectedRoleOptions, setSelectedRoleOptions] = useState<string[]>(selectedRole);
   const [selectedStatusOptions, setSelectedStatusOptions] = useState<string | null>(
     selectedStatus || null
   );
+
+  const [selectedCreatedDate, setSelectedCreatedDate] = useState("");
+  const [selectedUpdatedDate, setSelectedUpdatedDate] = useState("");
+  const [selectedCurrencyOptions, setSelectedCurrencyOptions] = useState<string[]>([]);
 
   const handleExpandClick = () => {
     setDialogExpanded(!dialogExpanded);
@@ -223,14 +224,6 @@ function DataTable({
     setOpenDialog(false);
   };
 
-  const handleCheckboxChange = (option: string) => {
-    setSelectedCurrencyOptions((prevState) =>
-      prevState.includes(option)
-        ? prevState.filter((item) => item !== option)
-        : [...prevState, option]
-    );
-  };
-
   const handleRoleCheckboxChange = (option: string) => {
     setSelectedRoleOptions((prevState) =>
       prevState.includes(option)
@@ -238,12 +231,6 @@ function DataTable({
         : [...prevState, option]
     );
   };
-
-  useEffect(() => {
-    if (handleCurrencyChange) {
-      handleCurrencyChange(selectedCurrencyOptions);
-    }
-  }, [selectedCurrencyOptions, handleCurrencyChange]);
 
   useEffect(() => {
     if (handleStatusChange) handleStatusChange(selectedStatusOptions || "");
@@ -256,6 +243,39 @@ function DataTable({
   }, [selectedRoleOptions, handleRoleChange]);
 
   const selectedRows = rows.filter((row) => editRows && editRows.includes(row.index + 1));
+
+  const formatDate = (date: string) => {
+    return dayjs(date).format("YYYY-MM-DD");
+  };
+
+  const handleCreatedDateChange = (value: string) => {
+    if (!value) return setSelectedCreatedDate("");
+    const date = formatDate(value);
+    setSelectedCreatedDate(date);
+  };
+
+  const handleUpdatedDateChange = (value: string) => {
+    if (!value) return setSelectedUpdatedDate("");
+    const date = formatDate(value);
+    setSelectedUpdatedDate(date);
+  };
+
+  const handleCheckboxChange = (option: string) => {
+    setSelectedCurrencyOptions((prevState) =>
+      prevState.includes(option)
+        ? prevState.filter((item) => item !== option)
+        : [...prevState, option]
+    );
+  };
+
+  const handleApplyFilters = () => {
+    applyFilters({
+      selectedCreatedDate,
+      selectedUpdatedDate,
+      selectedCurrencyOptions,
+    });
+    setOpenDialog(false);
+  };
 
   return (
     <TableContainer sx={{ boxShadow: "none" }}>
@@ -362,6 +382,7 @@ function DataTable({
               >
                 Filters
               </Button>
+
               <Dialog
                 open={openDialog}
                 onClose={handleFilterClose}
@@ -585,12 +606,7 @@ function DataTable({
                   </>
                 )}
                 <DialogActions>
-                  <Button
-                    onClick={() => {
-                      handleFilterClose();
-                    }}
-                    color="primary"
-                  >
+                  <Button onClick={handleApplyFilters} color="primary">
                     Apply
                   </Button>
                 </DialogActions>
@@ -699,17 +715,5 @@ function DataTable({
     </TableContainer>
   );
 }
-
-DataTable.defaultProps = {
-  entriesPerPage: { defaultValue: 10, entries: ["5", "10", "15", "20", "25"] },
-  showEntriesPerPage: true,
-  canSearch: false,
-  showTotalEntries: true,
-  pagination: { variant: "gradient", color: "info" },
-  isSorted: true,
-  noEndBorder: false,
-  handleCreatedDateChange: () => {},
-  handleUpdatedDateChange: () => {},
-};
 
 export default DataTable;

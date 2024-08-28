@@ -1,12 +1,13 @@
-import { Card, IconButton } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import { Card, IconButton } from "@mui/material";
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
 import DataTable from "assets/examples/Tables/DataTable";
+import axios from "axios";
 import MDBox from "components/MDBox";
 import MDSnackbar from "components/MDSnackbar";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 const tableColumns = [
   { Header: "", accessor: "edit", width: "1%" },
@@ -32,6 +33,7 @@ type Transaction = {
 };
 
 const Transactions = () => {
+  const [data, setData] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [editRows, setEditRows] = useState([]);
   const [statusChange, setStatusChange] = useState([]);
@@ -55,6 +57,7 @@ const Transactions = () => {
           id: index + 1,
         }));
 
+        setData(newData);
         setTableData(newData);
       } catch (error) {
         console.error("error", error);
@@ -113,6 +116,30 @@ const Transactions = () => {
     }
   };
 
+  const applyFilters = ({
+    selectedCreatedDate,
+    selectedUpdatedDate,
+    selectedCurrencyOptions,
+  }: {
+    selectedCreatedDate: string;
+    selectedUpdatedDate: string;
+    selectedCurrencyOptions: string[];
+  }) => {
+    // filter by OR condition
+    const filteredData = data.filter((row) => {
+      if (!selectedCurrencyOptions.length && !selectedCreatedDate && !selectedUpdatedDate)
+        return true;
+      if (selectedCurrencyOptions.includes(row.currency)) return true;
+      if (selectedCreatedDate && dayjs(row.created_date).isSame(selectedCreatedDate, "day"))
+        return true;
+      if (selectedUpdatedDate && dayjs(row.updated_date).isSame(selectedUpdatedDate, "day"))
+        return true;
+      return false;
+    });
+
+    setTableData(filteredData);
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -146,6 +173,7 @@ const Transactions = () => {
             editRows={editRows}
             onEditRow={onEditRow}
             onStatusChange={onStatusChange}
+            applyFilters={applyFilters}
           />
         </Card>
       </MDBox>
