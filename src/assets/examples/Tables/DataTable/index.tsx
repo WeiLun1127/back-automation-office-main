@@ -39,6 +39,8 @@ import Typography from "@mui/material/Typography";
 import MDDatePicker from "components/MDDatePicker";
 
 const currencyOptions = ["MYR", "THB", "VND", "IDR", "INR", "KRW", "JPN", "SGD", "MMK"];
+const roleOptions = ["Account Provider", "Merchant", "Reseller"];
+const statusOptions = ["SUCCESSFUL", "PENDING", "APPROVED", "IN PROGRESS", "FAILED"];
 
 interface Props {
   entriesPerPage?:
@@ -65,20 +67,16 @@ interface Props {
   onEditRow?: (row: number) => void;
   onStatusChange?: (row: number, status: string) => void;
   //Filter Properties
-  roleOptions?: string[];
-  selectedRole?: string[];
-  handleRoleChange?: (value: string[]) => void;
-  statusOptions?: string[];
-  selectedStatus?: string;
-  handleStatusChange?: (value: string) => void;
   applyFilters?: ({
     selectedCreatedDate,
     selectedUpdatedDate,
     selectedCurrencyOptions,
+    selectedStatus,
   }: {
     selectedCreatedDate: string;
     selectedUpdatedDate: string;
     selectedCurrencyOptions: string[];
+    selectedStatus: string | null;
   }) => void;
 }
 
@@ -96,12 +94,6 @@ function DataTable({
   onEditRow,
   onStatusChange,
   //Filter Properties
-  roleOptions = ["Account Provider", "Merchant", "Reseller"],
-  selectedRole = [],
-  handleRoleChange,
-  statusOptions = ["SUCCESSFULL", "PENDING", "APPROVED", "IN PROGRESS", "FAILED"],
-  selectedStatus,
-  handleStatusChange,
   applyFilters,
 }: Props): JSX.Element {
   let defaultValue: any;
@@ -198,14 +190,12 @@ function DataTable({
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogExpanded, setDialogExpanded] = useState(false);
-  const [selectedRoleOptions, setSelectedRoleOptions] = useState<string[]>(selectedRole);
-  const [selectedStatusOptions, setSelectedStatusOptions] = useState<string | null>(
-    selectedStatus || null
-  );
 
   const [selectedCreatedDate, setSelectedCreatedDate] = useState("");
   const [selectedUpdatedDate, setSelectedUpdatedDate] = useState("");
   const [selectedCurrencyOptions, setSelectedCurrencyOptions] = useState<string[]>([]);
+  const [selectedRoleOptions, setSelectedRoleOptions] = useState<string[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
   const handleExpandClick = () => {
     setDialogExpanded(!dialogExpanded);
@@ -223,24 +213,6 @@ function DataTable({
   const handleFilterClose = () => {
     setOpenDialog(false);
   };
-
-  const handleRoleCheckboxChange = (option: string) => {
-    setSelectedRoleOptions((prevState) =>
-      prevState.includes(option)
-        ? prevState.filter((item) => item !== option)
-        : [...prevState, option]
-    );
-  };
-
-  useEffect(() => {
-    if (handleStatusChange) handleStatusChange(selectedStatusOptions || "");
-  }, [selectedStatusOptions, handleStatusChange]);
-
-  useEffect(() => {
-    if (handleRoleChange) {
-      handleRoleChange(selectedRoleOptions);
-    }
-  }, [selectedRoleOptions, handleRoleChange]);
 
   const selectedRows = rows.filter((row) => editRows && editRows.includes(row.index + 1));
 
@@ -268,11 +240,24 @@ function DataTable({
     );
   };
 
+  const handleRoleCheckboxChange = (option: string) => {
+    setSelectedRoleOptions((prevState) =>
+      prevState.includes(option)
+        ? prevState.filter((item) => item !== option)
+        : [...prevState, option]
+    );
+  };
+
+  const handleStatusChange = (value: string) => {
+    setSelectedStatus(value);
+  };
+
   const handleApplyFilters = () => {
     applyFilters({
       selectedCreatedDate,
       selectedUpdatedDate,
       selectedCurrencyOptions,
+      selectedStatus,
     });
     setOpenDialog(false);
   };
@@ -584,9 +569,9 @@ function DataTable({
                       </Box>
                       <Autocomplete
                         disableClearable
-                        value={selectedStatusOptions}
+                        value={selectedStatus}
                         options={statusOptions}
-                        onChange={(event, newValue) => setSelectedStatusOptions(newValue || null)}
+                        onChange={(event, newValue) => handleStatusChange(newValue)}
                         size="small"
                         sx={{ width: "10rem", marginRight: 2 }}
                         renderInput={(params) => (

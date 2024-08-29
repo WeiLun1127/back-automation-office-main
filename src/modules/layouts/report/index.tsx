@@ -120,20 +120,28 @@ const Transactions = () => {
     selectedCreatedDate,
     selectedUpdatedDate,
     selectedCurrencyOptions,
+    selectedStatus,
   }: {
     selectedCreatedDate: string;
     selectedUpdatedDate: string;
     selectedCurrencyOptions: string[];
+    selectedStatus: string | null;
   }) => {
     // filter by OR condition
     const filteredData = data.filter((row) => {
-      if (!selectedCurrencyOptions.length && !selectedCreatedDate && !selectedUpdatedDate)
+      if (
+        !selectedCurrencyOptions.length &&
+        !selectedCreatedDate &&
+        !selectedUpdatedDate &&
+        !selectedStatus
+      )
         return true;
       if (selectedCurrencyOptions.includes(row.currency)) return true;
       if (selectedCreatedDate && dayjs(row.created_date).isSame(selectedCreatedDate, "day"))
         return true;
       if (selectedUpdatedDate && dayjs(row.updated_date).isSame(selectedUpdatedDate, "day"))
         return true;
+      if (selectedStatus && row.status === selectedStatus) return true;
       return false;
     });
 
