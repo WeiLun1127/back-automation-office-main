@@ -1,13 +1,16 @@
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState, ReactNode, ChangeEvent } from "react";
 
 // react-router-dom components
-import { NavLink, useLocation } from "react-router-dom";
+import { useLocation, NavLink } from "react-router-dom";
 
 // @mui material components
-import Divider from "@mui/material/Divider";
-import Icon from "@mui/material/Icon";
-import Link from "@mui/material/Link";
 import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import Link from "@mui/material/Link";
+import Icon from "@mui/material/Icon";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
 
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
@@ -15,8 +18,8 @@ import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 PRO React TS examples components
 import SidenavCollapse from "./SidenavCollapse";
-import SidenavItem from "./SidenavItem";
 import SidenavList from "./SidenavList";
+import SidenavItem from "./SidenavItem";
 
 // Custom styles for the Sidenav
 import SidenavRoot from "./SidenavRoot";
@@ -24,10 +27,10 @@ import sidenavLogoLabel from "./styles/sidenav";
 
 // Material Dashboard 2 PRO React context
 import {
+  useMaterialUIController,
   setMiniSidenav,
   setTransparentSidenav,
   setWhiteSidenav,
-  useMaterialUIController,
 } from "context";
 
 // Declaring props types for Sidenav
@@ -51,9 +54,10 @@ interface Props {
   [key: string]: any;
 }
 
-function Sidenav({ color = "info", brand, brandName, routes, ...rest }: Props): JSX.Element {
+function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Element {
   const [openCollapse, setOpenCollapse] = useState<boolean | string>(false);
   const [openNestedCollapse, setOpenNestedCollapse] = useState<boolean | string>(false);
+  const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
   const [controller, dispatch] = useMaterialUIController();
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode } = controller;
   const location = useLocation();
@@ -109,6 +113,14 @@ function Sidenav({ color = "info", brand, brandName, routes, ...rest }: Props): 
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
+  // Search handler
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value.toLowerCase());
+  };
+
+  // Filter routes based on the search query
+  const filteredRoutes = routes.filter(({ name }: any) => name.toLowerCase().includes(searchQuery));
+
   // Render all the nested collapse items from the routes.js
   const renderNestedCollapse = (collapse: any) => {
     const template = collapse.map(({ name, route, key, href }: any) =>
@@ -131,6 +143,7 @@ function Sidenav({ color = "info", brand, brandName, routes, ...rest }: Props): 
 
     return template;
   };
+
   // Render the all the collpases from the routes.js
   const renderCollapse = (collapses: any) =>
     collapses.map(({ name, collapse, route, href, key }: any) => {
@@ -174,7 +187,7 @@ function Sidenav({ color = "info", brand, brandName, routes, ...rest }: Props): 
     });
 
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
-  const renderRoutes = routes.map(
+  const renderRoutes = filteredRoutes.map(
     ({ type, name, icon, title, collapse, noCollapse, key, href, route }: any) => {
       let returnValue;
 
@@ -287,6 +300,28 @@ function Sidenav({ color = "info", brand, brandName, routes, ...rest }: Props): 
             </MDTypography>
           </MDBox>
         </MDBox>
+        <MDBox mt={2}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+              style: { backgroundColor: "white" }, // Ensures white background
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "white", // Ensures white background for the root element
+              },
+            }}
+          />
+        </MDBox>
       </MDBox>
       <Divider
         light={
@@ -298,5 +333,11 @@ function Sidenav({ color = "info", brand, brandName, routes, ...rest }: Props): 
     </SidenavRoot>
   );
 }
+
+// Declaring default props for Sidenav
+Sidenav.defaultProps = {
+  color: "info",
+  brand: "",
+};
 
 export default Sidenav;
