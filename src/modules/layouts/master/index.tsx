@@ -6,26 +6,31 @@ import MDBox from "components/MDBox";
 
 const dataTableData = {
   columns: [
-    { Header: "id", accessor: "id", width: "5%" },
-    { Header: "user", accessor: "user", width: "15%" },
-    { Header: "action", accessor: "action", width: "10%" },
-    { Header: "last login", accessor: "last_login", width: "15%" },
+    { Header: "id", accessor: "id", width: "3%" },
+    { Header: "username", accessor: "user", width: "4%" },
+    { Header: "userid", accessor: "user_id", width: "7%" },
+    { Header: "last login", accessor: "last_login", width: "10%" },
+    { Header: "ip address", accessor: "ip_addres", width: "10%" },
+    { Header: "action", accessor: "action", width: "7%" },
   ],
   rows: [
     {
       id: "1",
       user: "John Michael",
+      user_id: "johndoe2024",
       action: (
         <MDBox display="flex" gap={1}>
           <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
           <Icon style={{ cursor: "pointer" }}>edit</Icon>
         </MDBox>
       ),
-      last_login: "2024-05-24 12:12:21",
+      last_login: "2024-09-01 14:30:00",
+      ip_addres: "203.0.113.45",
     },
 
     {
       id: "2",
+      user_id: "alexaliras2024",
       user: "Alexa Liras",
       action: (
         <MDBox display="flex" gap={1}>
@@ -33,10 +38,12 @@ const dataTableData = {
           <Icon style={{ cursor: "pointer" }}>edit</Icon>
         </MDBox>
       ),
-      last_login: "2024-05-24 12:12:21",
+      last_login: "2024-09-01 14:35:00",
+      ip_addres: "198.51.100.78",
     },
     {
       id: "3",
+      user_id: "laurentperrier2024",
       user: "Laurent Perrier",
       action: (
         <MDBox display="flex" gap={1}>
@@ -44,106 +51,125 @@ const dataTableData = {
           <Icon style={{ cursor: "pointer" }}>edit</Icon>
         </MDBox>
       ),
-      last_login: "2024-05-24 12:12:21",
+      last_login: "2024-09-01 14:40:00",
+      ip_addres: "192.168.0.12",
     },
     {
       id: "4",
       user: "Michael Levi",
+      user_id: "michaellevi2024",
       action: (
         <MDBox display="flex" gap={1}>
           <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
           <Icon style={{ cursor: "pointer" }}>edit</Icon>
         </MDBox>
       ),
-      last_login: "2024-05-24 12:12:21",
+      last_login: "2024-09-01 14:45:00",
+      ip_addres: "10.1.2.34",
     },
     {
       id: "5",
       user: "Richard Gran",
+      user_id: "richardgran2024",
       action: (
         <MDBox display="flex" gap={1}>
           <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
           <Icon style={{ cursor: "pointer" }}>edit</Icon>
         </MDBox>
       ),
-      last_login: "2024-05-24 12:12:21",
+      last_login: "2024-09-01 14:50:00",
+      ip_addres: "172.31.255.255",
     },
     {
       id: "6",
       user: "Michael Johnson",
+      user_id: "michaeljohnson2024",
       action: (
         <MDBox display="flex" gap={1}>
           <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
           <Icon style={{ cursor: "pointer" }}>edit</Icon>
         </MDBox>
       ),
-      last_login: "2024-05-24 12:12:21",
+      last_login: "2024-09-01 14:55:00",
+      ip_addres: "198.51.100.200",
     },
     {
       id: "7",
       user: "Miriam Eric",
+      user_id: "miriameric2024",
       action: (
         <MDBox display="flex" gap={1}>
           <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
           <Icon style={{ cursor: "pointer" }}>edit</Icon>
         </MDBox>
       ),
-      last_login: "2024-05-24 12:12:21",
+      last_login: "2024-09-01 15:00:00",
+      ip_addres: "192.0.2.77",
     },
     {
       id: "8",
       user: "Peter Parker",
+      user_id: "peterparker2024",
       action: (
         <MDBox display="flex" gap={1}>
           <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
           <Icon style={{ cursor: "pointer" }}>edit</Icon>
         </MDBox>
       ),
-      last_login: "2024-05-24 12:12:21",
+      last_login: "2024-09-01 15:05:00",
+      ip_addres: "203.0.113.56",
     },
     {
       id: "9",
       user: "Diana Prince",
+      user_id: "dianaprince2024",
       action: (
         <MDBox display="flex" gap={1}>
           <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
           <Icon style={{ cursor: "pointer" }}>edit</Icon>
         </MDBox>
       ),
-      last_login: "2024-05-24 12:12:21",
+      last_login: "2024-09-01 15:10:00",
+      ip_addres: "198.51.100.22",
     },
     {
       id: "10",
       user: "Tony Stark",
+      user_id: "tonystark2024",
       action: (
         <MDBox display="flex" gap={1}>
           <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
           <Icon style={{ cursor: "pointer" }}>edit</Icon>
         </MDBox>
       ),
-      last_login: "2024-05-24 12:12:21",
+      last_login: "2024-09-01 15:15:00",
+      ip_addres: "172.16.254.89",
     },
     {
       id: "11",
       user: "Eleanor Rigby",
+      user_id: "eleanorrigby2024",
       action: (
         <MDBox display="flex" gap={1}>
           <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
           <Icon style={{ cursor: "pointer" }}>edit</Icon>
         </MDBox>
       ),
-      last_login: "2024-05-24 12:12:21",
+      last_login: "2024-09-01 15:20:00",
+      ip_addres: "10.0.0.123",
     },
     {
       id: "12",
       user: "Jack Sparrow",
+      user_id: "jacksparrow2024",
       action: (
         <MDBox display="flex" gap={1}>
           <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
           <Icon style={{ cursor: "pointer" }}>edit</Icon>
         </MDBox>
       ),
-      last_login: "2024-05-24 12:12:21",
+      last_login: "2024-09-01 15:25:00",
+      ip_addres: "192.168.1.45",
     },
   ],
 };

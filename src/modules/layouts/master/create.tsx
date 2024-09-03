@@ -7,8 +7,19 @@ import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
 import { Fragment, useState } from "react";
+import Flag from "react-flagkit";
+import SecurityIcon from "@mui/icons-material/Security";
 
-const currencies = ["MYR", "SGD", "JPN", "KRN", "TBH", "VND", "IDN", "IDR"];
+const currencies = [
+  { code: "MYR", country: "MY" }, // Malaysia
+  { code: "SGD", country: "SG" }, // Singapore
+  { code: "JPY", country: "JP" }, // Japan
+  { code: "KRW", country: "KR" }, // South Korea
+  { code: "THB", country: "TH" }, // Thailand
+  { code: "VND", country: "VN" }, // Vietnam
+  { code: "IDR", country: "ID" }, // Indonesia
+  { code: "INR", country: "IN" }, // India
+];
 
 const dataTableData = {
   columns: [
@@ -157,7 +168,7 @@ const CreateMasterAccount = () => {
                   <MDInput
                     fullWidth
                     variant="standard"
-                    label="Confrim Password"
+                    label="Confirm Password"
                     type="password"
                     InputProps={{ style: { maxWidth: "500px" } }}
                   />
@@ -175,6 +186,7 @@ const CreateMasterAccount = () => {
                 <Grid item xs={12}>
                   <MDBox display="flex" alignItems="center">
                     <MDTypography variant="button">Enable 2FA</MDTypography>
+                    <SecurityIcon style={{ marginLeft: 8, marginRight: 8 }} />
                     <Checkbox />
                   </MDBox>
                 </Grid>
@@ -182,8 +194,14 @@ const CreateMasterAccount = () => {
                 <Grid item xs={12}>
                   <MDBox display="flex" alignItems="center">
                     {currencies.map((currency) => (
-                      <Fragment key={currency}>
-                        <MDTypography variant="button">{currency}</MDTypography>
+                      <Fragment key={currency.code}>
+                        <MDTypography variant="button">
+                          <Flag
+                            country={currency.country}
+                            style={{ width: 24, height: 16, marginRight: 8 }}
+                          />
+                          {currency.code}
+                        </MDTypography>
                         <Checkbox />
                       </Fragment>
                     ))}

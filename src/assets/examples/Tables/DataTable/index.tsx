@@ -49,8 +49,13 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import StoreIcon from "@mui/icons-material/Store";
 import SellIcon from "@mui/icons-material/Sell";
 import Flag from "react-flagkit";
+import { styled } from "@mui/material/styles";
 
-// const currencyOptions = ["MYR", "THB", "VND", "IDR", "INR", "KRW", "JPN", "SGD", "MMK"];
+const CustomLabel = styled("span")(({ theme }) => ({
+  color: "black", // Set font color to black
+  fontFamily: "Arial, sans-serif", // Set your desired font family
+}));
+
 const currencyOptions = [
   { code: "MYR", country: "MY" }, // Malaysia
   { code: "THB", country: "TH" }, // Thailand
@@ -447,7 +452,12 @@ function DataTable({
                 />
                 <DialogContent>
                   <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
-                    <Typography variant="h6" gutterBottom sx={{ marginRight: 2, minWidth: "8rem" }}>
+                    <Typography
+                      variant="h6"
+                      color=""
+                      gutterBottom
+                      sx={{ marginRight: 2, minWidth: "8rem" }}
+                    >
                       Created By
                       <IconButton size="small" sx={{ marginLeft: 1.4, marginRight: 2 }}>
                         <CalendarTodayIcon />

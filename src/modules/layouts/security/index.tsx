@@ -5,6 +5,7 @@ import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
+import SecurityIcon from "@mui/icons-material/Security";
 
 const Authentication = () => {
   return (
@@ -47,6 +48,7 @@ const Authentication = () => {
                 <MDBox display="flex" alignItems="center">
                   <Checkbox />
                   <MDTypography variant="button">Enable 2FA</MDTypography>
+                  <SecurityIcon style={{ marginLeft: 8, marginRight: 8 }} />
                 </MDBox>
               </Grid>
             </Grid>
