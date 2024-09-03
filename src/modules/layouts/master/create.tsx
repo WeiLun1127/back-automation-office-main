@@ -1,4 +1,4 @@
-import { Card, Checkbox, Grid, Icon } from "@mui/material";
+import { Card, Checkbox, Grid, Icon, IconButton } from "@mui/material";
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
 import DataTable from "assets/examples/Tables/DataTable";
@@ -6,9 +6,11 @@ import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
-import { Fragment, useState } from "react";
+import { Fragment, SetStateAction, useState } from "react";
 import Flag from "react-flagkit";
 import SecurityIcon from "@mui/icons-material/Security";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const currencies = [
   { code: "MYR", country: "MY" }, // Malaysia
@@ -122,6 +124,49 @@ const dataTableData = {
 
 const CreateMasterAccount = () => {
   const [allowCommissionAgent, setAllowCommissionAgent] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [productMargin, setProductMargin] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handlePasswordChange = (e: { target: { value: SetStateAction<string> } }) => {
+    setPassword(e.target.value);
+  };
+
+  const handleConfirmPasswordChange = (e: { target: { value: SetStateAction<string> } }) => {
+    setConfirmPassword(e.target.value);
+    if (e.target.value !== password) {
+      setPasswordError("Passwords do not match.");
+    } else {
+      setPasswordError("");
+    }
+  };
+
+  const handleProductMarginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (/^\d{0,2}$/.test(value) && Number(value) <= 20) {
+      setProductMargin(value);
+    }
+  };
+
+  const handleSubmit = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setPasswordError("Passwords do not match.");
+    } else {
+      setPasswordError("");
+      // Proceed with form submission or further processing
+    }
+  };
+
+  const handleMouseUpPassword = () => {
+    setShowPassword(false);
+  };
+
+  const handleMouseDownPassword = () => {
+    setShowPassword(true);
+  };
 
   return (
     <DashboardLayout>
@@ -154,13 +199,38 @@ const CreateMasterAccount = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                   <MDInput
                     fullWidth
                     variant="standard"
                     label="Password"
                     type="password"
+                    value={password}
+                    onChange={handlePasswordChange}
                     InputProps={{ style: { maxWidth: "500px" } }}
+                  />
+                </Grid> */}
+
+                <Grid item xs={12}>
+                  <MDInput
+                    fullWidth
+                    variant="standard"
+                    label="Password"
+                    type={showPassword ? "text" : "password"} // Toggle between text and password
+                    value={password}
+                    onChange={handlePasswordChange}
+                    InputProps={{
+                      style: { maxWidth: "500px" },
+                      endAdornment: (
+                        <IconButton
+                          onMouseDown={handleMouseDownPassword}
+                          onMouseUp={handleMouseUpPassword}
+                          onMouseLeave={handleMouseUpPassword} // Ensure visibility is disabled when mouse leaves
+                        >
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                      ),
+                    }}
                   />
                 </Grid>
 
@@ -169,16 +239,53 @@ const CreateMasterAccount = () => {
                     fullWidth
                     variant="standard"
                     label="Confirm Password"
-                    type="password"
-                    InputProps={{ style: { maxWidth: "500px" } }}
+                    type={showPassword ? "text" : "password"} // Toggle between text and password
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                    error={!!passwordError}
+                    helperText={passwordError}
+                    InputProps={{
+                      style: { maxWidth: "500px" },
+                      endAdornment: (
+                        <IconButton
+                          onMouseDown={handleMouseDownPassword}
+                          onMouseUp={handleMouseUpPassword}
+                          onMouseLeave={handleMouseUpPassword} // Ensure visibility is disabled when mouse leaves
+                        >
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                      ),
+                    }}
                   />
                 </Grid>
+
+                {/* <Grid item xs={12}>
+                  <MDInput
+                    fullWidth
+                    variant="standard"
+                    label="Confirm Password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                    error={!!passwordError}
+                    helperText={passwordError}
+                    InputProps={{ style: { maxWidth: "500px" } }}
+                  />
+                </Grid> */}
 
                 <Grid item xs={12}>
                   <MDInput
                     fullWidth
                     variant="standard"
                     label="Product Margin (0-20%)"
+                    value={productMargin}
+                    onChange={handleProductMarginChange}
+                    inputProps={{
+                      inputMode: "numeric",
+                      pattern: "[0-9]*",
+                      max: 20,
+                      min: 0,
+                    }}
                     InputProps={{ style: { maxWidth: "500px" } }}
                   />
                 </Grid>
