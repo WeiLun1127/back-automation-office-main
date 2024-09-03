@@ -38,9 +38,46 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 import MDDatePicker from "components/MDDatePicker";
 
-const currencyOptions = ["MYR", "THB", "VND", "IDR", "INR", "KRW", "JPN", "SGD", "MMK"];
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import CircleIcon from "@mui/icons-material/Circle";
+import PeopleIcon from "@mui/icons-material/People";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import CancelIcon from "@mui/icons-material/Cancel";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import StoreIcon from "@mui/icons-material/Store";
+import SellIcon from "@mui/icons-material/Sell";
+import Flag from "react-flagkit";
+
+// const currencyOptions = ["MYR", "THB", "VND", "IDR", "INR", "KRW", "JPN", "SGD", "MMK"];
+const currencyOptions = [
+  { code: "MYR", country: "MY" }, // Malaysia
+  { code: "THB", country: "TH" }, // Thailand
+  { code: "VND", country: "VN" }, // Vietnam
+  { code: "IDR", country: "ID" }, // Indonesia
+  { code: "INR", country: "IN" }, // India
+  { code: "KRW", country: "KR" }, // South Korea
+  { code: "JPN", country: "JP" }, // Japan
+  { code: "SGD", country: "SG" }, // Singapore
+  { code: "MMK", country: "MM" }, // Myanmar
+];
 const roleOptions = ["Account Provider", "Merchant", "Reseller"];
 const statusOptions = ["SUCCESSFUL", "PENDING", "APPROVED", "IN PROGRESS", "FAILED"];
+
+const statusIcons: { [key: string]: React.ReactNode } = {
+  SUCCESSFUL: <CheckCircleIcon color="success" />,
+  PENDING: <HourglassEmptyIcon color="warning" />,
+  APPROVED: <CheckCircleIcon color="primary" />,
+  "IN PROGRESS": <HourglassEmptyIcon color="info" />,
+  FAILED: <CancelIcon color="error" />,
+};
+
+const roleIcons: { [key: string]: React.ReactNode } = {
+  "Account Provider": <PersonAddIcon color="primary" />,
+  Merchant: <StoreIcon color="secondary" />,
+  Reseller: <SellIcon color="action" />,
+};
 
 interface Props {
   entriesPerPage?:
@@ -410,15 +447,18 @@ function DataTable({
                 />
                 <DialogContent>
                   <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
-                    <Typography variant="h6" gutterBottom sx={{ marginRight: 2 }}>
+                    <Typography variant="h6" gutterBottom sx={{ marginRight: 2, minWidth: "8rem" }}>
                       Created By
+                      <IconButton size="small" sx={{ marginLeft: 1.4, marginRight: 2 }}>
+                        <CalendarTodayIcon />
+                      </IconButton>
                     </Typography>
                     <MDDatePicker
                       input={{
                         value: selectedCreatedDate,
                         placeholder: "Created Date",
                         size: "small",
-                        sx: { width: "10rem", marginRight: 2 },
+                        sx: { width: "12rem", marginRight: 2 },
                         InputProps: {
                           endAdornment: (
                             <InputAdornment position="end">
@@ -442,15 +482,18 @@ function DataTable({
                 />
                 <DialogContent>
                   <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
-                    <Typography variant="h6" gutterBottom sx={{ marginRight: 2 }}>
+                    <Typography variant="h6" gutterBottom sx={{ marginRight: 2, minWidth: "8rem" }}>
                       Updated By
+                      <IconButton size="small" sx={{ marginLeft: 1, marginRight: 2 }}>
+                        <CalendarTodayIcon />
+                      </IconButton>
                     </Typography>
                     <MDDatePicker
                       input={{
                         value: selectedUpdatedDate,
                         placeholder: "Updated Date",
                         size: "small",
-                        sx: { width: "10rem", marginRight: 2 },
+                        sx: { width: "12rem", marginRight: 2 },
                         InputProps: {
                           endAdornment: (
                             <InputAdornment position="end">
@@ -476,16 +519,17 @@ function DataTable({
                   <Box sx={{ marginBottom: 2 }}>
                     <Typography variant="h6" gutterBottom>
                       Currency
+                      <AttachMoneyIcon sx={{ marginLeft: 0.5, marginRight: 1, color: "grey" }} />
                     </Typography>
                     <FormGroup sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
                       {currencyOptions.map((option) => (
                         <FormControlLabel
-                          key={option}
+                          key={option.code}
                           control={
                             <Checkbox
-                              value={option}
-                              checked={selectedCurrencyOptions.includes(option)}
-                              onChange={() => handleCheckboxChange(option)}
+                              value={option.code}
+                              checked={selectedCurrencyOptions.includes(option.code)}
+                              onChange={() => handleCheckboxChange(option.code)}
                               sx={{
                                 "& .MuiSvgIcon-root": {
                                   border: "1px solid black",
@@ -496,7 +540,14 @@ function DataTable({
                               }}
                             />
                           }
-                          label={option}
+                          label={
+                            <Box sx={{ display: "flex", alignItems: "center" }}>
+                              <Box sx={{ marginRight: 1 }}>
+                                <Flag country={option.country} style={{ width: 24, height: 16 }} />
+                              </Box>
+                              {option.code}
+                            </Box>
+                          }
                           sx={{ margin: 0 }}
                         />
                       ))}
@@ -529,6 +580,7 @@ function DataTable({
                       <Box sx={{ marginBottom: 2 }}>
                         <Typography variant="h6" gutterBottom>
                           Roles
+                          <PeopleIcon sx={{ marginLeft: 1, marginRight: 1, color: "grey" }} />
                         </Typography>
                         <FormGroup sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
                           {roleOptions.map((option) => (
@@ -548,7 +600,15 @@ function DataTable({
                                   }}
                                 />
                               }
-                              label={option}
+                              // label={option}
+                              label={
+                                <Box sx={{ display: "flex", alignItems: "center" }}>
+                                  <Box sx={{ marginRight: 1 }}>
+                                    {roleIcons[option]} {/* Display role icon */}
+                                  </Box>
+                                  {option} {/* Display role label */}
+                                </Box>
+                              }
                               sx={{ margin: 0 }}
                             />
                           ))}
@@ -565,6 +625,7 @@ function DataTable({
                       <Box sx={{ marginBottom: 2 }}>
                         <Typography variant="h6" gutterBottom>
                           Status
+                          <CircleIcon sx={{ marginLeft: 1, marginRight: 1, color: "LightGreen" }} />
                         </Typography>
                       </Box>
                       <Autocomplete
@@ -573,7 +634,7 @@ function DataTable({
                         options={statusOptions}
                         onChange={(event, newValue) => handleStatusChange(newValue)}
                         size="small"
-                        sx={{ width: "10rem", marginRight: 2 }}
+                        sx={{ width: "12rem", marginRight: 2 }}
                         renderInput={(params) => (
                           <MDInput
                             {...params}
@@ -585,6 +646,12 @@ function DataTable({
                               },
                             }}
                           />
+                        )}
+                        renderOption={(props, option) => (
+                          <Box component="li" {...props} display="flex" alignItems="center">
+                            <Box sx={{ marginRight: 2 }}>{statusIcons[option]}</Box>
+                            {option}
+                          </Box>
                         )}
                       />
                     </DialogContent>
