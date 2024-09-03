@@ -99,7 +99,7 @@ export default function App() {
       {layout === "vr" && <Configurator />}
       <Routes>
         {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/report/transactions" />} />
+        <Route path="*" element={<Navigate to="/company-level/api-control" />} />
       </Routes>
     </ThemeProvider>
   );
