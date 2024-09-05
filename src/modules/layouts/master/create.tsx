@@ -199,18 +199,6 @@ const CreateMasterAccount = () => {
                   />
                 </Grid>
 
-                {/* <Grid item xs={12}>
-                  <MDInput
-                    fullWidth
-                    variant="standard"
-                    label="Password"
-                    type="password"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    InputProps={{ style: { maxWidth: "500px" } }}
-                  />
-                </Grid> */}
-
                 <Grid item xs={12}>
                   <MDInput
                     fullWidth
@@ -258,20 +246,6 @@ const CreateMasterAccount = () => {
                     }}
                   />
                 </Grid>
-
-                {/* <Grid item xs={12}>
-                  <MDInput
-                    fullWidth
-                    variant="standard"
-                    label="Confirm Password"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={handleConfirmPasswordChange}
-                    error={!!passwordError}
-                    helperText={passwordError}
-                    InputProps={{ style: { maxWidth: "500px" } }}
-                  />
-                </Grid> */}
 
                 <Grid item xs={12}>
                   <MDInput
