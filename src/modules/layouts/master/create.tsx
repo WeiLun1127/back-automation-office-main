@@ -302,14 +302,17 @@ const CreateMasterAccount = () => {
                   <MDBox display="flex" alignItems="center">
                     {currencies.map((currency) => (
                       <Fragment key={currency.code}>
-                        <MDTypography variant="button">
+                        <Checkbox />
+                        <MDTypography
+                          variant="button"
+                          style={{ display: "flex", alignItems: "center" }}
+                        >
                           <Flag
                             country={currency.country}
-                            style={{ width: 24, height: 16, marginRight: 8 }}
+                            style={{ width: 24, height: 16, marginRight: 4 }} // Adjust margin if needed
                           />
                           {currency.code}
                         </MDTypography>
-                        <Checkbox />
                       </Fragment>
                     ))}
                   </MDBox>
