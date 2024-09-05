@@ -49,7 +49,7 @@ export default function App() {
     controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   // const { pathname } = useLocation();
-  const [pathname, setPathname] = useState<Pathname>("transactions");
+  const [pathname, setPathname] = useState<Pathname>("apiControl");
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
