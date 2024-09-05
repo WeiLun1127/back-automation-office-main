@@ -18,7 +18,7 @@ const routes = [
       {
         name: "API Control",
         key: "api-control",
-        route: "/company-level/api-control",
+        route: "apiControl",
         component: <ApiControl />,
       },
     ],
@@ -32,13 +32,13 @@ const routes = [
       {
         name: "Master List",
         key: "master-list",
-        route: "/master/master-list",
+        route: "masterList",
         component: <MasterList />,
       },
       {
         name: "Create Master Account",
         key: "create-master-account",
-        route: "/master/create-master-account",
+        route: "createMasterAccount",
         component: <CreateMasterAccount />,
       },
     ],
@@ -52,7 +52,7 @@ const routes = [
       {
         name: "Transactions",
         key: "transactions",
-        route: "/report/transactions",
+        route: "transactions",
         component: <Transactions />,
       },
     ],
@@ -66,7 +66,7 @@ const routes = [
       {
         name: "Authentication",
         key: "authentication",
-        route: "/security/authentication",
+        route: "authentication",
         component: <Authentication />,
       },
     ],

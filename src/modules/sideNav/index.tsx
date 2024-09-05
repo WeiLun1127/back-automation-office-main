@@ -1,16 +1,16 @@
-import { useEffect, useState, ReactNode, ChangeEvent } from "react";
+import { ChangeEvent, ReactNode, useEffect, useState } from "react";
 
 // react-router-dom components
-import { useLocation, NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 // @mui material components
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import Link from "@mui/material/Link";
-import Icon from "@mui/material/Icon";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
+import Divider from "@mui/material/Divider";
+import Icon from "@mui/material/Icon";
+import InputAdornment from "@mui/material/InputAdornment";
+import Link from "@mui/material/Link";
+import List from "@mui/material/List";
+import TextField from "@mui/material/TextField";
 
 // Material Dashboard 2 PRO React TS components
 import MDBox from "components/MDBox";
@@ -18,19 +18,20 @@ import MDTypography from "components/MDTypography";
 
 // Material Dashboard 2 PRO React TS examples components
 import SidenavCollapse from "./SidenavCollapse";
-import SidenavList from "./SidenavList";
 import SidenavItem from "./SidenavItem";
+import SidenavList from "./SidenavList";
 
 // Custom styles for the Sidenav
 import SidenavRoot from "./SidenavRoot";
 import sidenavLogoLabel from "./styles/sidenav";
 
 // Material Dashboard 2 PRO React context
+import { Pathname } from "App";
 import {
-  useMaterialUIController,
   setMiniSidenav,
   setTransparentSidenav,
   setWhiteSidenav,
+  useMaterialUIController,
 } from "context";
 
 // Declaring props types for Sidenav
@@ -52,9 +53,10 @@ interface Props {
         }[];
   }[];
   [key: string]: any;
+  onSetPathname?: (pathname: Pathname) => void;
 }
 
-function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Element {
+function Sidenav({ color, brand, brandName, routes, onSetPathname, ...rest }: Props): JSX.Element {
   const [openCollapse, setOpenCollapse] = useState<boolean | string>(false);
   const [openNestedCollapse, setOpenNestedCollapse] = useState<boolean | string>(false);
   const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
@@ -135,7 +137,12 @@ function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Eleme
           <SidenavItem name={name} nested />
         </Link>
       ) : (
-        <NavLink to={route} key={key} style={{ textDecoration: "none" }}>
+        <NavLink
+          to={"/"}
+          onClick={() => onSetPathname(route)}
+          key={key}
+          style={{ textDecoration: "none" }}
+        >
           <SidenavItem name={name} active={route === pathname} nested />
         </NavLink>
       )
@@ -178,7 +185,12 @@ function Sidenav({ color, brand, brandName, routes, ...rest }: Props): JSX.Eleme
             <SidenavItem color={color} name={name} active={key === itemName} />
           </Link>
         ) : (
-          <NavLink to={route} key={key} style={{ textDecoration: "none" }}>
+          <NavLink
+            to={"/"}
+            onClick={() => onSetPathname(route)}
+            key={key}
+            style={{ textDecoration: "none" }}
+          >
             <SidenavItem color={color} name={name} active={key === itemName} />
           </NavLink>
         );
