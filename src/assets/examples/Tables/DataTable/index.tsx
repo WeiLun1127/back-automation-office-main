@@ -450,8 +450,15 @@ function DataTable({
                     margin: "0 16px",
                   }}
                 />
-                <DialogContent>
-                  <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
+                <DialogContent sx={{ overflow: "visible" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: 2,
+                      overflow: "visible",
+                    }}
+                  >
                     <Typography
                       variant="h6"
                       color=""
@@ -490,7 +497,7 @@ function DataTable({
                     margin: "0 16px",
                   }}
                 />
-                <DialogContent>
+                <DialogContent sx={{ overflow: "visible" }}>
                   <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
                     <Typography variant="h6" gutterBottom sx={{ marginRight: 2, minWidth: "8rem" }}>
                       Updated By
@@ -525,7 +532,7 @@ function DataTable({
                     margin: "0 16px",
                   }}
                 />
-                <DialogContent>
+                <DialogContent sx={{ overflow: "visible" }}>
                   <Box sx={{ marginBottom: 2 }}>
                     <Typography variant="h6" gutterBottom>
                       Currency
@@ -586,7 +593,7 @@ function DataTable({
                 </IconButton>
                 {dialogExpanded && (
                   <>
-                    <DialogContent>
+                    <DialogContent sx={{ overflow: "visible" }}>
                       <Box sx={{ marginBottom: 2 }}>
                         <Typography variant="h6" gutterBottom>
                           Roles
@@ -631,7 +638,7 @@ function DataTable({
                         margin: "0 16px",
                       }}
                     />
-                    <DialogContent>
+                    <DialogContent sx={{ overflow: "visible" }}>
                       <Box sx={{ marginBottom: 2 }}>
                         <Typography variant="h6" gutterBottom>
                           Status
