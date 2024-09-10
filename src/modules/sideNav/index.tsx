@@ -153,12 +153,13 @@ function Sidenav({ color, brand, brandName, routes, onSetPathname, ...rest }: Pr
 
   // Render the all the collpases from the routes.js
   const renderCollapse = (collapses: any) =>
-    collapses.map(({ name, collapse, route, href, key }: any) => {
+    collapses.map(({ id, name, collapse, route, href, key }: any) => {
       let returnValue;
 
       if (collapse) {
         returnValue = (
           <SidenavItem
+            id={id}
             key={key}
             color={color}
             name={name}
@@ -176,6 +177,7 @@ function Sidenav({ color, brand, brandName, routes, onSetPathname, ...rest }: Pr
       } else {
         returnValue = href ? (
           <Link
+            id={id}
             href={href}
             key={key}
             target="_blank"
@@ -186,6 +188,7 @@ function Sidenav({ color, brand, brandName, routes, onSetPathname, ...rest }: Pr
           </Link>
         ) : (
           <NavLink
+            id={id}
             to={"/"}
             onClick={() => onSetPathname(route)}
             key={key}
@@ -200,7 +203,7 @@ function Sidenav({ color, brand, brandName, routes, onSetPathname, ...rest }: Pr
 
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
   const renderRoutes = filteredRoutes.map(
-    ({ type, name, icon, title, collapse, noCollapse, key, href, route }: any) => {
+    ({ id, type, name, icon, title, collapse, noCollapse, key, href, route }: any) => {
       let returnValue;
 
       if (type === "collapse") {
@@ -209,6 +212,7 @@ function Sidenav({ color, brand, brandName, routes, onSetPathname, ...rest }: Pr
             <Link
               href={href}
               key={key}
+              id={id}
               target="_blank"
               rel="noreferrer"
               sx={{ textDecoration: "none" }}
@@ -223,7 +227,7 @@ function Sidenav({ color, brand, brandName, routes, onSetPathname, ...rest }: Pr
           );
         } else if (noCollapse && route) {
           returnValue = (
-            <NavLink to={route} key={key}>
+            <NavLink to={route} key={key} id={id}>
               <SidenavCollapse
                 name={name}
                 icon={icon}
@@ -237,6 +241,7 @@ function Sidenav({ color, brand, brandName, routes, onSetPathname, ...rest }: Pr
         } else {
           returnValue = (
             <SidenavCollapse
+              id={id}
               key={key}
               name={name}
               icon={icon}

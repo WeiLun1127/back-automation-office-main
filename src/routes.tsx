@@ -10,12 +10,14 @@ import Authentication from "modules/layouts/security";
 
 const routes = [
   {
+    id: "0001",
     type: "collapse",
     name: "Company Level",
     key: "company-level",
     icon: <Icon fontSize="medium">business</Icon>,
     collapse: [
       {
+        id: "0001",
         name: "API Control",
         key: "api-control",
         route: "apiControl",
@@ -24,18 +26,21 @@ const routes = [
     ],
   },
   {
+    id: "0002",
     type: "collapse",
     name: "Master",
     key: "master",
     icon: <Icon fontSize="medium">group</Icon>,
     collapse: [
       {
+        id: "0001",
         name: "Master List",
         key: "master-list",
         route: "masterList",
         component: <MasterList />,
       },
       {
+        id: "0002",
         name: "Create Master Account",
         key: "create-master-account",
         route: "createMasterAccount",
@@ -44,12 +49,14 @@ const routes = [
     ],
   },
   {
+    id: "0003",
     type: "collapse",
     name: "Report",
     key: "report",
     icon: <Icon fontSize="medium">assessment</Icon>,
     collapse: [
       {
+        id: "0001",
         name: "Transactions",
         key: "transactions",
         route: "transactions",
@@ -58,12 +65,14 @@ const routes = [
     ],
   },
   {
+    id: "0004",
     type: "collapse",
     name: "Security",
     key: "security",
     icon: <Icon fontSize="medium">security</Icon>,
     collapse: [
       {
+        id: "0001",
         name: "Authentication",
         key: "authentication",
         route: "authentication",
