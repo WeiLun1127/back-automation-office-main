@@ -31,15 +31,16 @@ export default function App() {
     controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [pathname, setPathname] = useState<Pathname>("apiControl");
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
 
   const handleSignIn = async (username: string, password: string) => {
     const authApi = "http://18.138.168.43:10311/api/auth";
 
     try {
-      console.log("Connecting To API");
       const response = await axios.post(
         authApi,
         {
@@ -58,12 +59,37 @@ export default function App() {
 
         if (data.Value.Status === "ERR:0") {
           console.log("Login successful", data.Value);
-          setIsAuthenticated(true);
-          setPathname("apiControl");
-          navigate("/");
+
+          // Extract the token
+          const tokenMatch = /"Token"\s*:\s*"([^"]+)"/.exec(data.Value.Data);
+          const initialToken = tokenMatch ? tokenMatch[1] : null;
+
+          if (initialToken) {
+            setIsAuthenticated(true);
+            setUsername(username);
+            setToken(initialToken); // Store the token in the state
+
+            pingApi(username, initialToken);
+
+            // Set interval to ping every 20 seconds
+            const newIntervalId = setInterval(() => {
+              setToken((prevToken) => {
+                if (prevToken) {
+                  pingApi(username, prevToken); // Use the latest token
+                }
+                return prevToken;
+              });
+            }, 20000);
+            setIntervalId(newIntervalId);
+
+            setPathname("apiControl");
+            navigate("/");
+          } else {
+            console.error("Token not found");
+            alert("Token not found during login.");
+          }
         } else {
           console.error("Login failed:", data.Value.Data.Message);
-          // alert(data.Value.Data.Message);
           alert("Login failed");
         }
       } else {
@@ -74,6 +100,51 @@ export default function App() {
       alert("An error occurred during login. Please try again.");
     }
   };
+
+  //Data Sample : "Control" : "["001.1.001.1", "002.1.001.1", "002.1.002.1", "003.1.001.1.001.1111", "004.1.001.1"]"
+
+  const pingApi = async (username: string, currentToken: string) => {
+    const pingUrl = "http://18.138.168.43:10311/api/ping";
+
+    try {
+      const response = await axios.post(
+        pingUrl,
+        {
+          Uid: username,
+          Token: currentToken,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log("Ping successful", response.data);
+        const newToken = response.data.Value?.Token;
+        if (newToken) {
+          setToken(newToken); // Update the token in the state
+        } else {
+          console.warn("Token is empty, navigating to illustration page.");
+          setIsAuthenticated(false); // Set authenticated state to false
+          navigate("/illustration"); // Navigate to the illustration page
+        }
+      } else {
+        console.error("Ping failed:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error during ping", error);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [intervalId]);
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
