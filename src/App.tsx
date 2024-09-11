@@ -1,33 +1,13 @@
 import { JSXElementConstructor, Key, ReactElement, useEffect, useState } from "react";
-
-// react-router components
-import { Navigate, Route, Routes } from "react-router-dom";
-
-// @mui material components
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
-
-// Material Dashboard 2 PRO React TS components
-
-// Material Dashboard 2 PRO React TS exampless
 import Configurator from "assets/examples/Configurator/Configurator";
 import Sidenav from "modules/sideNav";
-
-// Material Dashboard 2 PRO React TS themes
 import theme from "modules/settings/theme-settings/theme";
-
-// Material Dashboard 2 PRO React TS Dark Mode themes
 import themeDark from "modules/settings/theme-settings/theme-dark";
-
-// RTL plugins
-
-// Material Dashboard 2 PRO React TS routes
 import routes from "routes";
-
-// Material Dashboard 2 PRO React TS contexts
 import { setMiniSidenav, useMaterialUIController } from "context";
-
-// Images
 import brandDark from "assets/images/logo-ct-dark.png";
 import brandWhite from "assets/images/logo-ct.png";
 import ApiControl from "modules/layouts/company";
@@ -35,6 +15,7 @@ import MasterList from "modules/layouts/master";
 import CreateMasterAccount from "modules/layouts/master/create";
 import Transactions from "modules/layouts/report";
 import Authentication from "modules/layouts/security";
+import Illustration from "modules/layouts/signin/illustration";
 
 export type Pathname =
   | "apiControl"
@@ -48,8 +29,16 @@ export default function App() {
   const { miniSidenav, layout, sidenavColor, transparentSidenav, whiteSidenav, darkMode } =
     controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
-  // const { pathname } = useLocation();
   const [pathname, setPathname] = useState<Pathname>("apiControl");
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSignIn = () => {
+    setIsAuthenticated(true);
+    setPathname("apiControl");
+    navigate("/");
+  };
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
@@ -113,25 +102,30 @@ export default function App() {
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
       <CssBaseline />
-      {layout === "dashboard" && (
+      {!isAuthenticated ? (
+        <Illustration onSignIn={handleSignIn} /> // Pass the sign-in handler as a prop
+      ) : (
         <>
-          <Sidenav
-            color={sidenavColor}
-            brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-            brandName="BackOffice Automation"
-            routes={routes}
-            onMouseEnter={handleOnMouseEnter}
-            onMouseLeave={handleOnMouseLeave}
-            onSetPathname={(pathname: Pathname) => setPathname(pathname)}
-          />
-          <Configurator />
+          {layout === "dashboard" && (
+            <>
+              <Sidenav
+                color={sidenavColor}
+                brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
+                brandName="BackOffice Automation"
+                routes={routes}
+                onMouseEnter={handleOnMouseEnter}
+                onMouseLeave={handleOnMouseLeave}
+                onSetPathname={(pathname: Pathname) => setPathname(pathname)}
+              />
+              <Configurator />
+            </>
+          )}
+          {layout === "vr" && <Configurator />}
+          <Routes>
+            <Route path="*" element={getRouteElement(pathname)} />
+          </Routes>
         </>
       )}
-      {layout === "vr" && <Configurator />}
-
-      <Routes>
-        <Route path="*" element={getRouteElement(pathname)} />
-      </Routes>
     </ThemeProvider>
   );
 }
