@@ -16,6 +16,7 @@ import CreateMasterAccount from "modules/layouts/master/create";
 import Transactions from "modules/layouts/report";
 import Authentication from "modules/layouts/security";
 import Illustration from "modules/layouts/signin/illustration";
+import axios from "axios";
 
 export type Pathname =
   | "apiControl"
@@ -34,10 +35,44 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignIn = () => {
-    setIsAuthenticated(true);
-    setPathname("apiControl");
-    navigate("/");
+  const handleSignIn = async (username: string, password: string) => {
+    const authApi = "http://18.138.168.43:10311/api/auth";
+
+    try {
+      console.log("Connecting To API");
+      const response = await axios.post(
+        authApi,
+        {
+          Uid: username,
+          Pass: password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const data = typeof response.data === "string" ? JSON.parse(response.data) : response.data;
+
+        if (data.Value.Status === "ERR:0") {
+          console.log("Login successful", data.Value);
+          setIsAuthenticated(true);
+          setPathname("apiControl");
+          navigate("/");
+        } else {
+          console.error("Login failed:", data.Value.Data.Message);
+          // alert(data.Value.Data.Message);
+          alert("Login failed");
+        }
+      } else {
+        console.error("Unexpected response status:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error during login", error);
+      alert("An error occurred during login. Please try again.");
+    }
   };
 
   // Open sidenav when mouse enter on mini sidenav
@@ -103,7 +138,7 @@ export default function App() {
     <ThemeProvider theme={darkMode ? themeDark : theme}>
       <CssBaseline />
       {!isAuthenticated ? (
-        <Illustration onSignIn={handleSignIn} /> // Pass the sign-in handler as a prop
+        <Illustration onSignIn={handleSignIn} />
       ) : (
         <>
           {layout === "dashboard" && (
