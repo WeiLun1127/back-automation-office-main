@@ -1,5 +1,5 @@
 import { JSXElementConstructor, Key, ReactElement, useEffect, useState } from "react";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 import Configurator from "assets/examples/Configurator/Configurator";
@@ -36,6 +36,7 @@ export default function App() {
   const [token, setToken] = useState<string | null>(null);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSignIn = async (username: string, password: string) => {
     const authApi = "http://18.138.168.43:10311/api/auth";
@@ -128,7 +129,7 @@ export default function App() {
         } else {
           console.warn("Token is empty, navigating to illustration page.");
           setIsAuthenticated(false); // Set authenticated state to false
-          navigate("/illustration"); // Navigate to the illustration page
+          navigate("/"); // Navigate to the illustration page
         }
       } else {
         console.error("Ping failed:", response.statusText);
@@ -145,6 +146,23 @@ export default function App() {
       }
     };
   }, [intervalId]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (intervalId) {
+        clearInterval(intervalId); // stop the ping interval
+        setIntervalId(null); // clear the interval state
+      }
+      setIsAuthenticated(false); // reset authentication state
+      navigate("/"); // navigate to illustration page
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [intervalId, navigate]);
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
