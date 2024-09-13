@@ -58,11 +58,11 @@ export default function App() {
       if (response.status === 200) {
         const data = typeof response.data === "string" ? JSON.parse(response.data) : response.data;
 
-        if (data.Value.Status === "ERR:0") {
-          console.log("Login successful", data.Value);
+        if (data.Status === "ERR:0") {
+          console.log("Login successful", data);
 
           // Extract the token
-          const tokenMatch = /"Token"\s*:\s*"([^"]+)"/.exec(data.Value.Data);
+          const tokenMatch = /"Token"\s*:\s*"([^"]+)"/.exec(data.Data);
           const initialToken = tokenMatch ? tokenMatch[1] : null;
 
           if (initialToken) {
@@ -123,7 +123,7 @@ export default function App() {
 
       if (response.status === 200) {
         console.log("Ping successful", response.data);
-        const newToken = response.data.Value?.Token;
+        const newToken = response.data?.Token;
         if (newToken) {
           setToken(newToken); // Update the token in the state
         } else {
