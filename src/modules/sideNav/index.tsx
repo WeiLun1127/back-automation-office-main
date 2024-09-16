@@ -54,9 +54,18 @@ interface Props {
   }[];
   [key: string]: any;
   onSetPathname?: (pathname: Pathname) => void;
+  userControl: { [key: string]: string }[];
 }
 
-function Sidenav({ color, brand, brandName, routes, onSetPathname, ...rest }: Props): JSX.Element {
+function Sidenav({
+  color,
+  brand,
+  brandName,
+  routes,
+  onSetPathname,
+  userControl,
+  ...rest
+}: Props): JSX.Element {
   const [openCollapse, setOpenCollapse] = useState<boolean | string>(false);
   const [openNestedCollapse, setOpenNestedCollapse] = useState<boolean | string>(false);
   const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
@@ -153,51 +162,59 @@ function Sidenav({ color, brand, brandName, routes, onSetPathname, ...rest }: Pr
 
   // Render the all the collpases from the routes.js
   const renderCollapse = (collapses: any) =>
-    collapses.map(({ id, name, collapse, route, href, key }: any) => {
+    collapses.map(({ id, parentId, name, collapse, route, href, key }: any) => {
       let returnValue;
+      const childId = `${parentId}.${id}`;
 
-      if (collapse) {
-        returnValue = (
-          <SidenavItem
-            id={id}
-            key={key}
-            color={color}
-            name={name}
-            active={key === itemParentName ? "isParent" : false}
-            open={openNestedCollapse === key}
-            onClick={({ currentTarget }: any) =>
-              openNestedCollapse === key && currentTarget.classList.contains("MuiListItem-root")
-                ? setOpenNestedCollapse(false)
-                : setOpenNestedCollapse(key)
-            }
-          >
-            {renderNestedCollapse(collapse)}
-          </SidenavItem>
-        );
-      } else {
-        returnValue = href ? (
-          <Link
-            id={id}
-            href={href}
-            key={key}
-            target="_blank"
-            rel="noreferrer"
-            sx={{ textDecoration: "none" }}
-          >
-            <SidenavItem color={color} name={name} active={key === itemName} />
-          </Link>
-        ) : (
-          <NavLink
-            id={id}
-            to={"/"}
-            onClick={() => onSetPathname(route)}
-            key={key}
-            style={{ textDecoration: "none" }}
-          >
-            <SidenavItem color={color} name={name} active={key === itemName} />
-          </NavLink>
-        );
+      if (
+        userControl.some(
+          (control) => Object.keys(control).includes(childId) && control[childId] == "1"
+        )
+      ) {
+        if (collapse) {
+          returnValue = (
+            <SidenavItem
+              id={id}
+              key={key}
+              color={color}
+              name={name}
+              active={key === itemParentName ? "isParent" : false}
+              open={openNestedCollapse === key}
+              onClick={({ currentTarget }: any) =>
+                openNestedCollapse === key && currentTarget.classList.contains("MuiListItem-root")
+                  ? setOpenNestedCollapse(false)
+                  : setOpenNestedCollapse(key)
+              }
+            >
+              {renderNestedCollapse(collapse)}
+            </SidenavItem>
+          );
+        } else {
+          returnValue = href ? (
+            <Link
+              id={id}
+              href={href}
+              key={key}
+              target="_blank"
+              rel="noreferrer"
+              sx={{ textDecoration: "none" }}
+            >
+              <SidenavItem color={color} name={name} active={key === itemName} />
+            </Link>
+          ) : (
+            <NavLink
+              id={id}
+              to={"/"}
+              onClick={() => onSetPathname(route)}
+              key={key}
+              style={{ textDecoration: "none" }}
+            >
+              <SidenavItem color={color} name={name} active={key === itemName} />
+            </NavLink>
+          );
+        }
       }
+
       return <SidenavList key={key}>{returnValue}</SidenavList>;
     });
 
@@ -207,51 +224,57 @@ function Sidenav({ color, brand, brandName, routes, onSetPathname, ...rest }: Pr
       let returnValue;
 
       if (type === "collapse") {
-        if (href) {
-          returnValue = (
-            <Link
-              href={href}
-              key={key}
-              id={id}
-              target="_blank"
-              rel="noreferrer"
-              sx={{ textDecoration: "none" }}
-            >
+        if (
+          userControl.some((control) => Object.keys(control).includes(id) && control[id] == "1")
+        ) {
+          if (href) {
+            returnValue = (
+              <Link
+                href={href}
+                key={key}
+                id={id}
+                target="_blank"
+                rel="noreferrer"
+                sx={{ textDecoration: "none" }}
+              >
+                <SidenavCollapse
+                  name={name}
+                  icon={icon}
+                  active={key === collapseName}
+                  noCollapse={noCollapse}
+                />
+              </Link>
+            );
+          } else if (noCollapse && route) {
+            returnValue = (
+              <NavLink to={route} key={key} id={id}>
+                <SidenavCollapse
+                  name={name}
+                  icon={icon}
+                  noCollapse={noCollapse}
+                  active={key === collapseName}
+                >
+                  {collapse ? renderCollapse(collapse) : null}
+                </SidenavCollapse>
+              </NavLink>
+            );
+          } else {
+            returnValue = (
               <SidenavCollapse
+                id={id}
+                key={key}
                 name={name}
                 icon={icon}
                 active={key === collapseName}
-                noCollapse={noCollapse}
-              />
-            </Link>
-          );
-        } else if (noCollapse && route) {
-          returnValue = (
-            <NavLink to={route} key={key} id={id}>
-              <SidenavCollapse
-                name={name}
-                icon={icon}
-                noCollapse={noCollapse}
-                active={key === collapseName}
+                open={openCollapse === key}
+                onClick={() =>
+                  openCollapse === key ? setOpenCollapse(false) : setOpenCollapse(key)
+                }
               >
                 {collapse ? renderCollapse(collapse) : null}
               </SidenavCollapse>
-            </NavLink>
-          );
-        } else {
-          returnValue = (
-            <SidenavCollapse
-              id={id}
-              key={key}
-              name={name}
-              icon={icon}
-              active={key === collapseName}
-              open={openCollapse === key}
-              onClick={() => (openCollapse === key ? setOpenCollapse(false) : setOpenCollapse(key))}
-            >
-              {collapse ? renderCollapse(collapse) : null}
-            </SidenavCollapse>
-          );
+            );
+          }
         }
       } else if (type === "title") {
         returnValue = (

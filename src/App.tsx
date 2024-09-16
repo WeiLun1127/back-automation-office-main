@@ -1,22 +1,22 @@
-import { JSXElementConstructor, Key, ReactElement, useEffect, useState } from "react";
-import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 import Configurator from "assets/examples/Configurator/Configurator";
-import Sidenav from "modules/sideNav";
-import theme from "modules/settings/theme-settings/theme";
-import themeDark from "modules/settings/theme-settings/theme-dark";
-import routes from "routes";
-import { setMiniSidenav, useMaterialUIController } from "context";
 import brandDark from "assets/images/logo-ct-dark.png";
 import brandWhite from "assets/images/logo-ct.png";
+import axios from "axios";
+import { setMiniSidenav, useMaterialUIController } from "context";
 import ApiControl from "modules/layouts/company";
 import MasterList from "modules/layouts/master";
 import CreateMasterAccount from "modules/layouts/master/create";
 import Transactions from "modules/layouts/report";
 import Authentication from "modules/layouts/security";
 import Illustration from "modules/layouts/signin/illustration";
-import axios from "axios";
+import theme from "modules/settings/theme-settings/theme";
+import themeDark from "modules/settings/theme-settings/theme-dark";
+import Sidenav from "modules/sideNav";
+import { JSXElementConstructor, Key, ReactElement, useEffect, useState } from "react";
+import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import routes from "routes";
 
 export type Pathname =
   | "apiControl"
@@ -33,6 +33,7 @@ export default function App() {
   const [pathname, setPathname] = useState<Pathname>("apiControl");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
+  const [userControl, setUserControl] = useState<{ [key: string]: string }[]>(null);
   const [token, setToken] = useState<string | null>(null);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
@@ -57,6 +58,17 @@ export default function App() {
 
       if (response.status === 200) {
         const data = typeof response.data === "string" ? JSON.parse(response.data) : response.data;
+
+        // data.Data is "{Token : tfcWhyawKrAzMAvGpP00uOtY4Z/lWhKx1RQuyR9WDzqX6F25tNX5OkOwwA3TJuYi2zNpQeNz2maqGxYyrf9IJQHE9fAKu25QN4j3gTOnri0=, Control : [{001:1},{001.001:1}, {001.002:1},{002:1},{003:1},{002.004:1}, {002.004.001:1111}, {002.004.002:1001}] }"
+        // extract the control
+        // replace \n with '' and ' ' with ''
+        // remove " only the first and last
+        const control = data.Data.substring(data.Data.indexOf("Control") + 10, data.Data.length - 1)
+          .replace(/\n/g, "")
+          .replace(/ /g, "")
+          .slice(1, -1);
+        console.log("Control", control, JSON.parse(control));
+        setUserControl(JSON.parse(control));
 
         if (data.Status === "ERR:0") {
           console.log("Login successful", data);
@@ -237,6 +249,7 @@ export default function App() {
                 brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
                 brandName="BackOffice Automation"
                 routes={routes}
+                userControl={userControl}
                 onMouseEnter={handleOnMouseEnter}
                 onMouseLeave={handleOnMouseLeave}
                 onSetPathname={(pathname: Pathname) => setPathname(pathname)}

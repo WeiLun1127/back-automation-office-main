@@ -18,6 +18,7 @@ const routes = [
     collapse: [
       {
         id: "001",
+        parentId: "001",
         name: "API Control",
         key: "api-control",
         route: "apiControl",
@@ -34,6 +35,7 @@ const routes = [
     collapse: [
       {
         id: "001",
+        parentId: "002",
         name: "Master List",
         key: "master-list",
         route: "masterList",
@@ -41,6 +43,7 @@ const routes = [
       },
       {
         id: "002",
+        parentId: "002",
         name: "Create Master Account",
         key: "create-master-account",
         route: "createMasterAccount",
@@ -57,6 +60,7 @@ const routes = [
     collapse: [
       {
         id: "001",
+        parentId: "003",
         name: "Transactions",
         key: "transactions",
         route: "transactions",
@@ -73,6 +77,7 @@ const routes = [
     collapse: [
       {
         id: "001",
+        parentId: "004",
         name: "Authentication",
         key: "authentication",
         route: "authentication",
