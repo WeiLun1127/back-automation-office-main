@@ -3,7 +3,7 @@ import Flag from "react-world-flags";
 
 const dataTableData = {
   columns: [
-    { Header: "id", accessor: "id", width: "5%" },
+    { Header: "id", accessor: "id", width: "3%" },
     { Header: "currency", accessor: "currency", width: "10%" },
     { Header: "country", accessor: "country", width: "15%" }, // Increased width for flag + country name
     { Header: "rate", accessor: "rate", width: "10%" },
