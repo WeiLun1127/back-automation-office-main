@@ -1,3 +1,6 @@
+import SecurityIcon from "@mui/icons-material/Security";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Card, Checkbox, Grid, Icon, IconButton } from "@mui/material";
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
@@ -6,11 +9,8 @@ import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
-import { Fragment, SetStateAction, useState } from "react";
+import { SetStateAction, useState } from "react";
 import Flag from "react-flagkit";
-import SecurityIcon from "@mui/icons-material/Security";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const currencies = [
   { code: "MYR", country: "MY" }, // Malaysia
@@ -172,8 +172,8 @@ const CreateMasterAccount = () => {
     <DashboardLayout>
       <DashboardNavbar />
 
-      <Grid container justifyContent="center">
-        <Grid item lg={12} xl={8} pt={3} mb={3}>
+      <Grid container pt={3} pb={3} justifyContent="center">
+        <Grid item lg={12} xl={8}>
           <Card>
             <MDBox p={3}>
               <MDTypography variant="h4">Create Master Account</MDTypography>
@@ -273,9 +273,9 @@ const CreateMasterAccount = () => {
                 </Grid>
 
                 <Grid item xs={12}>
-                  <MDBox display="flex" alignItems="center">
+                  <MDBox display="flex" alignItems="center" flexWrap="wrap" gap={1}>
                     {currencies.map((currency) => (
-                      <Fragment key={currency.code}>
+                      <div style={{ display: "flex" }} key={currency.code}>
                         <Checkbox />
                         <MDTypography
                           variant="button"
@@ -287,7 +287,7 @@ const CreateMasterAccount = () => {
                           />
                           {currency.code}
                         </MDTypography>
-                      </Fragment>
+                      </div>
                     ))}
                   </MDBox>
                 </Grid>
@@ -323,34 +323,32 @@ const CreateMasterAccount = () => {
 
       {allowCommissionAgent && (
         <Grid container justifyContent="center">
-          <Grid item lg={12} xl={8} pt={3}>
-            <Card>
-              <MDBox p={3} display="flex" justifyContent="space-between">
-                <MDTypography variant="h4">Commission Agent</MDTypography>
+          <Card>
+            <MDBox p={3} display="flex" justifyContent="space-between" flexWrap="wrap" gap={1}>
+              <MDTypography variant="h4">Commission Agent</MDTypography>
 
-                <MDBox display="flex" gap={2}>
-                  <MDInput
-                    type="search"
-                    value="Search..."
-                    InputProps={{ style: { minWidth: "200px" } }}
-                  />
-                  <MDButton variant="gradient" color="primary">
-                    <Icon fontSize="small">add</Icon>&nbsp;Add
-                  </MDButton>
-                </MDBox>
+              <MDBox display="flex" gap={2}>
+                <MDInput
+                  type="search"
+                  value="Search..."
+                  InputProps={{ style: { maxWidth: "200px" } }}
+                />
+                <MDButton variant="gradient" color="primary">
+                  <Icon fontSize="small">add</Icon>&nbsp;Add
+                </MDButton>
               </MDBox>
+            </MDBox>
 
-              <DataTable
-                entriesPerPage={{
-                  entries: [5, 10, 20, 50, 100],
-                  defaultValue: 5,
-                }}
-                showEntriesPerPage={false}
-                showTotalEntries={false}
-                table={dataTableData}
-              />
-            </Card>
-          </Grid>
+            <DataTable
+              entriesPerPage={{
+                entries: [5, 10, 20, 50, 100],
+                defaultValue: 5,
+              }}
+              showEntriesPerPage={false}
+              showTotalEntries={false}
+              table={dataTableData}
+            />
+          </Card>
         </Grid>
       )}
 
