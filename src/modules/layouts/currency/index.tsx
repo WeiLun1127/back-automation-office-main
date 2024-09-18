@@ -8,7 +8,6 @@ import MDTypography from "components/MDTypography";
 // Material Dashboard 2 PRO React TS examples components
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
-import Footer from "assets/examples/Footer";
 import DataTable from "assets/examples/Tables/DataTable";
 
 // Data
@@ -26,7 +25,7 @@ function CurrencyTables(): JSX.Element {
                 Currency
               </MDTypography>
             </MDBox>
-            <DataTable table={dataTableData} />
+            <DataTable table={dataTableData} canSearch />
           </Card>
         </MDBox>
       </MDBox>
