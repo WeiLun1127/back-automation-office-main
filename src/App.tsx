@@ -43,6 +43,7 @@ export default function App() {
     const authApi = "http://18.138.168.43:10311/api/auth";
 
     try {
+      const userAgent = navigator.userAgent;
       const response = await axios.post(
         authApi,
         {
@@ -52,6 +53,7 @@ export default function App() {
         {
           headers: {
             "Content-Type": "application/json",
+            "User-Agent": userAgent,
           },
         }
       );
