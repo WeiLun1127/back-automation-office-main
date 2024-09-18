@@ -1,6 +1,7 @@
 // @mui icons
 import Icon from "@mui/material/Icon";
 import ApiControl from "modules/layouts/company";
+import CurrencyTables from "modules/layouts/currency";
 import MasterList from "modules/layouts/master";
 import CreateMasterAccount from "modules/layouts/master/create";
 import Transactions from "modules/layouts/report";
@@ -82,6 +83,40 @@ const routes = [
         key: "authentication",
         route: "authentication",
         component: <Authentication />,
+      },
+    ],
+  },
+  {
+    id: "005",
+    type: "collapse",
+    name: "Products",
+    key: "products",
+    icon: <Icon fontSize="medium">shopping_basket</Icon>,
+    collapse: [
+      {
+        id: "001",
+        parentId: "005",
+        name: "Products",
+        key: "products",
+        route: "products",
+        component: <Authentication />,
+      },
+    ],
+  },
+  {
+    id: "006",
+    type: "collapse",
+    name: "Currency",
+    key: "currency",
+    icon: <Icon fontSize="medium">attach_money</Icon>,
+    collapse: [
+      {
+        id: "001",
+        parentId: "006",
+        name: "Currency",
+        key: "currency",
+        route: "currency",
+        component: <CurrencyTables />,
       },
     ],
   },

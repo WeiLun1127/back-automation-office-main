@@ -6,6 +6,7 @@ import brandWhite from "assets/images/logo-ct.png";
 import axios from "axios";
 import { setMiniSidenav, useMaterialUIController } from "context";
 import ApiControl from "modules/layouts/company";
+import CurrencyTables from "modules/layouts/currency";
 import MasterList from "modules/layouts/master";
 import CreateMasterAccount from "modules/layouts/master/create";
 import Transactions from "modules/layouts/report";
@@ -23,7 +24,9 @@ export type Pathname =
   | "authentication"
   | "createMasterAccount"
   | "masterList"
-  | "transactions";
+  | "transactions"
+  | "products"
+  | "currency";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -232,6 +235,10 @@ export default function App() {
         return <MasterList />;
       case "transactions":
         return <Transactions />;
+      case "products":
+        return <Transactions />;
+      case "currency":
+        return <CurrencyTables />;
       default:
         return <Navigate to="/" />;
     }
