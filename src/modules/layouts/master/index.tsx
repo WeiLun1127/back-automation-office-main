@@ -3,6 +3,7 @@ import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
 import DataTable from "assets/examples/Tables/DataTable";
 import MDBox from "components/MDBox";
+import MDButton from "components/MDButton";
 
 const dataTableData = {
   columns: [
@@ -19,9 +20,23 @@ const dataTableData = {
       user: "John Michael",
       user_id: "johndoe2024",
       action: (
-        <MDBox display="flex" gap={1}>
-          <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
-          <Icon style={{ cursor: "pointer" }}>edit</Icon>
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>lockperson</Icon>
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+          <MDButton
+            variant="outlined"
+            color="dark"
+            size="small"
+            style={{
+              cursor: "pointer",
+              fontSize: "0.75rem", // Smaller font size
+              padding: "4px 8px", // Adjust padding for a smaller button
+              minWidth: "auto", // Ensure button size fits the text
+              height: "auto",
+            }}
+          >
+            Reset 2FA
+          </MDButton>
         </MDBox>
       ),
       last_login: "2024-09-01 14:30:00",
@@ -33,9 +48,23 @@ const dataTableData = {
       user_id: "alexaliras2024",
       user: "Alexa Liras",
       action: (
-        <MDBox display="flex" gap={1}>
-          <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
-          <Icon style={{ cursor: "pointer" }}>edit</Icon>
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>lockperson</Icon>
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+          <MDButton
+            variant="outlined"
+            color="dark"
+            size="small"
+            style={{
+              cursor: "pointer",
+              fontSize: "0.75rem", // Smaller font size
+              padding: "4px 8px", // Adjust padding for a smaller button
+              minWidth: "auto", // Ensure button size fits the text
+              height: "auto",
+            }}
+          >
+            Reset 2FA
+          </MDButton>
         </MDBox>
       ),
       last_login: "2024-09-01 14:35:00",
@@ -46,9 +75,23 @@ const dataTableData = {
       user_id: "laurentperrier2024",
       user: "Laurent Perrier",
       action: (
-        <MDBox display="flex" gap={1}>
-          <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
-          <Icon style={{ cursor: "pointer" }}>edit</Icon>
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>lockperson</Icon>
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+          <MDButton
+            variant="outlined"
+            color="dark"
+            size="small"
+            style={{
+              cursor: "pointer",
+              fontSize: "0.75rem", // Smaller font size
+              padding: "4px 8px", // Adjust padding for a smaller button
+              minWidth: "auto", // Ensure button size fits the text
+              height: "auto",
+            }}
+          >
+            Reset 2FA
+          </MDButton>
         </MDBox>
       ),
       last_login: "2024-09-01 14:40:00",
@@ -59,9 +102,23 @@ const dataTableData = {
       user: "Michael Levi",
       user_id: "michaellevi2024",
       action: (
-        <MDBox display="flex" gap={1}>
-          <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
-          <Icon style={{ cursor: "pointer" }}>edit</Icon>
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>lockperson</Icon>
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+          <MDButton
+            variant="outlined"
+            color="dark"
+            size="small"
+            style={{
+              cursor: "pointer",
+              fontSize: "0.75rem", // Smaller font size
+              padding: "4px 8px", // Adjust padding for a smaller button
+              minWidth: "auto", // Ensure button size fits the text
+              height: "auto",
+            }}
+          >
+            Reset 2FA
+          </MDButton>
         </MDBox>
       ),
       last_login: "2024-09-01 14:45:00",
@@ -72,9 +129,23 @@ const dataTableData = {
       user: "Richard Gran",
       user_id: "richardgran2024",
       action: (
-        <MDBox display="flex" gap={1}>
-          <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
-          <Icon style={{ cursor: "pointer" }}>edit</Icon>
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>lockperson</Icon>
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+          <MDButton
+            variant="outlined"
+            color="dark"
+            size="small"
+            style={{
+              cursor: "pointer",
+              fontSize: "0.75rem", // Smaller font size
+              padding: "4px 8px", // Adjust padding for a smaller button
+              minWidth: "auto", // Ensure button size fits the text
+              height: "auto",
+            }}
+          >
+            Reset 2FA
+          </MDButton>
         </MDBox>
       ),
       last_login: "2024-09-01 14:50:00",
@@ -85,9 +156,23 @@ const dataTableData = {
       user: "Michael Johnson",
       user_id: "michaeljohnson2024",
       action: (
-        <MDBox display="flex" gap={1}>
-          <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
-          <Icon style={{ cursor: "pointer" }}>edit</Icon>
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>lockperson</Icon>
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+          <MDButton
+            variant="outlined"
+            color="dark"
+            size="small"
+            style={{
+              cursor: "pointer",
+              fontSize: "0.75rem", // Smaller font size
+              padding: "4px 8px", // Adjust padding for a smaller button
+              minWidth: "auto", // Ensure button size fits the text
+              height: "auto",
+            }}
+          >
+            Reset 2FA
+          </MDButton>
         </MDBox>
       ),
       last_login: "2024-09-01 14:55:00",
@@ -98,9 +183,23 @@ const dataTableData = {
       user: "Miriam Eric",
       user_id: "miriameric2024",
       action: (
-        <MDBox display="flex" gap={1}>
-          <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
-          <Icon style={{ cursor: "pointer" }}>edit</Icon>
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>lockperson</Icon>
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+          <MDButton
+            variant="outlined"
+            color="dark"
+            size="small"
+            style={{
+              cursor: "pointer",
+              fontSize: "0.75rem", // Smaller font size
+              padding: "4px 8px", // Adjust padding for a smaller button
+              minWidth: "auto", // Ensure button size fits the text
+              height: "auto",
+            }}
+          >
+            Reset 2FA
+          </MDButton>
         </MDBox>
       ),
       last_login: "2024-09-01 15:00:00",
@@ -111,9 +210,23 @@ const dataTableData = {
       user: "Peter Parker",
       user_id: "peterparker2024",
       action: (
-        <MDBox display="flex" gap={1}>
-          <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
-          <Icon style={{ cursor: "pointer" }}>edit</Icon>
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>lockperson</Icon>
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+          <MDButton
+            variant="outlined"
+            color="dark"
+            size="small"
+            style={{
+              cursor: "pointer",
+              fontSize: "0.75rem", // Smaller font size
+              padding: "4px 8px", // Adjust padding for a smaller button
+              minWidth: "auto", // Ensure button size fits the text
+              height: "auto",
+            }}
+          >
+            Reset 2FA
+          </MDButton>
         </MDBox>
       ),
       last_login: "2024-09-01 15:05:00",
@@ -124,9 +237,23 @@ const dataTableData = {
       user: "Diana Prince",
       user_id: "dianaprince2024",
       action: (
-        <MDBox display="flex" gap={1}>
-          <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
-          <Icon style={{ cursor: "pointer" }}>edit</Icon>
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>lockperson</Icon>
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+          <MDButton
+            variant="outlined"
+            color="dark"
+            size="small"
+            style={{
+              cursor: "pointer",
+              fontSize: "0.75rem", // Smaller font size
+              padding: "4px 8px", // Adjust padding for a smaller button
+              minWidth: "auto", // Ensure button size fits the text
+              height: "auto",
+            }}
+          >
+            Reset 2FA
+          </MDButton>
         </MDBox>
       ),
       last_login: "2024-09-01 15:10:00",
@@ -137,9 +264,23 @@ const dataTableData = {
       user: "Tony Stark",
       user_id: "tonystark2024",
       action: (
-        <MDBox display="flex" gap={1}>
-          <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
-          <Icon style={{ cursor: "pointer" }}>edit</Icon>
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>lockperson</Icon>
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+          <MDButton
+            variant="outlined"
+            color="dark"
+            size="small"
+            style={{
+              cursor: "pointer",
+              fontSize: "0.75rem", // Smaller font size
+              padding: "4px 8px", // Adjust padding for a smaller button
+              minWidth: "auto", // Ensure button size fits the text
+              height: "auto",
+            }}
+          >
+            Reset 2FA
+          </MDButton>
         </MDBox>
       ),
       last_login: "2024-09-01 15:15:00",
@@ -150,9 +291,17 @@ const dataTableData = {
       user: "Eleanor Rigby",
       user_id: "eleanorrigby2024",
       action: (
-        <MDBox display="flex" gap={1}>
-          <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
-          <Icon style={{ cursor: "pointer" }}>edit</Icon>
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>lockperson</Icon>
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+          <MDButton
+            variant="outlined"
+            color="dark"
+            size="small"
+            style={{ cursor: "pointer", height: "auto", padding: "6px 12px" }}
+          >
+            Reset 2FA
+          </MDButton>
         </MDBox>
       ),
       last_login: "2024-09-01 15:20:00",
@@ -163,9 +312,17 @@ const dataTableData = {
       user: "Jack Sparrow",
       user_id: "jacksparrow2024",
       action: (
-        <MDBox display="flex" gap={1}>
-          <Icon style={{ cursor: "pointer" }}>lockperson</Icon>
-          <Icon style={{ cursor: "pointer" }}>edit</Icon>
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>lockperson</Icon>
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+          <MDButton
+            variant="outlined"
+            color="dark"
+            size="small"
+            style={{ cursor: "pointer", height: "auto", padding: "6px 12px" }}
+          >
+            Reset 2FA
+          </MDButton>
         </MDBox>
       ),
       last_login: "2024-09-01 15:25:00",
