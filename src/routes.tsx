@@ -1,5 +1,7 @@
 // @mui icons
 import Icon from "@mui/material/Icon";
+import AccountProviderList from "modules/layouts/accountProvider";
+import CreateAccountProvider from "modules/layouts/accountProvider/create";
 import ApiControl from "modules/layouts/company";
 import CurrencyTables from "modules/layouts/currency";
 import MasterList from "modules/layouts/master";
@@ -89,17 +91,25 @@ const routes = [
   {
     id: "005",
     type: "collapse",
-    name: "Products",
-    key: "products",
-    icon: <Icon fontSize="medium">shopping_basket</Icon>,
+    name: "Account Provider",
+    key: "account-provider",
+    icon: <Icon fontSize="medium">account_box</Icon>,
     collapse: [
       {
         id: "001",
         parentId: "005",
-        name: "Products",
-        key: "products",
-        route: "products",
-        component: <Authentication />,
+        name: "Create Account",
+        key: "create-account-provider",
+        route: "createAccountProvider",
+        component: <CreateAccountProvider />,
+      },
+      {
+        id: "002",
+        parentId: "005",
+        name: "Provider List",
+        key: "account-provider-list",
+        route: "accountProviderList",
+        component: <AccountProviderList />,
       },
     ],
   },
@@ -113,10 +123,27 @@ const routes = [
       {
         id: "001",
         parentId: "006",
-        name: "Currency",
+        name: "Currency List",
         key: "currency",
         route: "currency",
         component: <CurrencyTables />,
+      },
+    ],
+  },
+  {
+    id: "007",
+    type: "collapse",
+    name: "Products",
+    key: "products",
+    icon: <Icon fontSize="medium">shopping_basket</Icon>,
+    collapse: [
+      {
+        id: "001",
+        parentId: "007",
+        name: "Product List",
+        key: "products",
+        route: "products",
+        component: <Authentication />,
       },
     ],
   },

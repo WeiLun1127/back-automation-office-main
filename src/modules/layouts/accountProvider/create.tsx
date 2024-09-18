@@ -4,19 +4,18 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Card, Checkbox, Grid, Icon, IconButton } from "@mui/material";
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
+import DataTable from "assets/examples/Tables/DataTable";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
 import { SetStateAction, useState } from "react";
 
-const CreateMasterAccount = () => {
+const CreateAccountProvider = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [userId, setUserId] = useState("");
-  const [prefix, setPrefix] = useState("");
 
   const handlePasswordChange = (e: { target: { value: SetStateAction<string> } }) => {
     setPassword(e.target.value);
@@ -37,6 +36,7 @@ const CreateMasterAccount = () => {
       setPasswordError("Passwords do not match.");
     } else {
       setPasswordError("");
+      // Proceed with form submission or further processing
     }
   };
 
@@ -46,13 +46,6 @@ const CreateMasterAccount = () => {
 
   const handleMouseDownPassword = () => {
     setShowPassword(true);
-  };
-
-  const handleNextButtonClick = async () => {
-    if (password !== confirmPassword) {
-      setPasswordError("Passwords do not match.");
-      return;
-    }
   };
 
   return (
@@ -73,10 +66,6 @@ const CreateMasterAccount = () => {
                     fullWidth
                     variant="standard"
                     label="User ID"
-                    value={userId}
-                    onChange={(e: { target: { value: SetStateAction<string> } }) =>
-                      setUserId(e.target.value)
-                    }
                     InputProps={{ style: { maxWidth: "500px" } }}
                   />
                 </Grid>
@@ -143,14 +132,19 @@ const CreateMasterAccount = () => {
                     fullWidth
                     variant="standard"
                     label="Prefix"
-                    value={prefix} // Bind value to state
-                    onChange={(e: { target: { value: string } }) =>
-                      setPrefix(e.target.value.toUpperCase())
-                    } // Update state and convert to uppercase
                     InputProps={{ style: { maxWidth: "500px" } }}
                     inputProps={{
-                      maxLength: 3,
-                      pattern: "[A-Za-z]{3}",
+                      maxLength: 3, // Restrict the input to 3 characters
+                      pattern: "[A-Za-z]{3}", // Regex pattern to allow only 3 alphabetic characters
+                    }}
+                    onChange={(e: { target: { value: any }; preventDefault: () => void }) => {
+                      const value = e.target.value.toUpperCase();
+                      // Allow only alphabetic characters and restrict the length to 3
+                      if (/^[A-Za-z]{0,3}$/.test(value)) {
+                        e.target.value = value;
+                      } else {
+                        e.preventDefault();
+                      }
                     }}
                   />
                 </Grid>
@@ -180,12 +174,7 @@ const CreateMasterAccount = () => {
                 mt={6}
               >
                 <MDBox display="flex" gap={2} justifyContent="flex-end" width="100%">
-                  <MDButton
-                    variant="gradient"
-                    color="dark"
-                    size="small"
-                    onClick={handleNextButtonClick}
-                  >
+                  <MDButton variant="gradient" color="dark" size="small">
                     Next
                   </MDButton>
                 </MDBox>
@@ -198,4 +187,4 @@ const CreateMasterAccount = () => {
   );
 };
 
-export default CreateMasterAccount;
+export default CreateAccountProvider;
