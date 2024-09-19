@@ -56,7 +56,7 @@ const CreateAccountProvider = () => {
         <Grid item lg={12} xl={8}>
           <Card>
             <MDBox p={3}>
-              <MDTypography variant="h4">Create Master Account</MDTypography>
+              <MDTypography variant="h4">Create Account Provider</MDTypography>
             </MDBox>
 
             <MDBox component="form" pb={3} px={3}>
