@@ -1,4 +1,5 @@
-import { Switch } from "@mui/material";
+import { Icon, Switch } from "@mui/material";
+import MDBox from "components/MDBox";
 import Flag from "react-world-flags";
 
 const dataTableData = {
@@ -9,6 +10,7 @@ const dataTableData = {
     { Header: "rate", accessor: "rate", width: "10%" },
     { Header: "ratio", accessor: "ratio", width: "10%" },
     { Header: "status", accessor: "status", width: "10%" },
+    { Header: "action", accessor: "action", width: "7%" },
   ],
 
   rows: [
@@ -29,6 +31,11 @@ const dataTableData = {
           onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
         />
       ),
+      action: (
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+        </MDBox>
+      ),
     },
     {
       id: 2,
@@ -46,6 +53,11 @@ const dataTableData = {
           checked={true} // Set this based on your logic (1 for true, 0 for false)
           onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
         />
+      ),
+      action: (
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+        </MDBox>
       ),
     },
     {
@@ -65,6 +77,11 @@ const dataTableData = {
           onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
         />
       ),
+      action: (
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+        </MDBox>
+      ),
     },
     {
       id: 4,
@@ -82,6 +99,11 @@ const dataTableData = {
           checked={true} // Set this based on your logic (1 for true, 0 for false)
           onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
         />
+      ),
+      action: (
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+        </MDBox>
       ),
     },
     {
@@ -101,6 +123,11 @@ const dataTableData = {
           onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
         />
       ),
+      action: (
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+        </MDBox>
+      ),
     },
     {
       id: 6,
@@ -118,6 +145,11 @@ const dataTableData = {
           checked={true} // Set this based on your logic (1 for true, 0 for false)
           onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
         />
+      ),
+      action: (
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+        </MDBox>
       ),
     },
     {
@@ -137,6 +169,11 @@ const dataTableData = {
           onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
         />
       ),
+      action: (
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+        </MDBox>
+      ),
     },
     {
       id: 8,
@@ -154,6 +191,11 @@ const dataTableData = {
           checked={true} // Set this based on your logic (1 for true, 0 for false)
           onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
         />
+      ),
+      action: (
+        <MDBox display="flex" gap={1} alignItems="center">
+          <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
+        </MDBox>
       ),
     },
   ],

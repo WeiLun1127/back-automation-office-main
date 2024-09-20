@@ -1,7 +1,17 @@
 import SecurityIcon from "@mui/icons-material/Security";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { Autocomplete, Card, Checkbox, Grid, Icon, IconButton, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Card,
+  Checkbox,
+  Grid,
+  Icon,
+  IconButton,
+  Switch,
+  TextField,
+} from "@mui/material";
+import { apiHandler } from "api/apiHandler";
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
 import MDBox from "components/MDBox";
@@ -17,6 +27,7 @@ const CreateMasterAccount = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [userId, setUserId] = useState("");
   const [prefix, setPrefix] = useState("");
+  const [isSwitchOn, setIsSwitchOn] = useState(false);
 
   const handlePasswordChange = (e: { target: { value: SetStateAction<string> } }) => {
     setPassword(e.target.value);
@@ -60,10 +71,40 @@ const CreateMasterAccount = () => {
     setShowPassword(true);
   };
 
+  const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsSwitchOn(event.target.checked); // Update switch state
+  };
+
+  const storedUsername = localStorage.getItem("username");
+  const storedToken = localStorage.getItem("token");
+
   const handleNextButtonClick = async () => {
     if (password !== confirmPassword) {
       setPasswordError("Passwords do not match.");
       return;
+    }
+    try {
+      const apiUrl = "http://18.138.168.43:10311/api/execset";
+      const params = {
+        EXECF: "SETCURRDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          Uid: userId,
+          Pass: password,
+          Control: "001:1",
+          Tfa: 0,
+          Tfakey: 1,
+          Class: "MA",
+          Prefix: prefix,
+          Status: isSwitchOn ? "1" : "0", // Convert boolean to string "1" or "0"
+        }),
+      };
+
+      const response = await apiHandler(apiUrl, params);
+      console.log("API Response:", response);
+    } catch (error) {
+      console.error("Error during API call:", error);
     }
   };
 
@@ -212,7 +253,10 @@ const CreateMasterAccount = () => {
                   <MDBox display="flex" alignItems="center">
                     <MDTypography variant="button">Show</MDTypography>
                     <Icon style={{ marginLeft: 8, marginRight: 8 }}>visibility</Icon>
-                    <Checkbox />
+                    <Switch
+                      checked={isSwitchOn} // Bind the checked state to isSwitchOn
+                      onChange={handleSwitchChange} // Call handleSwitchChange on toggle
+                    />
                   </MDBox>
                 </Grid>
               </Grid>
@@ -231,7 +275,7 @@ const CreateMasterAccount = () => {
                     size="small"
                     onClick={handleNextButtonClick}
                   >
-                    Next
+                    Create
                   </MDButton>
                 </MDBox>
               </MDBox>
