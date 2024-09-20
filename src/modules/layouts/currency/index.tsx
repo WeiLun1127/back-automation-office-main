@@ -585,8 +585,14 @@ function CurrencyTables(): JSX.Element {
               }}
               sx={{
                 "& .MuiSelect-select": {
-                  minHeight: "48px", // Adjust this value as needed for height
-                  height: "48px", // Set a specific height if necessary
+                  display: "flex",
+                  alignItems: "center",
+                  minHeight: "45px", // Ensure minimum height
+                  height: "45px", // Specific height
+                  padding: "0 8px", // Add padding
+                },
+                "& .MuiInputBase-root": {
+                  height: "45px", // Consistent height for the root
                 },
               }}
             >
