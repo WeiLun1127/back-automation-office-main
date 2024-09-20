@@ -9,13 +9,14 @@ import SecurityIcon from "@mui/icons-material/Security";
 import { SetStateAction, useState } from "react";
 import { apiHandler } from "api/apiHandler";
 
-const storedUsername = localStorage.getItem("username");
-
 const Authentication = () => {
   // States to manage input values
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
+  const storedUsername = localStorage.getItem("username");
+  const storedToken = localStorage.getItem("token");
 
   // Event handler for the "Next" button
   const handleNextClick = async () => {
@@ -23,7 +24,7 @@ const Authentication = () => {
     const params = {
       EXECF: "GETAUTHDATA",
       Uid: storedUsername, // Use the stored username
-      Token: "storedToken", // Use the stored token
+      Token: storedToken, // Use the stored token
       Data: JSON.stringify({
         // Uid: storedUsername, // Use the stored username
         Uid: "test",
@@ -37,17 +38,41 @@ const Authentication = () => {
       console.log("API Response:", response);
       // Handle the response as needed (e.g., navigate to another page, show a success message, etc.)
       const parsedData = JSON.parse(response.Data);
-      // console.log(parsedData.Uid);
-      // console.log(parsedData.Pass);
-      // console.log(parsedData.Control);
-      // console.log(parsedData.Tfa);
-      // console.log(parsedData.TfaKey);
-      // console.log(parsedData.Class);
-      // console.log(parsedData.Prefix);
-      // console.log(parsedData.Status);
-      // console.log(parsedData.OtpAuth);
+      console.log(parsedData.Uid);
+      console.log(parsedData.Pass);
+      console.log(parsedData.Control);
+      console.log(parsedData.Tfa);
+      console.log(parsedData.TfaKey);
+      console.log(parsedData.Class);
+      console.log(parsedData.Prefix);
+      console.log(parsedData.Status);
+      console.log(parsedData.OtpAuth);
       if (response.Status === "1" && currentPassword === parsedData.Pass) {
         console.log("Success Message");
+        // Define parameters for the second API call
+        const updateParams = {
+          EXECF: "SETAUTHDATA",
+          Uid: storedUsername, // Use the stored username
+          Token: storedToken, // Use the stored token
+          Data: JSON.stringify({
+            Uid: "test", //changeToStoredUsername
+            Pass: newPassword, // New password entered by the user
+            Control: parsedData.Control,
+            Tfa: parsedData.TfaKey,
+            Tfakey: parsedData.TfaKey,
+            Class: parsedData.Class,
+            Prefix: parsedData.Prefix,
+            Status: parsedData.Status,
+          }),
+        };
+        // Call the apiHandler function for the second API
+        const updateResponse = await apiHandler(apiUrl, updateParams);
+        console.log("Update API Response:", updateResponse);
+        if (updateResponse.Status === "1") {
+          console.log("Password updated successfully");
+        } else {
+          console.log("Failed to update password");
+        }
       } else {
         console.log("Failure: Incorrect password or status not 1");
       }
