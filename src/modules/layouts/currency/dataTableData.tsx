@@ -1,3 +1,4 @@
+import { Switch } from "@mui/material";
 import Flag from "react-world-flags";
 
 const dataTableData = {
@@ -7,6 +8,7 @@ const dataTableData = {
     { Header: "country", accessor: "country", width: "15%" }, // Increased width for flag + country name
     { Header: "rate", accessor: "rate", width: "10%" },
     { Header: "ratio", accessor: "ratio", width: "10%" },
+    { Header: "status", accessor: "status", width: "10%" },
   ],
 
   rows: [
@@ -21,7 +23,12 @@ const dataTableData = {
       ),
       rate: "1", // Base rate
       ratio: "1",
-      status: 1,
+      status: (
+        <Switch
+          checked={true} // Set this based on your logic (1 for true, 0 for false)
+          onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
+        />
+      ),
     },
     {
       id: 2,
@@ -34,7 +41,12 @@ const dataTableData = {
       ),
       rate: "0.31", // Example: 1 MYR = 0.31 SGD
       ratio: "1",
-      status: 1,
+      status: (
+        <Switch
+          checked={true} // Set this based on your logic (1 for true, 0 for false)
+          onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
+        />
+      ),
     },
     {
       id: 3,
@@ -47,7 +59,12 @@ const dataTableData = {
       ),
       rate: "30.50", // Example: 1 MYR = 30.50 JPY
       ratio: "1",
-      status: 1,
+      status: (
+        <Switch
+          checked={true} // Set this based on your logic (1 for true, 0 for false)
+          onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
+        />
+      ),
     },
     {
       id: 4,
@@ -60,7 +77,12 @@ const dataTableData = {
       ),
       rate: "280", // Example: 1 MYR = 280 KRW
       ratio: "1",
-      status: 1,
+      status: (
+        <Switch
+          checked={true} // Set this based on your logic (1 for true, 0 for false)
+          onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
+        />
+      ),
     },
     {
       id: 5,
@@ -73,7 +95,12 @@ const dataTableData = {
       ),
       rate: "7.55", // Example: 1 MYR = 7.55 THB
       ratio: "1",
-      status: 1,
+      status: (
+        <Switch
+          checked={true} // Set this based on your logic (1 for true, 0 for false)
+          onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
+        />
+      ),
     },
     {
       id: 6,
@@ -86,7 +113,12 @@ const dataTableData = {
       ),
       rate: "5462", // Example: 1 MYR = 5462 VND
       ratio: "1",
-      status: 1,
+      status: (
+        <Switch
+          checked={true} // Set this based on your logic (1 for true, 0 for false)
+          onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
+        />
+      ),
     },
     {
       id: 7,
@@ -99,7 +131,12 @@ const dataTableData = {
       ),
       rate: "3300", // Example: 1 MYR = 3300 IDR
       ratio: "1",
-      status: 1,
+      status: (
+        <Switch
+          checked={true} // Set this based on your logic (1 for true, 0 for false)
+          onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
+        />
+      ),
     },
     {
       id: 8,
@@ -112,9 +149,17 @@ const dataTableData = {
       ),
       rate: "18.45", // Example: 1 MYR = 18.45 INR
       ratio: "1",
-      status: 1,
+      status: (
+        <Switch
+          checked={true} // Set this based on your logic (1 for true, 0 for false)
+          onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
+        />
+      ),
     },
   ],
 };
 
 export default dataTableData;
+function handleStatusChange(arg0: number, checked: boolean): void {
+  throw new Error("Function not implemented.");
+}

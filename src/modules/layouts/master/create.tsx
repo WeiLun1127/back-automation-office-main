@@ -1,7 +1,7 @@
 import SecurityIcon from "@mui/icons-material/Security";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { Card, Checkbox, Grid, Icon, IconButton } from "@mui/material";
+import { Autocomplete, Card, Checkbox, Grid, Icon, IconButton, TextField } from "@mui/material";
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
 import MDBox from "components/MDBox";
@@ -21,6 +21,18 @@ const CreateMasterAccount = () => {
   const handlePasswordChange = (e: { target: { value: SetStateAction<string> } }) => {
     setPassword(e.target.value);
   };
+
+  const controlOptions = [
+    { label: "Api Control", value: "apiControl" },
+    { label: "Master List", value: "masterList" },
+    { label: "Create Master Account", value: "createMasterAccount" },
+    { label: "Transactions", value: "transactions" },
+    { label: "Authentication", value: "authenthication" },
+    { label: "Create Account Provider", value: "createAccountProvider" },
+    { label: "Account Provider List", value: "accountProviderList" },
+    { label: "Currency List", value: "currencyList" },
+    { label: "Product List", value: "productList" },
+  ];
 
   const handleConfirmPasswordChange = (e: { target: { value: SetStateAction<string> } }) => {
     setConfirmPassword(e.target.value);
@@ -81,14 +93,14 @@ const CreateMasterAccount = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                   <MDInput
                     fullWidth
                     variant="standard"
                     label="Name"
                     InputProps={{ style: { maxWidth: "500px" } }}
                   />
-                </Grid>
+                </Grid> */}
 
                 <Grid item xs={12}>
                   <MDInput
@@ -152,6 +164,39 @@ const CreateMasterAccount = () => {
                       maxLength: 3,
                       pattern: "[A-Za-z]{3}",
                     }}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <MDInput
+                    fullWidth
+                    variant="standard"
+                    label="Level"
+                    value="MA"
+                    InputProps={{
+                      readOnly: true,
+                      style: { maxWidth: "500px" },
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Autocomplete
+                    multiple
+                    options={controlOptions}
+                    disableCloseOnSelect
+                    getOptionLabel={(option) => option.label}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="standard"
+                        label="Control"
+                        style={{ maxWidth: "500px" }}
+                        fullWidth
+                      />
+                    )}
+                    // This state will hold the selected options
+                    onChange={(event, value) => console.log(value)}
                   />
                 </Grid>
 

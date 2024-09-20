@@ -124,6 +124,7 @@ export default function App() {
   };
 
   //Data Sample : "Control" : "["001.1.001.1", "002.1.001.1", "002.1.002.1", "003.1.001.1.001.1111", "004.1.001.1"]"
+  localStorage.setItem("username", username);
 
   const pingApi = async (username: string, currentToken: string) => {
     const pingUrl = "http://18.138.168.43:10311/api/ping";
@@ -147,6 +148,7 @@ export default function App() {
         const newToken = response.data?.Token;
         if (newToken) {
           setToken(newToken); // Update the token in the state
+          localStorage.setItem("token", newToken);
         } else {
           console.warn("Token is empty, navigating to illustration page.");
           setIsAuthenticated(false); // Set authenticated state to false
