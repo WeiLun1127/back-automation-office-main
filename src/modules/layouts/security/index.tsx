@@ -6,8 +6,57 @@ import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
 import SecurityIcon from "@mui/icons-material/Security";
+import { SetStateAction, useState } from "react";
+import { apiHandler } from "api/apiHandler";
+
+const storedUsername = localStorage.getItem("username");
 
 const Authentication = () => {
+  // States to manage input values
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
+  // Event handler for the "Next" button
+  const handleNextClick = async () => {
+    const apiUrl = "http://18.138.168.43:10311/api/execmem";
+    const params = {
+      EXECF: "GETAUTHDATA",
+      Uid: storedUsername, // Use the stored username
+      Token: "storedToken", // Use the stored token
+      Data: JSON.stringify({
+        // Uid: storedUsername, // Use the stored username
+        Uid: "test",
+        Prefix: "",
+      }),
+    };
+
+    try {
+      // Call the apiHandler function
+      const response = await apiHandler(apiUrl, params);
+      console.log("API Response:", response);
+      // Handle the response as needed (e.g., navigate to another page, show a success message, etc.)
+      const parsedData = JSON.parse(response.Data);
+      // console.log(parsedData.Uid);
+      // console.log(parsedData.Pass);
+      // console.log(parsedData.Control);
+      // console.log(parsedData.Tfa);
+      // console.log(parsedData.TfaKey);
+      // console.log(parsedData.Class);
+      // console.log(parsedData.Prefix);
+      // console.log(parsedData.Status);
+      // console.log(parsedData.OtpAuth);
+      if (response.Status === "1" && currentPassword === parsedData.Pass) {
+        console.log("Success Message");
+      } else {
+        console.log("Failure: Incorrect password or status not 1");
+      }
+    } catch (error) {
+      console.error("API Error:", error);
+      // Handle the error as needed (e.g., show an error message)
+    }
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -25,6 +74,10 @@ const Authentication = () => {
                   fullWidth
                   label="Current Password"
                   inputProps={{ type: "password", autoComplete: "" }}
+                  value={currentPassword}
+                  onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                    setCurrentPassword(e.target.value)
+                  }
                 />
               </Grid>
 
@@ -33,6 +86,10 @@ const Authentication = () => {
                   fullWidth
                   label="New Password"
                   inputProps={{ type: "password", autoComplete: "" }}
+                  value={newPassword}
+                  onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                    setNewPassword(e.target.value)
+                  }
                 />
               </Grid>
 
@@ -41,6 +98,10 @@ const Authentication = () => {
                   fullWidth
                   label="Confirm New Password"
                   inputProps={{ type: "password", autoComplete: "" }}
+                  value={confirmNewPassword}
+                  onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                    setConfirmNewPassword(e.target.value)
+                  }
                 />
               </Grid>
 
@@ -61,7 +122,7 @@ const Authentication = () => {
               mt={6}
             >
               <MDBox ml="auto">
-                <MDButton variant="gradient" color="dark" size="small">
+                <MDButton variant="gradient" color="dark" size="small" onClick={handleNextClick}>
                   Next
                 </MDButton>
               </MDBox>
