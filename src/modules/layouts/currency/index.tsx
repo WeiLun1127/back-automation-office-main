@@ -129,7 +129,7 @@ function CurrencyTables(): JSX.Element {
                 startIcon={<Icon>add</Icon>}
                 onClick={handleClickOpen}
               >
-                Create
+                Add
               </MDButton>
             </MDBox>
             <DataTable table={dataTableData} canSearch />
@@ -139,7 +139,7 @@ function CurrencyTables(): JSX.Element {
       {/* Dialog Component */}
       <Dialog open={open} onClose={handleClose} fullWidth>
         <DialogTitle>
-          Create New Currency
+          Add New Currency
           <IconButton
             aria-label="close"
             onClick={handleClose}
