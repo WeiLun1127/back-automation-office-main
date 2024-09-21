@@ -77,11 +77,18 @@ const Authentication = () => {
         console.log("Update API Response:", updateResponse);
         if (updateResponse.Status === "1") {
           console.log("Password updated successfully");
+          alert("Password updated successfully");
+
+          setCurrentPassword("");
+          setNewPassword("");
+          setConfirmNewPassword("");
         } else {
           console.log("Failed to update password");
+          alert("Failed to update password.");
         }
       } else {
         console.log("Failure: Incorrect password or status not 1");
+        alert("Please make sure current password is entered correctly");
       }
     } catch (error) {
       console.error("API Error:", error);
