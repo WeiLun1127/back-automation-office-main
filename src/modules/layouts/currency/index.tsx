@@ -562,7 +562,16 @@ function CurrencyTables(): JSX.Element {
           }}
         />
         <DialogContent>
-          <FormControl fullWidth sx={{ mt: 1 }}>
+          <FormControl
+            fullWidth
+            sx={{
+              mt: 1,
+              "& .MuiOutlinedInput-root": {
+                minHeight: "45px", // Ensure consistent min-height
+                borderWidth: "2px", // Consistent border width (optional)
+              },
+            }}
+          >
             <InputLabel id="currency-select-label">Currency</InputLabel>
             <Select
               labelId="currency-select-label"
@@ -587,7 +596,7 @@ function CurrencyTables(): JSX.Element {
                 "& .MuiSelect-select": {
                   display: "flex",
                   alignItems: "center",
-                  minHeight: "45px", // Ensure minimum height
+                  minHeight: "46px", // Ensure minimum height
                   height: "45px", // Specific height
                   padding: "0 8px", // Add padding
                 },

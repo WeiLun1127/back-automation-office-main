@@ -28,6 +28,8 @@ const CreateMasterAccount = () => {
   const [userId, setUserId] = useState("");
   const [prefix, setPrefix] = useState("");
   const [isSwitchOn, setIsSwitchOn] = useState(false);
+  const [isTfaSwitchOn, setIsTfaSwitchOn] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const handlePasswordChange = (e: { target: { value: SetStateAction<string> } }) => {
     setPassword(e.target.value);
@@ -44,6 +46,18 @@ const CreateMasterAccount = () => {
     { label: "Currency List", value: "currencyList" },
     { label: "Product List", value: "productList" },
   ];
+
+  const controlMapping: { [key: string]: string[] } = {
+    apiControl: ["001", "001.001"],
+    masterList: ["002", "002.001"],
+    createMasterAccount: ["002", "002.002"],
+    transactions: ["003", "003.001"],
+    authenthication: ["004", "004.001"],
+    createAccountProvider: ["005", "005.001"],
+    accountProviderList: ["005", "005.002"],
+    currencyList: ["006", "006.001"],
+    productList: ["007", "007.001"],
+  };
 
   const handleConfirmPasswordChange = (e: { target: { value: SetStateAction<string> } }) => {
     setConfirmPassword(e.target.value);
@@ -75,6 +89,10 @@ const CreateMasterAccount = () => {
     setIsSwitchOn(event.target.checked); // Update switch state
   };
 
+  const handleTfaSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsTfaSwitchOn(event.target.checked); // Update switch state
+  };
+
   const storedUsername = localStorage.getItem("username");
   const storedToken = localStorage.getItem("token");
 
@@ -84,25 +102,45 @@ const CreateMasterAccount = () => {
       return;
     }
     try {
-      const apiUrl = "http://18.138.168.43:10311/api/execset";
+      const apiUrl = "http://18.138.168.43:10311/api/execmem";
+      const selectedControlValues = selectedOptions.flatMap((option) => controlMapping[option]);
+      const controlArray = selectedControlValues.map((control) => ({
+        [control]: "1",
+      }));
+
       const params = {
-        EXECF: "SETCURRDATA",
+        EXECF: "SETAUTHDATA",
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
           Uid: userId,
           Pass: password,
-          Control: "001:1",
-          Tfa: 0,
-          Tfakey: 1,
+          Control: JSON.stringify(controlArray),
+          Tfa: isTfaSwitchOn ? "1" : "0",
+          Tfakey: "1",
           Class: "MA",
           Prefix: prefix,
           Status: isSwitchOn ? "1" : "0", // Convert boolean to string "1" or "0"
         }),
       };
-
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
+
+      // Check if response.Status is 1
+      if (response.Status === "1") {
+        alert("Master Account Created Successfully");
+
+        //Remove User Input
+        setUserId("");
+        setPassword("");
+        setConfirmPassword("");
+        setPrefix("");
+        setSelectedOptions([]);
+        setIsSwitchOn(false);
+        setIsTfaSwitchOn(false);
+      } else {
+        alert("Error Occured. Please Try Again Shortly");
+      }
     } catch (error) {
       console.error("Error during API call:", error);
     }
@@ -224,7 +262,10 @@ const CreateMasterAccount = () => {
                 <Grid item xs={12}>
                   <Autocomplete
                     multiple
-                    options={controlOptions}
+                    // options={controlOptions}
+                    options={controlOptions.filter(
+                      (option) => !selectedOptions.includes(option.value)
+                    )}
                     disableCloseOnSelect
                     getOptionLabel={(option) => option.label}
                     renderInput={(params) => (
@@ -236,8 +277,15 @@ const CreateMasterAccount = () => {
                         fullWidth
                       />
                     )}
-                    // This state will hold the selected options
-                    onChange={(event, value) => console.log(value)}
+                    value={selectedOptions.map((optionValue) =>
+                      controlOptions.find((option) => option.value === optionValue)
+                    )} // Map selected values to the corresponding options
+                    onChange={(event, value) =>
+                      setSelectedOptions(value.map((option) => option.value))
+                    }
+                    // onChange={(event, value) =>
+                    //   setSelectedOptions(value.map((option) => option.value))
+                    // }
                   />
                 </Grid>
 
@@ -245,7 +293,7 @@ const CreateMasterAccount = () => {
                   <MDBox display="flex" alignItems="center">
                     <MDTypography variant="button">Enable 2FA</MDTypography>
                     <SecurityIcon style={{ marginLeft: 8, marginRight: 8 }} />
-                    <Checkbox />
+                    <Checkbox checked={isTfaSwitchOn} onChange={handleTfaSwitchChange} />
                   </MDBox>
                 </Grid>
 
