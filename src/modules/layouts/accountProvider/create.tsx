@@ -43,6 +43,10 @@ const CreateAccountProvider = () => {
     { label: "Authentication", value: "authenthication" },
     { label: "Create Account Provider", value: "createAccountProvider" },
     { label: "Account Provider List", value: "accountProviderList" },
+    { label: "Create Agent", value: "createAgent" },
+    { label: "Agent List", value: "agentList" },
+    { label: "Create Commission", value: "createCommission" },
+    { label: "Commission List", value: "commissionList" },
     { label: "Currency List", value: "currencyList" },
     { label: "Product List", value: "productList" },
   ];
@@ -55,8 +59,12 @@ const CreateAccountProvider = () => {
     authenthication: ["004", "004.001"],
     createAccountProvider: ["005", "005.001"],
     accountProviderList: ["005", "005.002"],
-    currencyList: ["006", "006.001"],
-    productList: ["007", "007.001"],
+    createAgent: ["006", "006.001"],
+    agentList: ["006", "006.002"],
+    createCommission: ["007", "007.001"],
+    commissionList: ["007", "007.002"],
+    currencyList: ["008", "008.001"],
+    productList: ["009", "009.001"],
   };
 
   const handleConfirmPasswordChange = (e: { target: { value: SetStateAction<string> } }) => {

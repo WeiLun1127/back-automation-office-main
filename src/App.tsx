@@ -7,6 +7,10 @@ import axios from "axios";
 import { setMiniSidenav, useMaterialUIController } from "context";
 import AccountProviderList from "modules/layouts/accountProvider";
 import CreateAccountProvider from "modules/layouts/accountProvider/create";
+import AgentList from "modules/layouts/agent";
+import CreateAgentAccount from "modules/layouts/agent/create";
+import CommissionList from "modules/layouts/comm";
+import CreateCommissionAccount from "modules/layouts/comm/create";
 import ApiControl from "modules/layouts/company";
 import CurrencyTables from "modules/layouts/currency";
 import MasterList from "modules/layouts/master";
@@ -29,6 +33,10 @@ export type Pathname =
   | "transactions"
   | "createAccountProvider"
   | "accountProviderList"
+  | "createAgent"
+  | "agentList"
+  | "createCommission"
+  | "commissionList"
   | "currency"
   | "products";
 
@@ -245,6 +253,14 @@ export default function App() {
         return <CreateAccountProvider />;
       case "accountProviderList":
         return <AccountProviderList />;
+      case "createAgent":
+        return <CreateAgentAccount />;
+      case "agentList":
+        return <AgentList />;
+      case "createCommission":
+        return <CreateCommissionAccount />;
+      case "commissionList":
+        return <CommissionList />;
       case "currency":
         return <CurrencyTables />;
       case "products":

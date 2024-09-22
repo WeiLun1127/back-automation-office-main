@@ -20,7 +20,7 @@ import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
 import { SetStateAction, useState } from "react";
 
-const CreateMasterAccount = () => {
+const CreateAgentAccount = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -126,7 +126,7 @@ const CreateMasterAccount = () => {
           Control: JSON.stringify(controlArray),
           Tfa: isTfaSwitchOn ? "1" : "0",
           Tfakey: "1",
-          Class: "MA",
+          Class: "AG",
           Prefix: prefix,
           Status: isSwitchOn ? "1" : "0", // Convert boolean to string "1" or "0"
         }),
@@ -136,7 +136,7 @@ const CreateMasterAccount = () => {
 
       // Check if response.Status is 1
       if (response.Status === "1") {
-        alert("Master Account Created Successfully");
+        alert("Agent Account Created Successfully");
 
         //Remove User Input
         setUserId("");
@@ -162,7 +162,7 @@ const CreateMasterAccount = () => {
         <Grid item lg={12} xl={8}>
           <Card>
             <MDBox p={3}>
-              <MDTypography variant="h4">Create Master Account</MDTypography>
+              <MDTypography variant="h4">Create Agent</MDTypography>
             </MDBox>
 
             <MDBox component="form" pb={3} px={3}>
@@ -259,7 +259,7 @@ const CreateMasterAccount = () => {
                     fullWidth
                     variant="standard"
                     label="Level"
-                    value="MA"
+                    value="AG"
                     InputProps={{
                       readOnly: true,
                       style: { maxWidth: "500px" },
@@ -343,4 +343,4 @@ const CreateMasterAccount = () => {
   );
 };
 
-export default CreateMasterAccount;
+export default CreateAgentAccount;
