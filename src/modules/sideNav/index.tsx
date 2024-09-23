@@ -293,6 +293,27 @@ function Sidenav({
             {title}
           </MDTypography>
         );
+      } else if (type === "item") {
+        returnValue = href ? (
+          <Link
+            href={href}
+            key={key}
+            target="_blank"
+            rel="noreferrer"
+            sx={{ textDecoration: "none" }}
+          >
+            <SidenavItem name={name} icon={icon} active={key === itemName} />
+          </Link>
+        ) : (
+          <NavLink
+            to={"/"}
+            onClick={() => console.log("log out")}
+            key={key}
+            style={{ textDecoration: "none" }}
+          >
+            <SidenavItem name={name} icon={icon} active={key === itemName} />
+          </NavLink>
+        );
       } else if (type === "divider") {
         returnValue = (
           <Divider
