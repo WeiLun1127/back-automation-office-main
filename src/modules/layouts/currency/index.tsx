@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -6,26 +5,27 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  FormControlLabel,
   Icon,
   IconButton,
-  FormControl,
   InputLabel,
-  Select,
   MenuItem,
+  Select,
   SelectChangeEvent,
-  TextField,
-  FormControlLabel,
   Switch,
+  TextField,
 } from "@mui/material";
 import Card from "@mui/material/Card";
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
+import { apiHandler } from "api/apiHandler";
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
 import DataTable from "assets/examples/Tables/DataTable";
+import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
+import MDTypography from "components/MDTypography";
+import React, { useState } from "react";
 import Flag from "react-world-flags";
-import { apiHandler } from "api/apiHandler";
 
 function CurrencyTables(): JSX.Element {
   const [open, setOpen] = useState(false);
@@ -674,6 +674,7 @@ function CurrencyTables(): JSX.Element {
             <InputLabel id="edit-currency-select-label">Currency</InputLabel>
             <Select
               labelId="edit-currency-select-label"
+              label="Currency"
               value={editCurrencyData?.currency || ""}
               onChange={(e) => {
                 const currency = e.target.value;
