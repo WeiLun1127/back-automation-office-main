@@ -302,7 +302,7 @@ function Sidenav({
             icon={icon}
             active={key === collapseName}
             noCollapse
-            onClick={() => console.log("Log out")}
+            onClick={() => window.location.reload()}
           >
             {collapse ? renderCollapse(collapse) : null}
           </SidenavCollapse>
