@@ -206,11 +206,15 @@ const routes = [
     ],
   },
   {
+    type: "divider",
+    name: "Divider-1",
+    key: "divider-1",
+  },
+  {
     type: "item",
     name: "Logout",
     key: "logout",
     icon: <Icon fontSize="medium">logout</Icon>,
-    // route: "logout",
   }
 ];
 

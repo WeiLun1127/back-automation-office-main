@@ -294,25 +294,18 @@ function Sidenav({
           </MDTypography>
         );
       } else if (type === "item") {
-        returnValue = href ? (
-          <Link
-            href={href}
+        returnValue = (
+          <SidenavCollapse
+            id={id}
             key={key}
-            target="_blank"
-            rel="noreferrer"
-            sx={{ textDecoration: "none" }}
+            name={name}
+            icon={icon}
+            active={key === collapseName}
+            noCollapse
+            onClick={() => console.log("Log out")}
           >
-            <SidenavItem name={name} icon={icon} active={key === itemName} />
-          </Link>
-        ) : (
-          <NavLink
-            to={"/"}
-            onClick={() => console.log("log out")}
-            key={key}
-            style={{ textDecoration: "none" }}
-          >
-            <SidenavItem name={name} icon={icon} active={key === itemName} />
-          </NavLink>
+            {collapse ? renderCollapse(collapse) : null}
+          </SidenavCollapse>
         );
       } else if (type === "divider") {
         returnValue = (
