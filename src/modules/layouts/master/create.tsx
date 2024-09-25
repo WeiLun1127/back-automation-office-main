@@ -24,6 +24,7 @@ const CreateMasterAccount = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [userId, setUserId] = useState("");
   const [prefix, setPrefix] = useState("");
@@ -103,6 +104,7 @@ const CreateMasterAccount = () => {
 
   const storedUsername = localStorage.getItem("username");
   const storedToken = localStorage.getItem("token");
+  localStorage.setItem("userId", userId);
 
   const handleNextButtonClick = async () => {
     if (password !== confirmPassword) {
@@ -122,6 +124,7 @@ const CreateMasterAccount = () => {
         Token: storedToken,
         Data: JSON.stringify({
           Uid: userId,
+          Name: name,
           Pass: password,
           Control: JSON.stringify(controlArray),
           Tfa: isTfaSwitchOn ? "1" : "0",
@@ -180,14 +183,18 @@ const CreateMasterAccount = () => {
                   />
                 </Grid>
 
-                {/* <Grid item xs={12}>
+                <Grid item xs={12}>
                   <MDInput
                     fullWidth
                     variant="standard"
                     label="Name"
+                    value={name}
+                    onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                      setName(e.target.value)
+                    }
                     InputProps={{ style: { maxWidth: "500px" } }}
                   />
-                </Grid> */}
+                </Grid>
 
                 <Grid item xs={12}>
                   <MDInput

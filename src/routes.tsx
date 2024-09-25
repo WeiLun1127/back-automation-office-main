@@ -215,7 +215,7 @@ const routes = [
     name: "Logout",
     key: "logout",
     icon: <Icon fontSize="medium">logout</Icon>,
-  }
+  },
 ];
 
 export default routes;
