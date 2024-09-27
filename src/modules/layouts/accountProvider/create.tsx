@@ -147,6 +147,7 @@ const CreateAccountProvider = () => {
         setPrefix("");
         setSelectedOptions([]);
         setIsSwitchOn(false);
+        setName("");
         setIsTfaSwitchOn(false);
       } else {
         alert("Error Occured. Please Try Again Shortly");

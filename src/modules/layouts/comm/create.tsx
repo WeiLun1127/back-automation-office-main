@@ -146,6 +146,7 @@ const CreateCommissionAccount = () => {
         setConfirmPassword("");
         setPrefix("");
         setSelectedOptions([]);
+        setName("");
         setIsSwitchOn(false);
         setIsTfaSwitchOn(false);
       } else {

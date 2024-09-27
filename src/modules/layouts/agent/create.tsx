@@ -145,6 +145,7 @@ const CreateAgentAccount = () => {
         setPassword("");
         setConfirmPassword("");
         setPrefix("");
+        setName("");
         setSelectedOptions([]);
         setIsSwitchOn(false);
         setIsTfaSwitchOn(false);
