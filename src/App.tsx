@@ -76,16 +76,14 @@ export default function App() {
       if (response.status === 200) {
         const data = typeof response.data === "string" ? JSON.parse(response.data) : response.data;
 
-        // data.Data is "{Token : tfcWhyawKrAzMAvGpP00uOtY4Z/lWhKx1RQuyR9WDzqX6F25tNX5OkOwwA3TJuYi2zNpQeNz2maqGxYyrf9IJQHE9fAKu25QN4j3gTOnri0=, Control : [{001:1},{001.001:1}, {001.002:1},{002:1},{003:1},{002.004:1}, {002.004.001:1111}, {002.004.002:1001}] }"
-        // extract the control
-        // replace \n with '' and ' ' with ''
-        // remove " only the first and last
-        const control = data.Data.substring(data.Data.indexOf("Control") + 10, data.Data.length - 1)
-          .replace(/\n/g, "")
-          .replace(/ /g, "")
-          .slice(1, -1);
-        console.log("Control", control, JSON.parse(control));
-        setUserControl(JSON.parse(control));
+        const decodedString = data.Data.replace(/\\u0022/g, '"')
+          .replace('"[{', "[{")
+          .replace('}]"', "}]");
+        const authData = JSON.parse(decodedString);
+
+        // set user control
+        console.log("control", authData.Control);
+        setUserControl(authData.Control);
 
         if (data.Status === "ERR:0") {
           console.log("Login successful", data);
