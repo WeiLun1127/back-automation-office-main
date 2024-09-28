@@ -21,6 +21,7 @@ const Authentication = () => {
 
   const storedUsername = localStorage.getItem("username");
   const storedToken = localStorage.getItem("token");
+  const storedUserId = localStorage.getItem("userId");
 
   // Event handler for the "Next" button
   const handleNextClick = async () => {
@@ -42,9 +43,8 @@ const Authentication = () => {
       Uid: storedUsername, // Use the stored username
       Token: storedToken, // Use the stored token
       Data: JSON.stringify({
-        // Uid: storedUsername, // Use the stored username
-        Uid: "test",
-        Prefix: "",
+        // Uid: storedUsername, （"test"） // Use the stored username
+        Uid: storedUserId,
       }),
     };
 
@@ -59,16 +59,16 @@ const Authentication = () => {
         // Define parameters for the second API call
         const updateParams = {
           EXECF: "SETAUTHDATA",
-          Uid: storedUsername, // Use the stored username
-          Token: storedToken, // Use the stored token
+          Uid: storedUsername,
+          Token: storedToken,
           Data: JSON.stringify({
-            Uid: "test", //changeToStoredUsername
+            Uid: storedUserId, //changeToStoredUsername("test")
             Pass: newPassword, // New password entered by the user
             Control: parsedData.Control,
             Tfa: parsedData.TfaKey,
-            Tfakey: parsedData.TfaKey,
+            // Tfakey: parsedData.TfaKey,
             Class: parsedData.Class,
-            Prefix: parsedData.Prefix,
+            // Prefix: parsedData.Prefix,
             Status: parsedData.Status,
           }),
         };
@@ -92,7 +92,6 @@ const Authentication = () => {
       }
     } catch (error) {
       console.error("API Error:", error);
-      // Handle the error as needed (e.g., show an error message)
     }
   };
 
@@ -170,14 +169,6 @@ const Authentication = () => {
                   }}
                 />
               </Grid>
-
-              {/* <Grid item xs={12}>
-                <MDBox display="flex" alignItems="center">
-                  <Checkbox />
-                  <MDTypography variant="button">Enable 2FA</MDTypography>
-                  <SecurityIcon style={{ marginLeft: 8, marginRight: 8 }} />
-                </MDBox>
-              </Grid> */}
             </Grid>
 
             <MDBox

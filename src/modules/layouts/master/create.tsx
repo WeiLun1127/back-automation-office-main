@@ -128,9 +128,8 @@ const CreateMasterAccount = () => {
           Pass: password,
           Control: JSON.stringify(controlArray),
           Tfa: isTfaSwitchOn ? "1" : "0",
-          Tfakey: "1",
           Class: "MA",
-          Prefix: prefix,
+          // Prefix: prefix,
           Status: isSwitchOn ? "1" : "0", // Convert boolean to string "1" or "0"
         }),
       };
@@ -145,7 +144,7 @@ const CreateMasterAccount = () => {
         setUserId("");
         setPassword("");
         setConfirmPassword("");
-        setPrefix("");
+        // setPrefix("");
         setName("");
         setSelectedOptions([]);
         setIsSwitchOn(false);
@@ -245,7 +244,7 @@ const CreateMasterAccount = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                   <MDInput
                     fullWidth
                     variant="standard"
@@ -260,7 +259,7 @@ const CreateMasterAccount = () => {
                       pattern: "[A-Za-z]{3}",
                     }}
                   />
-                </Grid>
+                </Grid> */}
 
                 <Grid item xs={12}>
                   <MDInput

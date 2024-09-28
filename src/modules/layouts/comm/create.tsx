@@ -127,9 +127,8 @@ const CreateCommissionAccount = () => {
           Pass: password,
           Control: JSON.stringify(controlArray),
           Tfa: isTfaSwitchOn ? "1" : "0",
-          Tfakey: "1",
           Class: "COMM",
-          Prefix: prefix,
+          // Prefix: prefix,
           Status: isSwitchOn ? "1" : "0", // Convert boolean to string "1" or "0"
         }),
       };
@@ -144,7 +143,7 @@ const CreateCommissionAccount = () => {
         setUserId("");
         setPassword("");
         setConfirmPassword("");
-        setPrefix("");
+        // setPrefix("");
         setSelectedOptions([]);
         setName("");
         setIsSwitchOn(false);
@@ -244,7 +243,7 @@ const CreateCommissionAccount = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                   <MDInput
                     fullWidth
                     variant="standard"
@@ -259,7 +258,7 @@ const CreateCommissionAccount = () => {
                       pattern: "[A-Za-z]{3}",
                     }}
                   />
-                </Grid>
+                </Grid> */}
 
                 <Grid item xs={12}>
                   <MDInput
