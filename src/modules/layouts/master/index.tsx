@@ -22,6 +22,8 @@ const MasterList = () => {
   const [open, setOpen] = useState(false); // State for controlling the dialog visibility
   const [selectedUserId, setSelectedUserId] = useState(null); // State to store the selected user ID
   const [tableRows, setTableRows] = useState([]); // State to store rows for the DataTable
+  const [filterStatus, setFilterStatus] = useState("1"); // Default to "1"
+  const [searchValue, setSearchValue] = useState("");
 
   // Function to handle the edit button click
   const handleEditClick = (userId: string) => {
@@ -35,7 +37,7 @@ const MasterList = () => {
   };
 
   // Fetch data from API and populate table rows
-  const fetchTableData = async () => {
+  const fetchTableData = async (FilterStatus = "", searchValue = "") => {
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
 
@@ -47,14 +49,14 @@ const MasterList = () => {
         Token: storedToken,
         Data: JSON.stringify({
           FilterClass: "mtr",
-          FilterName: "",
+          FilterName: searchValue,
           FilterUid: "",
-          FilterStatus: "",
+          FilterStatus: FilterStatus,
         }),
       };
       const response = await apiHandler(apiUrl, params);
       const responseData = JSON.parse(response.Data);
-
+      console.log(responseData);
       // Map API data to fit DataTable format
       const formattedRows = responseData.map(
         (
@@ -97,7 +99,7 @@ const MasterList = () => {
                   minWidth: "auto", // Ensure button size fits the text
                   height: "auto",
                 }}
-                onClick={fetchTableData}
+                onClick={() => fetchTableData(FilterStatus)}
               >
                 Reset 2FA
               </MDButton>
@@ -117,6 +119,19 @@ const MasterList = () => {
     fetchTableData();
   }, []); // Empty dependency array to run only once on mount
 
+  // New function to handle the status header click
+  const handleStatusHeaderClick = () => {
+    const newFilterStatus = filterStatus === "0" ? "1" : "0";
+    setFilterStatus(newFilterStatus);
+    fetchTableData(newFilterStatus, searchValue);
+  };
+
+  const handleSearchChange = (e: { target: { value: any } }) => {
+    const value = e.target.value;
+    setSearchValue(value);
+    fetchTableData(filterStatus, value); // Fetch with search value
+  };
+
   const dataTableData = {
     columns: [
       { Header: "id", accessor: "id", width: "1%", disableSortBy: true },
@@ -126,7 +141,16 @@ const MasterList = () => {
       { Header: "last update", accessor: "last_update", width: "10%", disableSortBy: true },
       { Header: "last login", accessor: "last_login", width: "10%", disableSortBy: true },
       { Header: "last ip", accessor: "last_ip", width: "7%", disableSortBy: true },
-      { Header: "status", accessor: "status", width: "7%", disableSortBy: true },
+      {
+        Header: (
+          <span style={{ cursor: "pointer" }} onClick={handleStatusHeaderClick}>
+            Status
+          </span>
+        ),
+        accessor: "status",
+        width: "7%",
+        disableSortBy: true,
+      },
       { Header: "action", accessor: "action", width: "7%", disableSortBy: true },
     ],
     rows: tableRows, // Pass the dynamic rows to DataTable
@@ -138,7 +162,22 @@ const MasterList = () => {
 
       <MDBox pt={3} pb={3}>
         <Card>
-          <DataTable table={dataTableData} canSearch />
+          {/* Search input box */}
+          <MDBox p={2}>
+            <input
+              type="text"
+              value={searchValue}
+              onChange={handleSearchChange}
+              placeholder="Search"
+              style={{
+                padding: "10px",
+                width: "100%",
+                border: "1px solid #ccc",
+                borderRadius: "5px",
+              }}
+            />
+          </MDBox>
+          <DataTable table={dataTableData} />
         </Card>
       </MDBox>
 
