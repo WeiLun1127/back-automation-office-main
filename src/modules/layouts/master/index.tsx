@@ -9,6 +9,7 @@ import {
   DialogTitle,
   Button,
   IconButton,
+  Switch,
 } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material"; // Import Close Icon
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
@@ -78,7 +79,8 @@ const MasterList = () => {
           last_update: item.LastUpdateDateTimeUTC,
           last_ip: item.LastIP,
           last_login: item.LastLoginDateTimeUTC,
-          status: item.Status,
+          // status: item.Status,
+          status: <Switch checked={item.Status === "1"} disabled />,
           action: (
             <MDBox display="flex" gap={2} alignItems="center">
               <Icon style={{ cursor: "pointer", fontSize: 20 }}>lockperson</Icon>
@@ -119,7 +121,6 @@ const MasterList = () => {
     fetchTableData();
   }, []); // Empty dependency array to run only once on mount
 
-  // New function to handle the status header click
   const handleStatusHeaderClick = () => {
     const newFilterStatus = filterStatus === "0" ? "1" : "0";
     setFilterStatus(newFilterStatus);
@@ -129,7 +130,7 @@ const MasterList = () => {
   const handleSearchChange = (e: { target: { value: any } }) => {
     const value = e.target.value;
     setSearchValue(value);
-    fetchTableData(filterStatus, value); // Fetch with search value
+    fetchTableData(filterStatus, value);
   };
 
   const dataTableData = {
@@ -153,7 +154,7 @@ const MasterList = () => {
       },
       { Header: "action", accessor: "action", width: "7%", disableSortBy: true },
     ],
-    rows: tableRows, // Pass the dynamic rows to DataTable
+    rows: tableRows,
   };
 
   return (
@@ -162,7 +163,6 @@ const MasterList = () => {
 
       <MDBox pt={3} pb={3}>
         <Card>
-          {/* Search input box */}
           <MDBox p={2}>
             <input
               type="text"
@@ -181,11 +181,9 @@ const MasterList = () => {
         </Card>
       </MDBox>
 
-      {/* Dialog Component */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
           Edit User
-          {/* Add Close Icon on the right side */}
           <IconButton
             aria-label="close"
             onClick={handleClose}
