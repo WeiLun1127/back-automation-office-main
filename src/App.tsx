@@ -25,8 +25,9 @@ import theme from "modules/settings/theme-settings/theme";
 import themeDark from "modules/settings/theme-settings/theme-dark";
 import Sidenav from "modules/sideNav";
 import { JSXElementConstructor, Key, ReactElement, useEffect, useState } from "react";
-import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import routes from "routes";
+import Session from "Session";
 
 export type Pathname =
   | "apiControl"
@@ -53,12 +54,9 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [pathname, setPathname] = useState<Pathname>("apiControl");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState<string | null>(null);
   const [userControl, setUserControl] = useState<{ [key: string]: string }[]>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleSignIn = async (username: string, password: string) => {
     const authApi = "http://18.138.168.43:10311/api/auth";
@@ -96,26 +94,13 @@ export default function App() {
 
           // Extract the token
           const tokenMatch = /"Token"\s*:\s*"([^"]+)"/.exec(data.Data);
-          const initialToken = tokenMatch ? tokenMatch[1] : null;
+          const token = tokenMatch ? tokenMatch[1] : null;
 
-          if (initialToken) {
+          localStorage.setItem("username", username);
+          localStorage.setItem("token", token);
+
+          if (token) {
             setIsAuthenticated(true);
-            setUsername(username);
-            setToken(initialToken); // Store the token in the state
-
-            pingApi(username, initialToken);
-
-            // Set interval to ping every 20 seconds
-            const newIntervalId = setInterval(() => {
-              setToken((prevToken) => {
-                if (prevToken) {
-                  pingApi(username, prevToken); // Use the latest token
-                }
-                return prevToken;
-              });
-            }, 20000);
-            setIntervalId(newIntervalId);
-
             setPathname("apiControl");
             navigate("/");
           } else {
@@ -132,45 +117,6 @@ export default function App() {
     } catch (error) {
       console.error("Error during login", error);
       alert("An error occurred during login. Please try again.");
-    }
-  };
-
-  //Data Sample : "Control" : "["001.1.001.1", "002.1.001.1", "002.1.002.1", "003.1.001.1.001.1111", "004.1.001.1"]"
-  localStorage.setItem("username", username);
-
-  const pingApi = async (username: string, currentToken: string) => {
-    const pingUrl = "http://18.138.168.43:10311/api/ping";
-
-    try {
-      const response = await axios.post(
-        pingUrl,
-        {
-          Uid: username,
-          Token: currentToken,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        console.log("Ping successful", response.data);
-        const newToken = response.data?.Token;
-        if (newToken) {
-          setToken(newToken); // Update the token in the state
-          localStorage.setItem("token", newToken);
-        } else {
-          console.warn("Token is empty, navigating to illustration page.");
-          setIsAuthenticated(false); // Set authenticated state to false
-          navigate("/"); // Navigate to the illustration page
-        }
-      } else {
-        console.error("Ping failed:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error during ping", error);
     }
   };
 
@@ -283,31 +229,33 @@ export default function App() {
   return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
       <CssBaseline />
-      {!isAuthenticated ? (
-        <Illustration onSignIn={handleSignIn} />
-      ) : (
-        <>
-          {layout === "dashboard" && (
-            <>
-              <Sidenav
-                color={sidenavColor}
-                brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-                brandName="BackOffice Automation"
-                routes={routes}
-                userControl={userControl}
-                onMouseEnter={handleOnMouseEnter}
-                onMouseLeave={handleOnMouseLeave}
-                onSetPathname={(pathname: Pathname) => setPathname(pathname)}
-              />
-              <Configurator />
-            </>
-          )}
-          {layout === "vr" && <Configurator />}
-          <Routes>
-            <Route path="*" element={getRouteElement(pathname)} />
-          </Routes>
-        </>
-      )}
+      <Session>
+        {!isAuthenticated ? (
+          <Illustration onSignIn={handleSignIn} />
+        ) : (
+          <>
+            {layout === "dashboard" && (
+              <>
+                <Sidenav
+                  color={sidenavColor}
+                  brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
+                  brandName="BackOffice Automation"
+                  routes={routes}
+                  userControl={userControl}
+                  onMouseEnter={handleOnMouseEnter}
+                  onMouseLeave={handleOnMouseLeave}
+                  onSetPathname={(pathname: Pathname) => setPathname(pathname)}
+                />
+                <Configurator />
+              </>
+            )}
+            {layout === "vr" && <Configurator />}
+            <Routes>
+              <Route path="*" element={getRouteElement(pathname)} />
+            </Routes>
+          </>
+        )}
+      </Session>
     </ThemeProvider>
   );
 }
