@@ -207,9 +207,9 @@ const CompanyList = () => {
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
       const parsedData = JSON.parse(response.Data);
-      console.log("Parsed Data:", parsedData);
-      console.log("Uid:", parsedData.Uid);
-      console.log("Name:", parsedData.Name);
+      // console.log("Parsed Data:", parsedData);
+      // console.log("Uid:", parsedData.Uid);
+      // console.log("Name:", parsedData.Name);
 
       setDialogUserID(parsedData.Uid);
       setDialogUsername(parsedData.Name);
@@ -220,14 +220,14 @@ const CompanyList = () => {
       setDialogStatus(parsedData.Status);
       setIs2FAEnabled(parsedData.Status === "1");
 
-      console.log("Pass:", parsedData.Pass);
-      console.log("Control:", parsedData.Control);
-      console.log("Tfa:", parsedData.Tfa);
-      console.log("TfaKey:", parsedData.TfaKey);
-      console.log("Class:", parsedData.Class);
-      console.log("Prefix:", parsedData.Prefix);
-      console.log("Status:", parsedData.Status);
-      console.log("OtpAuth:", parsedData.OtpAuth);
+      // console.log("Pass:", parsedData.Pass);
+      // console.log("Control:", parsedData.Control);
+      // console.log("Tfa:", parsedData.Tfa);
+      // console.log("TfaKey:", parsedData.TfaKey);
+      // console.log("Class:", parsedData.Class);
+      // console.log("Prefix:", parsedData.Prefix);
+      // console.log("Status:", parsedData.Status);
+      // console.log("OtpAuth:", parsedData.OtpAuth);
 
       setIs2FAEnabled(parsedData.Tfa === "1");
     } catch (error) {

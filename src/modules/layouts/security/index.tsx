@@ -89,7 +89,7 @@ const Authentication = () => {
           alert("Failed to update password.");
         }
       } else {
-        console.log("Failure: Incorrect password or status not 1");
+        console.log("Failure: Incorrect password");
         alert("Please make sure current password is entered correctly");
       }
     } catch (error) {
