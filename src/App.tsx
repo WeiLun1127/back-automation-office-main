@@ -12,6 +12,7 @@ import CreateAgentAccount from "modules/layouts/agent/create";
 import CommissionList from "modules/layouts/comm";
 import CreateCommissionAccount from "modules/layouts/comm/create";
 import ApiControl from "modules/layouts/company";
+import CompanyList from "modules/layouts/company/companyList";
 import CurrencyTables from "modules/layouts/currency";
 import MasterList from "modules/layouts/master";
 import CreateMasterAccount from "modules/layouts/master/create";
@@ -27,6 +28,7 @@ import routes from "routes";
 
 export type Pathname =
   | "apiControl"
+  | "companyList"
   | "authentication"
   | "createMasterAccount"
   | "masterList"
@@ -239,6 +241,8 @@ export default function App() {
     switch (route) {
       case "apiControl":
         return <ApiControl />;
+      case "companyList":
+        return <CompanyList />;
       case "authentication":
         return <Authentication />;
       case "createMasterAccount":

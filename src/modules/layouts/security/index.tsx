@@ -18,6 +18,7 @@ const Authentication = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
   const [showPasswords, setShowPasswords] = useState(false);
+  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
 
   const storedUsername = localStorage.getItem("username");
   const storedToken = localStorage.getItem("token");
@@ -44,7 +45,7 @@ const Authentication = () => {
       Token: storedToken, // Use the stored token
       Data: JSON.stringify({
         // Uid: storedUsername, （"test"） // Use the stored username
-        Uid: storedUserId,
+        FilterUid: storedUsername,
       }),
     };
 
@@ -62,10 +63,11 @@ const Authentication = () => {
           Uid: storedUsername,
           Token: storedToken,
           Data: JSON.stringify({
-            Uid: storedUserId, //changeToStoredUsername("test")
+            Uid: storedUsername, //changeToStoredUsername("test")
+            Name: parsedData.Name,
             Pass: newPassword, // New password entered by the user
             Control: parsedData.Control,
-            Tfa: parsedData.TfaKey,
+            Tfa: is2FAEnabled ? "1" : "0",
             // Tfakey: parsedData.TfaKey,
             Class: parsedData.Class,
             // Prefix: parsedData.Prefix,
@@ -168,6 +170,17 @@ const Authentication = () => {
                     ),
                   }}
                 />
+              </Grid>
+
+              <Grid item xs={12}>
+                <MDBox display="flex" alignItems="center">
+                  <Checkbox
+                    checked={is2FAEnabled}
+                    onChange={(e) => setIs2FAEnabled(e.target.checked)} // Track checkbox change
+                  />
+                  <MDTypography variant="button">Enable 2FA</MDTypography>
+                  <SecurityIcon style={{ marginLeft: 8, marginRight: 8 }} />
+                </MDBox>
               </Grid>
             </Grid>
 

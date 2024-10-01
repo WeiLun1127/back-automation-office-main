@@ -24,7 +24,7 @@ import MDButton from "components/MDButton";
 import { apiHandler } from "api/apiHandler";
 import SecurityIcon from "@mui/icons-material/Security";
 
-const MasterList = () => {
+const CompanyList = () => {
   const [open, setOpen] = useState(false); // State for controlling the dialog visibility
   const [lockDialogOpen, setLockDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null); // State to store the selected user ID
@@ -98,7 +98,7 @@ const MasterList = () => {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          FilterClass: "agt",
+          FilterClass: "com",
           FilterName: searchValue,
           FilterUid: "",
           FilterStatus: FilterStatus,
@@ -522,4 +522,4 @@ const MasterList = () => {
   );
 };
 
-export default MasterList;
+export default CompanyList;

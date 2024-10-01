@@ -38,6 +38,7 @@ const CreateMasterAccount = () => {
 
   const controlOptions = [
     { label: "Api Control", value: "apiControl" },
+    { label: "Company List", value: "companyList" },
     { label: "Master List", value: "masterList" },
     { label: "Create Master Account", value: "createMasterAccount" },
     { label: "Transactions", value: "transactions" },
@@ -54,6 +55,7 @@ const CreateMasterAccount = () => {
 
   const controlMapping: { [key: string]: string[] } = {
     apiControl: ["001", "001.001"],
+    companyList: ["001", "001.002"],
     masterList: ["002", "002.001"],
     createMasterAccount: ["002", "002.002"],
     transactions: ["003", "003.001"],
@@ -128,7 +130,7 @@ const CreateMasterAccount = () => {
           Pass: password,
           Control: JSON.stringify(controlArray),
           Tfa: isTfaSwitchOn ? "1" : "0",
-          Class: "MA",
+          Class: "mtr",
           // Prefix: prefix,
           Status: isSwitchOn ? "1" : "0", // Convert boolean to string "1" or "0"
         }),
@@ -266,7 +268,7 @@ const CreateMasterAccount = () => {
                     fullWidth
                     variant="standard"
                     label="Level"
-                    value="MA"
+                    value="MTR"
                     InputProps={{
                       readOnly: true,
                       style: { maxWidth: "500px" },

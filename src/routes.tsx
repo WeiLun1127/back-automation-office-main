@@ -3,6 +3,7 @@ import Icon from "@mui/material/Icon";
 import AccountProviderList from "modules/layouts/accountProvider";
 import CreateAccountProvider from "modules/layouts/accountProvider/create";
 import ApiControl from "modules/layouts/company";
+import CompanyList from "modules/layouts/company/companyList";
 import CurrencyTables from "modules/layouts/currency";
 import MasterList from "modules/layouts/master";
 import CreateMasterAccount from "modules/layouts/master/create";
@@ -27,6 +28,14 @@ const routes = [
         route: "apiControl",
         component: <ApiControl />,
       },
+      {
+        id: "002",
+        parentId: "001",
+        name: "Company List",
+        key: "company-list",
+        route: "companyList",
+        component: <CompanyList />,
+      },
     ],
   },
   {
@@ -36,18 +45,10 @@ const routes = [
     key: "master",
     icon: <Icon fontSize="medium">group</Icon>,
     collapse: [
-      // {
-      //   id: "001",
-      //   parentId: "002",
-      //   name: "Master List",
-      //   key: "master-list",
-      //   route: "masterList",
-      //   component: <MasterList />,
-      // },
       {
         id: "001",
         parentId: "002",
-        name: "Create Master Account",
+        name: "Create Account",
         key: "create-master-account",
         route: "createMasterAccount",
         component: <CreateMasterAccount />,
@@ -131,7 +132,7 @@ const routes = [
       {
         id: "001",
         parentId: "006",
-        name: "Create Agent",
+        name: "Create Account",
         key: "create-agent",
         route: "createAgent",
         component: <CreateAccountProvider />,
@@ -149,14 +150,14 @@ const routes = [
   {
     id: "007",
     type: "collapse",
-    name: "Commission",
+    name: "Commission Broker",
     key: "Commission",
     icon: <Icon fontSize="medium">monetization_on</Icon>,
     collapse: [
       {
         id: "001",
         parentId: "007",
-        name: "Create Commission",
+        name: "Create Account",
         key: "create-commission",
         route: "createCommission",
         component: <CreateAccountProvider />,
