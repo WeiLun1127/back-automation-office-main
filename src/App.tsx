@@ -16,6 +16,8 @@ import CompanyList from "modules/layouts/company/companyList";
 import CurrencyTables from "modules/layouts/currency";
 import MasterList from "modules/layouts/master";
 import CreateMasterAccount from "modules/layouts/master/create";
+import MerchantList from "modules/layouts/merchant";
+import CreateMerchantAccount from "modules/layouts/merchant/create";
 import Transactions from "modules/layouts/report";
 import Authentication from "modules/layouts/security";
 import Illustration from "modules/layouts/signin/illustration";
@@ -33,6 +35,8 @@ export type Pathname =
   | "createMasterAccount"
   | "masterList"
   | "transactions"
+  | "createMerchantAccount"
+  | "merchantList"
   | "createAccountProvider"
   | "accountProviderList"
   | "createAgent"
@@ -251,6 +255,10 @@ export default function App() {
         return <MasterList />;
       case "transactions":
         return <Transactions />;
+      case "createMerchantAccount":
+        return <CreateMerchantAccount />;
+      case "merchantList":
+        return <MerchantList />;
       case "createAccountProvider":
         return <CreateAccountProvider />;
       case "accountProviderList":

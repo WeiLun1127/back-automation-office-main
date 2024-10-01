@@ -7,6 +7,8 @@ import CompanyList from "modules/layouts/company/companyList";
 import CurrencyTables from "modules/layouts/currency";
 import MasterList from "modules/layouts/master";
 import CreateMasterAccount from "modules/layouts/master/create";
+import MerchantList from "modules/layouts/merchant";
+import CreateMerchantAccount from "modules/layouts/merchant/create";
 import Transactions from "modules/layouts/report";
 import Authentication from "modules/layouts/security";
 
@@ -100,13 +102,38 @@ const routes = [
   {
     id: "005",
     type: "collapse",
+    name: "Merchant",
+    key: "merchant",
+    icon: <Icon fontSize="medium">shopping_cart</Icon>,
+    collapse: [
+      {
+        id: "001",
+        parentId: "005",
+        name: "Create Account",
+        key: "create-merchant-account",
+        route: "createMerchantAccount",
+        component: <CreateMerchantAccount />,
+      },
+      {
+        id: "002",
+        parentId: "005",
+        name: "Merchant List",
+        key: "merchant-list",
+        route: "merchantList",
+        component: <MerchantList />,
+      },
+    ],
+  },
+  {
+    id: "006",
+    type: "collapse",
     name: "Account Provider",
     key: "account-provider",
     icon: <Icon fontSize="medium">account_box</Icon>,
     collapse: [
       {
         id: "001",
-        parentId: "005",
+        parentId: "006",
         name: "Create Account",
         key: "create-account-provider",
         route: "createAccountProvider",
@@ -114,7 +141,7 @@ const routes = [
       },
       {
         id: "002",
-        parentId: "005",
+        parentId: "006",
         name: "Provider List",
         key: "account-provider-list",
         route: "accountProviderList",
@@ -123,7 +150,7 @@ const routes = [
     ],
   },
   {
-    id: "006",
+    id: "007",
     type: "collapse",
     name: "Agent",
     key: "agent",
@@ -131,7 +158,7 @@ const routes = [
     collapse: [
       {
         id: "001",
-        parentId: "006",
+        parentId: "007",
         name: "Create Account",
         key: "create-agent",
         route: "createAgent",
@@ -139,7 +166,7 @@ const routes = [
       },
       {
         id: "002",
-        parentId: "006",
+        parentId: "007",
         name: "Agent List",
         key: "agent-list",
         route: "agentList",
@@ -148,7 +175,7 @@ const routes = [
     ],
   },
   {
-    id: "007",
+    id: "008",
     type: "collapse",
     name: "Commission Broker",
     key: "Commission",
@@ -156,7 +183,7 @@ const routes = [
     collapse: [
       {
         id: "001",
-        parentId: "007",
+        parentId: "008",
         name: "Create Account",
         key: "create-commission",
         route: "createCommission",
@@ -164,7 +191,7 @@ const routes = [
       },
       {
         id: "002",
-        parentId: "007",
+        parentId: "008",
         name: "Commission List",
         key: "commission-list",
         route: "commissionList",
@@ -173,7 +200,7 @@ const routes = [
     ],
   },
   {
-    id: "008",
+    id: "009",
     type: "collapse",
     name: "Currency",
     key: "currency",
@@ -181,7 +208,7 @@ const routes = [
     collapse: [
       {
         id: "001",
-        parentId: "008",
+        parentId: "009",
         name: "Currency List",
         key: "currency",
         route: "currency",
@@ -190,7 +217,7 @@ const routes = [
     ],
   },
   {
-    id: "009",
+    id: "010",
     type: "collapse",
     name: "Products",
     key: "products",
@@ -198,7 +225,7 @@ const routes = [
     collapse: [
       {
         id: "001",
-        parentId: "009",
+        parentId: "010",
         name: "Product List",
         key: "products",
         route: "products",

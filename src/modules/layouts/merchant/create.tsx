@@ -20,12 +20,12 @@ import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
 import { SetStateAction, useState } from "react";
 
-const CreateAccountProvider = () => {
+const CreateMerchantAccount = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [userId, setUserId] = useState("");
   const [prefix, setPrefix] = useState("");
   const [isSwitchOn, setIsSwitchOn] = useState(false);
@@ -110,6 +110,7 @@ const CreateAccountProvider = () => {
 
   const storedUsername = localStorage.getItem("username");
   const storedToken = localStorage.getItem("token");
+  localStorage.setItem("userId", userId);
 
   const handleNextButtonClick = async () => {
     if (password !== confirmPassword) {
@@ -133,7 +134,7 @@ const CreateAccountProvider = () => {
           Pass: password,
           Control: JSON.stringify(controlArray),
           Tfa: isTfaSwitchOn ? "1" : "0",
-          Class: "acp",
+          Class: "mer",
           // Prefix: prefix,
           Status: isSwitchOn ? "1" : "0", // Convert boolean to string "1" or "0"
         }),
@@ -143,16 +144,16 @@ const CreateAccountProvider = () => {
 
       // Check if response.Status is 1
       if (response.Status === "1") {
-        alert("Account Provider Created Successfully");
+        alert("Master Account Created Successfully");
 
         //Remove User Input
         setUserId("");
         setPassword("");
         setConfirmPassword("");
         // setPrefix("");
+        setName("");
         setSelectedOptions([]);
         setIsSwitchOn(false);
-        setName("");
         setIsTfaSwitchOn(false);
       } else {
         alert("Error Occured. Please Try Again Shortly");
@@ -170,7 +171,7 @@ const CreateAccountProvider = () => {
         <Grid item lg={12} xl={8}>
           <Card>
             <MDBox p={3}>
-              <MDTypography variant="h4">Create Account Provider</MDTypography>
+              <MDTypography variant="h4">Create Merchant</MDTypography>
             </MDBox>
 
             <MDBox component="form" pb={3} px={3}>
@@ -271,7 +272,7 @@ const CreateAccountProvider = () => {
                     fullWidth
                     variant="standard"
                     label="Level"
-                    value="ACP"
+                    value="MER"
                     InputProps={{
                       readOnly: true,
                       style: { maxWidth: "500px" },
@@ -355,4 +356,4 @@ const CreateAccountProvider = () => {
   );
 };
 
-export default CreateAccountProvider;
+export default CreateMerchantAccount;
