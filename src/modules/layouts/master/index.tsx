@@ -46,9 +46,43 @@ const MasterList = () => {
   const [confirmPassword, setConfirmPassword] = useState(""); // State for confirming the new password
   const [passwordError, setPasswordError] = useState("");
 
-  const handleEditClick = (userId: string) => {
-    setSelectedUserId(userId); // Set the selected user ID (optional)
-    setOpen(true); // Open the dialog
+  const handleEditClick = async (userId: string) => {
+    setSelectedUserId(userId);
+    setOpen(true);
+    await fetchUserData();
+  };
+
+  const handleEditSaveClick = async (userId: string) => {
+    const storedToken = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
+
+    try {
+      const apiUrl = "http://18.138.168.43:10311/api/execmem";
+      const params = {
+        EXECF: "SETAUTHDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          Uid: userId,
+          Name: dialogUsername,
+          Pass: dialogPass,
+          Control: dialogControl,
+          Tfa: dialogTfa,
+          Class: dialogClass,
+          Status: dialogStatus,
+        }),
+      };
+      const response = await apiHandler(apiUrl, params);
+      if (response.Status === "1") {
+        alert("User Details Updated Successfully.");
+      } else {
+        alert("Error Update User Details.");
+      }
+      handleClose();
+      fetchTableData(filterStatus, searchValue);
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
   };
 
   const handle2FAChange = (event: {
@@ -169,7 +203,7 @@ const MasterList = () => {
 
   useEffect(() => {
     fetchTableData();
-  }, []); // Empty dependency array to run only once on mount
+  }, []);
 
   const handleStatusHeaderClick = () => {
     const newFilterStatus = filterStatus === "0" ? "1" : "0";
@@ -290,14 +324,12 @@ const MasterList = () => {
       };
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
-      if (response.Status === "1") {
-        alert("Details Updated Successfully.");
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-        handleLockClose();
-        fetchTableData(filterStatus, searchValue); // Pass filter and search value
-      }
+      alert("Details Updated Successfully.");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      handleLockClose();
+      fetchTableData(filterStatus, searchValue);
       const parsedData = JSON.parse(response.Data);
       console.log("Parsed Data:", parsedData);
     } catch (error) {
@@ -397,12 +429,19 @@ const MasterList = () => {
           <DialogContentText>
             You are editing the details for User ID: {selectedUserId}.
           </DialogContentText>
-          <TextField fullWidth label="Name" variant="outlined" sx={{ mt: 2 }} />
+          <TextField
+            fullWidth
+            label="Name"
+            variant="outlined"
+            value={dialogUsername}
+            onChange={(e) => setDialogUsername(e.target.value)}
+            sx={{ mt: 2 }}
+          />
           <TextField fullWidth label="Phone Number" variant="outlined" sx={{ mt: 2 }} />
           <TextField fullWidth label="Email" variant="outlined" sx={{ mt: 2 }} />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={() => handleEditSaveClick(selectedUserId)} color="primary">
             Save
           </Button>
         </DialogActions>
