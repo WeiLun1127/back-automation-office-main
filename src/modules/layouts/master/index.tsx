@@ -46,7 +46,6 @@ const MasterList = () => {
   const [confirmPassword, setConfirmPassword] = useState(""); // State for confirming the new password
   const [passwordError, setPasswordError] = useState("");
 
-  // Function to handle the edit button click
   const handleEditClick = (userId: string) => {
     setSelectedUserId(userId); // Set the selected user ID (optional)
     setOpen(true); // Open the dialog
@@ -56,6 +55,7 @@ const MasterList = () => {
     target: { checked: boolean | ((prevState: boolean) => boolean) };
   }) => {
     setIs2FAEnabled(event.target.checked);
+    fetchTableData();
   };
 
   const handleLockClick = async (userId: string) => {
@@ -71,7 +71,6 @@ const MasterList = () => {
     }
   }, [selectedUserId]);
 
-  // Function to close the dialog
   const handleClose = () => {
     setOpen(false);
     fetchTableData(filterStatus, searchValue);
@@ -86,7 +85,6 @@ const MasterList = () => {
     fetchTableData(filterStatus, searchValue);
   };
 
-  // Fetch data from API and populate table rows
   const fetchTableData = async (FilterStatus = "", searchValue = "") => {
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
@@ -128,8 +126,7 @@ const MasterList = () => {
           last_update: item.LastUpdateOnUTC,
           last_ip: item.LastIP,
           last_login: item.LastLoginOnUTC,
-          // status: item.Status,
-          status: <Switch checked={item.Status === "1"} disabled />,
+          status: <Switch checked={item.Status === "1"} />,
           action: (
             <MDBox display="flex" gap={2} alignItems="center">
               <Icon
@@ -170,7 +167,6 @@ const MasterList = () => {
     }
   };
 
-  // Call fetchTableData when the component mounts
   useEffect(() => {
     fetchTableData();
   }, []); // Empty dependency array to run only once on mount
@@ -207,9 +203,6 @@ const MasterList = () => {
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
       const parsedData = JSON.parse(response.Data);
-      // console.log("Parsed Data:", parsedData);
-      // console.log("Uid:", parsedData.Uid);
-      // console.log("Name:", parsedData.Name);
 
       setDialogUserID(parsedData.Uid);
       setDialogUsername(parsedData.Name);
@@ -218,16 +211,6 @@ const MasterList = () => {
       setDialogTfa(parsedData.Tfa);
       setDialogClass(parsedData.Class);
       setDialogStatus(parsedData.Status);
-      setIs2FAEnabled(parsedData.Status === "1");
-
-      // console.log("Pass:", parsedData.Pass);
-      // console.log("Control:", parsedData.Control);
-      // console.log("Tfa:", parsedData.Tfa);
-      // console.log("TfaKey:", parsedData.TfaKey);
-      // console.log("Class:", parsedData.Class);
-      // console.log("Prefix:", parsedData.Prefix);
-      // console.log("Status:", parsedData.Status);
-      // console.log("OtpAuth:", parsedData.OtpAuth);
 
       setIs2FAEnabled(parsedData.Tfa === "1");
     } catch (error) {
@@ -258,7 +241,6 @@ const MasterList = () => {
       const response = await apiHandler(apiUrl, params);
       if (response.Status === "1") {
         alert("2FA has been reset successfully.");
-        await fetchTableData();
       } else {
         alert("Please make sure 2fa is enable before reset.");
       }
@@ -273,7 +255,7 @@ const MasterList = () => {
     const storedUsername = localStorage.getItem("username");
 
     // Check for empty passwords and spaces
-    if (!currentPassword || !newPassword || !confirmPassword) {
+    if (!newPassword || !confirmPassword) {
       setPasswordError("All password fields are required.");
       return;
     }
@@ -290,39 +272,37 @@ const MasterList = () => {
 
     setPasswordError("");
 
-    if (dialogPass === currentPassword) {
-      try {
-        const apiUrl = "http://18.138.168.43:10311/api/execmem";
-        const params = {
-          EXECF: "SETAUTHDATA",
-          Uid: storedUsername,
-          Token: storedToken,
-          Data: JSON.stringify({
-            Uid: selectedUserId,
-            Name: dialogUsername,
-            Pass: newPassword,
-            Control: dialogControl,
-            Tfa: dialogTfa,
-            Class: dialogClass,
-            Status: is2FAEnabled ? "1" : "0",
-          }),
-        };
-        const response = await apiHandler(apiUrl, params);
-        console.log("API Response:", response);
-        if (response.Status === "1") {
-          alert("Details Updated Successfully.");
-          setCurrentPassword("");
-          setNewPassword("");
-          setConfirmPassword("");
-          handleLockClose();
-          fetchTableData(filterStatus, searchValue); // Pass filter and search value
-        }
-        const parsedData = JSON.parse(response.Data);
-        console.log("Parsed Data:", parsedData);
-      } catch (error) {
-        console.error("Error during API call:", error);
+    try {
+      const apiUrl = "http://18.138.168.43:10311/api/execmem";
+      const params = {
+        EXECF: "SETAUTHDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          Uid: selectedUserId,
+          Name: dialogUsername,
+          Pass: newPassword,
+          Control: dialogControl,
+          Tfa: dialogTfa,
+          Class: dialogClass,
+          Status: is2FAEnabled ? "1" : "0",
+        }),
+      };
+      const response = await apiHandler(apiUrl, params);
+      console.log("API Response:", response);
+      if (response.Status === "1") {
+        alert("Details Updated Successfully.");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        handleLockClose();
+        fetchTableData(filterStatus, searchValue); // Pass filter and search value
       }
-    } else alert("Please make sure you have input a correct password");
+      const parsedData = JSON.parse(response.Data);
+      console.log("Parsed Data:", parsedData);
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
   };
 
   const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -453,6 +433,7 @@ const MasterList = () => {
             InputProps={{
               readOnly: true,
             }}
+            disabled
             sx={{ mt: 2 }}
           />
           <TextField
@@ -463,15 +444,7 @@ const MasterList = () => {
             InputProps={{
               readOnly: true,
             }}
-            sx={{ mt: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Current Password"
-            variant="outlined"
-            type="password" // Ensure password is hidden
-            value={currentPassword} // Bind state variable
-            onChange={(e) => setCurrentPassword(e.target.value)}
+            disabled
             sx={{ mt: 2 }}
           />
           <TextField
@@ -479,7 +452,6 @@ const MasterList = () => {
             label="New Password"
             variant="outlined"
             value={newPassword} // Bind state variable
-            // onChange={(e) => setNewPassword(e.target.value)}
             onChange={handleNewPasswordChange}
             sx={{ mt: 2 }}
           />
@@ -488,7 +460,6 @@ const MasterList = () => {
             label="Confirm Password"
             variant="outlined"
             value={confirmPassword} // Bind state variable
-            // onChange={(e) => setConfirmPassword(e.target.value)}
             onChange={handleConfirmPasswordChange} // Updated handler for confirm password
             error={!!passwordError} // Show error styling if there's an error
             helperText={passwordError}
