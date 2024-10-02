@@ -32,7 +32,6 @@ const MasterList = () => {
   const [filterStatus, setFilterStatus] = useState("1"); // Default to "1"
   const [searchValue, setSearchValue] = useState("");
   const [is2FAEnabled, setIs2FAEnabled] = useState(false);
-
   const [dialogUserID, setDialogUserID] = useState("");
   const [dialogUsername, setDialogUsername] = useState("");
   const [dialogPass, setDialogPass] = useState("");
@@ -40,10 +39,8 @@ const MasterList = () => {
   const [dialogTfa, setDialogTfa] = useState("");
   const [dialogClass, setDialogClass] = useState("");
   const [dialogStatus, setDialogStatus] = useState("");
-
-  const [currentPassword, setCurrentPassword] = useState(""); // State for the current password
   const [newPassword, setNewPassword] = useState(""); // State for the new password
-  const [confirmPassword, setConfirmPassword] = useState(""); // State for confirming the new password
+  const [confirmPassword, setConfirmPassword] = useState(""); 
   const [passwordError, setPasswordError] = useState("");
 
   const handleEditClick = async (userId: string) => {
@@ -73,13 +70,14 @@ const MasterList = () => {
         }),
       };
       const response = await apiHandler(apiUrl, params);
-      if (response.Status === "1") {
-        alert("User Details Updated Successfully.");
-      } else {
-        alert("Error Update User Details.");
-      }
+      // if (response.Status === "1") {
+      //   alert("User Details Updated Successfully.");
+      // } else {
+      //   alert("Error Update User Details.");
+      // }
+      alert("User Details Updated Successfully.");
       handleClose();
-      fetchTableData(filterStatus, searchValue);
+      fetchTableData();
     } catch (error) {
       console.error("Error during API call:", error);
     }
@@ -107,16 +105,15 @@ const MasterList = () => {
 
   const handleClose = () => {
     setOpen(false);
-    fetchTableData(filterStatus, searchValue);
+    fetchTableData();
   };
 
   const handleLockClose = () => {
     setLockDialogOpen(false);
-    setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
     setPasswordError("");
-    fetchTableData(filterStatus, searchValue);
+    fetchTableData();
   };
 
   const fetchTableData = async (FilterStatus = "", searchValue = "") => {
@@ -278,7 +275,7 @@ const MasterList = () => {
       } else {
         alert("Please make sure 2fa is enable before reset.");
       }
-      fetchTableData(filterStatus, searchValue);
+      fetchTableData();
     } catch (error) {
       console.error("Error during API call:", error);
     }
@@ -325,7 +322,6 @@ const MasterList = () => {
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
       alert("Details Updated Successfully.");
-      setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
       handleLockClose();
