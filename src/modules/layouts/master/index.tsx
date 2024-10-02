@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from "react";
+import { Close as CloseIcon } from "@mui/icons-material"; // Import Close Icon
+import SecurityIcon from "@mui/icons-material/Security";
 import {
+  Box,
+  Button,
   Card,
-  Icon,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Button,
+  FormControlLabel,
+  Icon,
   IconButton,
   Switch,
   TextField,
-  Checkbox,
-  FormControlLabel,
-  Box,
 } from "@mui/material";
-import { CheckBox, Close as CloseIcon } from "@mui/icons-material"; // Import Close Icon
+import { apiHandler } from "api/apiHandler";
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
 import DataTable from "assets/examples/Tables/DataTable";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
-import { apiHandler } from "api/apiHandler";
-import SecurityIcon from "@mui/icons-material/Security";
+import React, { useEffect, useState } from "react";
 
 const MasterList = () => {
   const [open, setOpen] = useState(false); // State for controlling the dialog visibility
@@ -106,7 +106,7 @@ const MasterList = () => {
       };
       const response = await apiHandler(apiUrl, params);
       const responseData = JSON.parse(response.Data);
-      console.log(responseData);
+      console.log("master list", responseData);
       // Map API data to fit DataTable format
       const formattedRows = responseData.map(
         (
@@ -187,13 +187,11 @@ const MasterList = () => {
     fetchTableData(filterStatus, value);
   };
 
-  const fetchUserData = async () => {
+  const fetchUserData = async (uid?: string) => {
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
-    if (!selectedUserId) {
-      console.error("No user selected for fetching data.");
-      return;
-    }
+    const userId = uid || selectedUserId;
+
     try {
       const apiUrl = "http://18.138.168.43:10311/api/execmem";
       const params = {
@@ -201,12 +199,12 @@ const MasterList = () => {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          FilterUid: selectedUserId,
+          FilterUid: userId,
         }),
       };
       const response = await apiHandler(apiUrl, params);
-      console.log("API Response:", response);
       const parsedData = JSON.parse(response.Data);
+      console.log("Master Account User", parsedData);
       // console.log("Parsed Data:", parsedData);
       // console.log("Uid:", parsedData.Uid);
       // console.log("Name:", parsedData.Name);
@@ -230,39 +228,47 @@ const MasterList = () => {
       // console.log("OtpAuth:", parsedData.OtpAuth);
 
       setIs2FAEnabled(parsedData.Tfa === "1");
+      return parsedData;
     } catch (error) {
       console.error("Error during API call:", error);
     }
   };
 
   const handleReset2FA = async (userId: string) => {
-    const storedToken = localStorage.getItem("token");
-    const storedUsername = localStorage.getItem("username");
-
     try {
-      const apiUrl = "http://18.138.168.43:10311/api/execmem";
-      const params = {
-        EXECF: "SETAUTHDATA",
-        Uid: storedUsername,
-        Token: storedToken,
-        Data: JSON.stringify({
-          Uid: userId,
-          Name: dialogUsername,
-          Pass: dialogPass,
-          Control: dialogControl,
-          Tfa: "0",
-          Class: dialogClass,
-          Status: dialogStatus,
-        }),
-      };
-      const response = await apiHandler(apiUrl, params);
-      if (response.Status === "1") {
-        alert("2FA has been reset successfully.");
-        await fetchTableData();
-      } else {
+      const storedToken = localStorage.getItem("token");
+      const storedUsername = localStorage.getItem("username");
+
+      const user = await fetchUserData(userId);
+
+      if (user.Tfa === "0") {
         alert("Please make sure 2fa is enable before reset.");
+      } else {
+        const apiUrl = "http://18.138.168.43:10311/api/execmem";
+        const params = {
+          EXECF: "SETAUTHDATA",
+          Uid: storedUsername,
+          Token: storedToken,
+          Data: JSON.stringify({
+            Uid: userId,
+            Name: dialogUsername,
+            Pass: dialogPass,
+            Control: dialogControl,
+            Tfa: "0",
+            Class: dialogClass,
+            Status: dialogStatus,
+          }),
+        };
+        const response = await apiHandler(apiUrl, params);
+        console.log("response", response);
+        if (response.Status === "1") {
+          alert("2FA has been reset successfully.");
+          await fetchTableData();
+        } else {
+          alert("Something went wrong.");
+        }
+        fetchTableData(filterStatus, searchValue);
       }
-      fetchTableData(filterStatus, searchValue);
     } catch (error) {
       console.error("Error during API call:", error);
     }
