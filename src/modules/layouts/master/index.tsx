@@ -1,28 +1,28 @@
-import { Close as CloseIcon } from "@mui/icons-material"; // Import Close Icon
-import SecurityIcon from "@mui/icons-material/Security";
+import React, { useState, useEffect } from "react";
 import {
-  Box,
-  Button,
   Card,
-  Checkbox,
+  Icon,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  FormControlLabel,
-  Icon,
+  Button,
   IconButton,
   Switch,
   TextField,
+  Checkbox,
+  FormControlLabel,
+  Box,
 } from "@mui/material";
-import { apiHandler } from "api/apiHandler";
+import { CheckBox, Close as CloseIcon } from "@mui/icons-material"; // Import Close Icon
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
 import DataTable from "assets/examples/Tables/DataTable";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
-import React, { useEffect, useState } from "react";
+import { apiHandler } from "api/apiHandler";
+import SecurityIcon from "@mui/icons-material/Security";
 
 const MasterList = () => {
   const [open, setOpen] = useState(false); // State for controlling the dialog visibility
@@ -135,7 +135,7 @@ const MasterList = () => {
       };
       const response = await apiHandler(apiUrl, params);
       const responseData = JSON.parse(response.Data);
-      console.log("master list", responseData);
+      console.log(responseData);
       // Map API data to fit DataTable format
       const formattedRows = responseData.map(
         (
@@ -214,11 +214,13 @@ const MasterList = () => {
     fetchTableData(filterStatus, value);
   };
 
-  const fetchUserData = async (uid?: string) => {
+  const fetchUserData = async () => {
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
-    const userId = uid || selectedUserId;
-
+    if (!selectedUserId) {
+      console.error("No user selected for fetching data.");
+      return;
+    }
     try {
       const apiUrl = "http://18.138.168.43:10311/api/execmem";
       const params = {
@@ -226,18 +228,12 @@ const MasterList = () => {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          FilterUid: userId,
+          FilterUid: selectedUserId,
         }),
       };
       const response = await apiHandler(apiUrl, params);
+      console.log("API Response:", response);
       const parsedData = JSON.parse(response.Data);
-<<<<<<< HEAD
-=======
-      console.log("Master Account User", parsedData);
-      // console.log("Parsed Data:", parsedData);
-      // console.log("Uid:", parsedData.Uid);
-      // console.log("Name:", parsedData.Name);
->>>>>>> e6477a4a89a1c32f2a3cab8cfa3ed34ac1dde2e1
 
       setDialogUserID(parsedData.Uid);
       setDialogUsername(parsedData.Name);
@@ -248,15 +244,16 @@ const MasterList = () => {
       setDialogStatus(parsedData.Status);
 
       setIs2FAEnabled(parsedData.Tfa === "1");
-      return parsedData;
     } catch (error) {
       console.error("Error during API call:", error);
     }
   };
 
   const handleReset2FA = async (userId: string) => {
+    const storedToken = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
+
     try {
-<<<<<<< HEAD
       const apiUrl = "http://18.138.168.43:10311/api/execmem";
       const params = {
         EXECF: "SETAUTHDATA",
@@ -276,40 +273,7 @@ const MasterList = () => {
       if (response.Status === "1") {
         alert("2FA has been reset successfully.");
       } else {
-=======
-      const storedToken = localStorage.getItem("token");
-      const storedUsername = localStorage.getItem("username");
-
-      const user = await fetchUserData(userId);
-
-      if (user.Tfa === "0") {
->>>>>>> e6477a4a89a1c32f2a3cab8cfa3ed34ac1dde2e1
         alert("Please make sure 2fa is enable before reset.");
-      } else {
-        const apiUrl = "http://18.138.168.43:10311/api/execmem";
-        const params = {
-          EXECF: "SETAUTHDATA",
-          Uid: storedUsername,
-          Token: storedToken,
-          Data: JSON.stringify({
-            Uid: userId,
-            Name: dialogUsername,
-            Pass: dialogPass,
-            Control: dialogControl,
-            Tfa: "0",
-            Class: dialogClass,
-            Status: dialogStatus,
-          }),
-        };
-        const response = await apiHandler(apiUrl, params);
-        console.log("response", response);
-        if (response.Status === "1") {
-          alert("2FA has been reset successfully.");
-          await fetchTableData();
-        } else {
-          alert("Something went wrong.");
-        }
-        fetchTableData(filterStatus, searchValue);
       }
       fetchTableData();
     } catch (error) {
