@@ -40,7 +40,7 @@ const MasterList = () => {
   const [dialogClass, setDialogClass] = useState("");
   const [dialogStatus, setDialogStatus] = useState("");
   const [newPassword, setNewPassword] = useState(""); // State for the new password
-  const [confirmPassword, setConfirmPassword] = useState(""); 
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
   const handleEditClick = async (userId: string) => {
