@@ -46,7 +46,7 @@ const MasterList = () => {
   const handleEditClick = async (userId: string) => {
     setSelectedUserId(userId);
     setOpen(true);
-    await fetchUserData();
+    // await fetchUserData(userId);
   };
 
   const handleEditSaveClick = async (userId: string) => {
@@ -77,7 +77,6 @@ const MasterList = () => {
       // }
       alert("User Details Updated Successfully.");
       handleClose();
-      fetchTableData();
     } catch (error) {
       console.error("Error during API call:", error);
     }
@@ -86,20 +85,21 @@ const MasterList = () => {
   const handle2FAChange = (event: {
     target: { checked: boolean | ((prevState: boolean) => boolean) };
   }) => {
+    const isChecked = event.target.checked;
     setIs2FAEnabled(event.target.checked);
+    setDialogTfa(isChecked ? "1" : "0");
     fetchTableData();
   };
 
   const handleLockClick = async (userId: string) => {
     setLockDialogOpen(true); // Open the lock dialog
-    setSelectedUserId(userId); // Set the selected user ID
-
-    await fetchUserData();
+    setSelectedUserId(userId);
+    await fetchUserData(userId);
   };
 
   useEffect(() => {
     if (selectedUserId) {
-      fetchUserData();
+      fetchUserData(selectedUserId);
     }
   }, [selectedUserId]);
 
@@ -214,13 +214,9 @@ const MasterList = () => {
     fetchTableData(filterStatus, value);
   };
 
-  const fetchUserData = async () => {
+  const fetchUserData = async (userId: string) => {
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
-    if (!selectedUserId) {
-      console.error("No user selected for fetching data.");
-      return;
-    }
     try {
       const apiUrl = "http://18.138.168.43:10311/api/execmem";
       const params = {
@@ -228,7 +224,7 @@ const MasterList = () => {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          FilterUid: selectedUserId,
+          FilterUid: userId,
         }),
       };
       const response = await apiHandler(apiUrl, params);
@@ -256,26 +252,41 @@ const MasterList = () => {
     try {
       const apiUrl = "http://18.138.168.43:10311/api/execmem";
       const params = {
-        EXECF: "SETAUTHDATA",
+        EXECF: "GETAUTHDATA",
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          Uid: userId,
-          Name: dialogUsername,
-          Pass: dialogPass,
-          Control: dialogControl,
-          Tfa: "0",
-          Class: dialogClass,
-          Status: dialogStatus,
+          FilterUid: userId,
         }),
       };
       const response = await apiHandler(apiUrl, params);
-      if (response.Status === "1") {
-        alert("2FA has been reset successfully.");
+      console.log("API Response:", response);
+      const parsedData = JSON.parse(response.Data);
+      if (parsedData.Tfa === "1") {
+        try {
+          const apiUrl = "http://18.138.168.43:10311/api/execmem";
+          const params = {
+            EXECF: "SETAUTHDATA",
+            Uid: storedUsername,
+            Token: storedToken,
+            Data: JSON.stringify({
+              Uid: userId,
+              Name: parsedData.Name,
+              Pass: parsedData.Pass,
+              Control: parsedData.Control,
+              Tfa: "0",
+              Class: parsedData.Class,
+              Status: parsedData.Status,
+            }),
+          };
+          const response = await apiHandler(apiUrl, params);
+          alert("2FA Reset Successfully.");
+        } catch (error) {
+          console.error("Error during API call:", error);
+        }
       } else {
-        alert("Please make sure 2fa is enable before reset.");
+        alert("Please make sure you enable 2FA.");
       }
-      fetchTableData();
     } catch (error) {
       console.error("Error during API call:", error);
     }
@@ -285,7 +296,6 @@ const MasterList = () => {
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
 
-    // Check for empty passwords and spaces
     if (!newPassword || !confirmPassword) {
       setPasswordError("All password fields are required.");
       return;
@@ -316,7 +326,7 @@ const MasterList = () => {
           Control: dialogControl,
           Tfa: dialogTfa,
           Class: dialogClass,
-          Status: is2FAEnabled ? "1" : "0",
+          Status: dialogStatus,
         }),
       };
       const response = await apiHandler(apiUrl, params);
@@ -325,7 +335,7 @@ const MasterList = () => {
       setNewPassword("");
       setConfirmPassword("");
       handleLockClose();
-      fetchTableData(filterStatus, searchValue);
+      fetchTableData();
       const parsedData = JSON.parse(response.Data);
       console.log("Parsed Data:", parsedData);
     } catch (error) {
