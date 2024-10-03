@@ -42,6 +42,7 @@ const MasterList = () => {
   const [newPassword, setNewPassword] = useState(""); // State for the new password
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [statusClickCount, setStatusClickCount] = useState(0); // Track the number of clicks
 
   const handleEditClick = async (userId: string) => {
     setSelectedUserId(userId);
@@ -128,7 +129,7 @@ const MasterList = () => {
         Token: storedToken,
         Data: JSON.stringify({
           FilterClass: "mtr",
-          FilterName: searchValue,
+          FilterName: searchValue || "",
           FilterUid: "",
           FilterStatus: FilterStatus,
         }),
@@ -203,7 +204,23 @@ const MasterList = () => {
   }, []);
 
   const handleStatusHeaderClick = () => {
-    const newFilterStatus = filterStatus === "0" ? "1" : "0";
+    // const newFilterStatus = filterStatus === "0" ? "1" : "0";
+    // setFilterStatus(newFilterStatus);
+    // fetchTableData(newFilterStatus, searchValue);
+
+    let newFilterStatus = "";
+    let newClickCount = statusClickCount + 1;
+
+    if (newClickCount === 1) {
+      newFilterStatus = "1"; // First click: filter active
+    } else if (newClickCount === 2) {
+      newFilterStatus = "0"; // Second click: filter inactive
+    } else {
+      newFilterStatus = ""; // Third click: no filtering
+      newClickCount = 0; // Reset count after third click
+    }
+
+    setStatusClickCount(newClickCount);
     setFilterStatus(newFilterStatus);
     fetchTableData(newFilterStatus, searchValue);
   };
@@ -211,7 +228,12 @@ const MasterList = () => {
   const handleSearchChange = (e: { target: { value: any } }) => {
     const value = e.target.value;
     setSearchValue(value);
-    fetchTableData(filterStatus, value);
+    // fetchTableData(filterStatus, value);
+    if (value.trim() === "") {
+      fetchTableData(); // Fetch without the search value
+    } else {
+      fetchTableData(filterStatus, value); // Fetch with the search value
+    }
   };
 
   const fetchUserData = async (userId: string) => {
