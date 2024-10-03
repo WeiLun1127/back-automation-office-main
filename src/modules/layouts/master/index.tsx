@@ -158,7 +158,12 @@ const MasterList = () => {
           last_update: item.LastUpdateOnUTC,
           last_ip: item.LastIP,
           last_login: item.LastLoginOnUTC,
-          status: <Switch checked={item.Status === "1"} />,
+          status: (
+            <Switch
+              checked={item.Status === "1"}
+              onChange={() => handleStatusChange(item.Uid, item.Status === "1" ? "0" : "1")}
+            />
+          ),
           action: (
             <MDBox display="flex" gap={2} alignItems="center">
               <Icon
@@ -233,6 +238,34 @@ const MasterList = () => {
       fetchTableData(); // Fetch without the search value
     } else {
       fetchTableData(filterStatus, value); // Fetch with the search value
+    }
+  };
+
+  const handleStatusChange = async (userId: string, newStatus: string) => {
+    const storedToken = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
+
+    try {
+      const apiUrl = "http://18.138.168.43:10311/api/execmem";
+      const params = {
+        EXECF: "SETAUTHDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          Uid: userId,
+          Status: newStatus, // Update the status based on switch toggle
+        }),
+      };
+
+      const response = await apiHandler(apiUrl, params);
+      if (response.Status === "1") {
+        alert("User status updated successfully.");
+        fetchTableData(); // Refresh the table data after status change
+      } else {
+        alert("Error updating user status.");
+      }
+    } catch (error) {
+      console.error("Error during status update:", error);
     }
   };
 
@@ -518,7 +551,7 @@ const MasterList = () => {
             fullWidth
             label="New Password"
             variant="outlined"
-            value={newPassword} // Bind state variable
+            value={newPassword}
             onChange={handleNewPasswordChange}
             sx={{ mt: 2 }}
           />
@@ -526,9 +559,9 @@ const MasterList = () => {
             fullWidth
             label="Confirm Password"
             variant="outlined"
-            value={confirmPassword} // Bind state variable
-            onChange={handleConfirmPasswordChange} // Updated handler for confirm password
-            error={!!passwordError} // Show error styling if there's an error
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+            error={!!passwordError}
             helperText={passwordError}
             sx={{ mt: 2 }}
           />
