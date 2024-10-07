@@ -24,7 +24,7 @@ import DataTable from "assets/examples/Tables/DataTable";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Flag from "react-world-flags";
 
 function CurrencyTables(): JSX.Element {
@@ -47,300 +47,118 @@ function CurrencyTables(): JSX.Element {
       { Header: "status", accessor: "status", width: "10%" },
       { Header: "action", accessor: "action", width: "7%" },
     ],
-    rows: [
-      {
-        id: 1,
-        currency: "THB",
-        country: (
-          <div>
-            <Flag code="TH" style={{ width: "20px", marginRight: "10px" }} />
-            Thailand
-          </div>
-        ),
-        rate: "7.55", // Example: 1 MYR = 7.55 THB
-        ratio: "1",
-        status: (
-          <Switch
-            checked={true} // Set this based on your logic (1 for true, 0 for false)
-            onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
-          />
-        ),
-        action: (
-          <MDBox display="flex" gap={1} alignItems="center">
-            <Icon
-              style={{ cursor: "pointer", fontSize: 20 }}
-              onClick={() =>
-                handleEditClick({
-                  currency: "THB",
-                  country: "Thailand",
-                  rate: "7.55",
-                  ratio: "1",
-                  status: true,
-                })
-              }
-            >
-              edit
-            </Icon>
-          </MDBox>
-        ),
-      },
-      {
-        id: 2,
-        currency: "MYR",
-        country: (
-          <div>
-            <Flag code="MY" style={{ width: "20px", marginRight: "10px" }} />
-            Malaysia
-          </div>
-        ),
-        rate: "1",
-        ratio: "1",
-        status: (
-          <Switch
-            checked={true}
-            onChange={(event) => handleStatusChange(1, event.target.checked)}
-          />
-        ),
-        action: (
-          <MDBox display="flex" gap={1} alignItems="center">
-            <Icon
-              style={{ cursor: "pointer", fontSize: 20 }}
-              onClick={() =>
-                handleEditClick({
-                  currency: "MYR",
-                  country: "Malaysia",
-                  rate: "1",
-                  ratio: "1",
-                  status: true,
-                })
-              }
-            >
-              edit
-            </Icon>
-          </MDBox>
-        ),
-      },
-      {
-        id: 3,
-        currency: "SGD",
-        country: (
-          <div>
-            <Flag code="SG" style={{ width: "20px", marginRight: "10px" }} />
-            Singapore
-          </div>
-        ),
-        rate: "0.31254",
-        ratio: "1",
-        status: (
-          <Switch
-            checked={true}
-            onChange={(event) => handleStatusChange(1, event.target.checked)}
-          />
-        ),
-        action: (
-          <MDBox display="flex" gap={1} alignItems="center">
-            <Icon
-              style={{ cursor: "pointer", fontSize: 20 }}
-              onClick={() =>
-                handleEditClick({
-                  currency: "SGD",
-                  country: "Singapore",
-                  rate: "0.31254",
-                  ratio: "1",
-                  status: true,
-                })
-              }
-            >
-              edit
-            </Icon>
-          </MDBox>
-        ),
-      },
-      {
-        id: 4,
-        currency: "JPY",
-        country: (
-          <div>
-            <Flag code="JP" style={{ width: "20px", marginRight: "10px" }} />
-            Japan
-          </div>
-        ),
-        rate: "30.50", // Example: 1 MYR = 30.50 JPY
-        ratio: "1",
-        status: (
-          <Switch
-            checked={true}
-            onChange={(event) => handleStatusChange(1, event.target.checked)}
-          />
-        ),
-        action: (
-          <MDBox display="flex" gap={1} alignItems="center">
-            <Icon
-              style={{ cursor: "pointer", fontSize: 20 }}
-              onClick={() =>
-                handleEditClick({
-                  currency: "JPY",
-                  country: "Japan",
-                  rate: "30.50",
-                  ratio: "1",
-                  status: true,
-                })
-              }
-            >
-              edit
-            </Icon>
-          </MDBox>
-        ),
-      },
-      {
-        id: 5,
-        currency: "KRW",
-        country: (
-          <div>
-            <Flag code="KR" style={{ width: "20px", marginRight: "10px" }} />
-            Korea
-          </div>
-        ),
-        rate: "280", // Example: 1 MYR = 280 KRW
-        ratio: "1",
-        status: (
-          <Switch
-            checked={true} // Set this based on your logic (1 for true, 0 for false)
-            onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
-          />
-        ),
-        action: (
-          <MDBox display="flex" gap={1} alignItems="center">
-            <Icon
-              style={{ cursor: "pointer", fontSize: 20 }}
-              onClick={() =>
-                handleEditClick({
-                  currency: "KRW",
-                  country: "Korea",
-                  rate: "280",
-                  ratio: "1",
-                  status: true,
-                })
-              }
-            >
-              edit
-            </Icon>
-          </MDBox>
-        ),
-      },
-      {
-        id: 6,
-        currency: "VND",
-        country: (
-          <div>
-            <Flag code="VN" style={{ width: "20px", marginRight: "10px" }} />
-            Vietnam
-          </div>
-        ),
-        rate: "5462", // Example: 1 MYR = 5462 VND
-        ratio: "1",
-        status: (
-          <Switch
-            checked={true} // Set this based on your logic (1 for true, 0 for false)
-            onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
-          />
-        ),
-        action: (
-          <MDBox display="flex" gap={1} alignItems="center">
-            <Icon
-              style={{ cursor: "pointer", fontSize: 20 }}
-              onClick={() =>
-                handleEditClick({
-                  currency: "VND",
-                  country: "Vietnam",
-                  rate: "5462",
-                  ratio: "1",
-                  status: true,
-                })
-              }
-            >
-              edit
-            </Icon>
-          </MDBox>
-        ),
-      },
-      {
-        id: 7,
-        currency: "IDR",
-        country: (
-          <div>
-            <Flag code="ID" style={{ width: "20px", marginRight: "10px" }} />
-            Indonesia
-          </div>
-        ),
-        rate: "3300", // Example: 1 MYR = 3300 IDR
-        ratio: "1",
-        status: (
-          <Switch
-            checked={true} // Set this based on your logic (1 for true, 0 for false)
-            onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
-          />
-        ),
-        action: (
-          <MDBox display="flex" gap={1} alignItems="center">
-            <Icon
-              style={{ cursor: "pointer", fontSize: 20 }}
-              onClick={() =>
-                handleEditClick({
-                  currency: "IDR",
-                  country: "Indonesia",
-                  rate: "3300",
-                  ratio: "1",
-                  status: true,
-                })
-              }
-            >
-              edit
-            </Icon>
-          </MDBox>
-        ),
-      },
-      {
-        id: 8,
-        currency: "INR",
-        country: (
-          <div>
-            <Flag code="IN" style={{ width: "20px", marginRight: "10px" }} />
-            India
-          </div>
-        ),
-        rate: "18.45", // Example: 1 MYR = 18.45 INR
-        ratio: "1",
-        status: (
-          <Switch
-            checked={true} // Set this based on your logic (1 for true, 0 for false)
-            onChange={(event) => handleStatusChange(1, event.target.checked)} // Pass the id and the new status
-          />
-        ),
-        action: (
-          <MDBox display="flex" gap={1} alignItems="center">
-            <Icon
-              style={{ cursor: "pointer", fontSize: 20 }}
-              onClick={() =>
-                handleEditClick({
-                  currency: "INR",
-                  country: "India",
-                  rate: "18.45",
-                  ratio: "1",
-                  status: true,
-                })
-              }
-            >
-              edit
-            </Icon>
-          </MDBox>
-        ),
-      },
-    ],
+    rows: [],
   });
+
+  const fetchCurrencyData = async () => {
+    const storedToken = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
+
+    try {
+      const apiUrl = "http://18.138.168.43:10312/api/execset";
+      const params = {
+        EXECF: "GETCURRSBYSTATUS",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          Currency: "",
+          Status: "",
+        }),
+      };
+      const response = await apiHandler(apiUrl, params);
+      const responseData = JSON.parse(response.Data);
+      console.log(responseData);
+      // Map API data to fit DataTable format
+      const formattedRows = responseData.map(
+        (
+          item: {
+            Currency: any;
+            Country: string;
+            Rate: any;
+            Ratio: any;
+            Status: any;
+          },
+          index: number
+        ) => ({
+          id: index + 1, // Generate an ID based on index
+          currency: item.Currency,
+          country: (
+            <Box display="flex" alignItems="center">
+              <Flag
+                code={
+                  currencyOptions.find((option) => option.country === item.Country)?.countryCode
+                }
+                style={{ width: 24, height: 16, marginRight: "8px" }}
+              />
+              {item.Country}
+            </Box>
+          ),
+          rate: item.Rate,
+          ratio: item.Ratio,
+          status: (
+            <Switch
+              checked={item.Status === "1"}
+              onChange={() => handleStatusChangeCurrencyTable(item.Currency, item.Status === "1")}
+            />
+          ),
+          action: (
+            <MDBox display="flex" gap={1} alignItems="center">
+              <Icon
+                style={{ cursor: "pointer", fontSize: 20 }}
+                onClick={() => handleEditClick(item.Currency)}
+              >
+                edit
+              </Icon>
+            </MDBox>
+          ),
+        })
+      );
+      setTableData((prevData) => ({
+        ...prevData,
+        rows: formattedRows,
+      }));
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCurrencyData();
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
+  };
+
+  const handleStatusChangeCurrencyTable = async (currency: string, currentStatus: boolean) => {
+    const storedUsername = localStorage.getItem("username");
+    const storedToken = localStorage.getItem("token");
+
+    // Invert the current status
+    const updatedStatus = currentStatus ? "0" : "1";
+
+    try {
+      const apiUrl = "http://18.138.168.43:10312/api/execset";
+      const params = {
+        EXECF: "SETCURRDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          Currency: currency,
+          Status: updatedStatus,
+        }),
+      };
+
+      const response = await apiHandler(apiUrl, params);
+      console.log("API Response:", response);
+
+      if (response.Status === "1") {
+        alert("Currency status updated successfully!");
+        fetchCurrencyData(); // Refresh the table data
+      }
+    } catch (error) {
+      console.error("Error updating currency status:", error);
+    }
   };
 
   const handleClose = () => {
@@ -361,33 +179,56 @@ function CurrencyTables(): JSX.Element {
     setSelectedCountry(countryOption ? countryOption.country : "");
   };
 
-  const handleRatioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    if (/^\d*$/.test(value)) {
-      setRatio(value);
+  const handleRatioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow up to 3 digits before the decimal and 5 digits after the decimal
+    const ratioPattern = /^\d{0,3}(\.\d{0,5})?$/;
+    if (ratioPattern.test(value)) {
+      setEditCurrencyData((prevData: any) => ({
+        ...prevData,
+        ratio: value,
+      }));
     }
   };
 
-  const handleRateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    if (/^\d*\.?\d{0,5}$/.test(value)) {
-      setRate(value);
+  const handleRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow up to 3 digits before the decimal and 5 digits after the decimal
+    const ratePattern = /^\d{0,3}(\.\d{0,5})?$/;
+    if (ratePattern.test(value)) {
+      setEditCurrencyData((prevData: any) => ({
+        ...prevData,
+        rate: value,
+      }));
     }
   };
 
   const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsSwitchOn(event.target.checked);
+    setEditCurrencyData((prevData: any) => ({
+      ...prevData,
+      status: event.target.checked,
+    }));
   };
 
-  const handleEditClick = async (currencyData: {
-    currency: string;
-    country: string;
-    rate: string;
-    ratio: string;
-    status: boolean;
-  }) => {
-    // setEditCurrencyData(currencyData);
-    // setEditOpen(true);
+  const handleNewRatioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const ratioPattern = /^\d{0,3}(\.\d{0,5})?$/;
+    if (ratioPattern.test(value)) {
+      setRatio(value); // Set the ratio for the new currency dialog
+    }
+  };
+
+  const handleNewRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const ratePattern = /^\d{0,3}(\.\d{0,5})?$/;
+    if (ratePattern.test(value)) {
+      setRate(value); // Set the rate for the new currency dialog
+    }
+  };
+
+  const handleEditClick = async (currency: string) => {
+    const storedUsername = localStorage.getItem("username");
+    const storedToken = localStorage.getItem("token");
     try {
       const apiUrl = "http://18.138.168.43:10312/api/execset";
       const params = {
@@ -395,41 +236,31 @@ function CurrencyTables(): JSX.Element {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          Currency: currencyData.currency,
-          Status: currencyData.status ? "1" : "0", // Convert boolean to string "1" or "0"
+          Currency: currency,
+          Status: "", // Convert boolean to string "1" or "0"
         }),
       };
 
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
-
       const dataArray = JSON.parse(response.Data);
-
-      if (response.Status == 1 && dataArray.length > 0) {
-        const { Currency, Country, Rate, Ratio, Status } = dataArray[0]; // Destructure the first item
-
-        // // Set the edit currency data and open the edit dialog
-        // setEditCurrencyData(currencyData);
-        setEditCurrencyData({
-          currency: Currency,
-          country: Country,
-          rate: Rate,
-          ratio: Ratio,
-          status: Status === "1", // Convert string to boolean
-        });
-        setEditOpen(true);
-      } else {
-        alert("An error occurred, please try again.");
-      }
+      const currencyData = dataArray[0];
+      setEditCurrencyData({
+        currency: currencyData.Currency,
+        country: currencyData.Country,
+        rate: currencyData.Rate,
+        ratio: currencyData.Ratio,
+        status: currencyData.Status === "1",
+      });
+      setEditOpen(true);
     } catch (error) {
       console.error("Error during API call:", error);
     }
   };
 
-  const storedUsername = localStorage.getItem("username");
-  const storedToken = localStorage.getItem("token");
-
   const handleSubmit = async () => {
+    const storedUsername = localStorage.getItem("username");
+    const storedToken = localStorage.getItem("token");
     try {
       const apiUrl = "http://18.138.168.43:10312/api/execset";
       const params = {
@@ -447,17 +278,22 @@ function CurrencyTables(): JSX.Element {
 
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
-      handleClose(); // Close the dialog after successful submission
+      if (response.Status === "1") {
+        alert("Currency added successfully!");
+        fetchCurrencyData(); // Refresh the table data after successful submission
+        handleClose(); // Close the dialog
+      } else {
+        alert("Failed to add currency.");
+      }
     } catch (error) {
       console.error("Error during API call:", error);
     }
   };
 
   const handleEditSubmit = async () => {
-    // API submit logic for edit
-    // handleEditClose();
-    if (!editCurrencyData) return; // Ensure editCurrencyData is not null
-
+    const storedUsername = localStorage.getItem("username");
+    const storedToken = localStorage.getItem("token");
+    if (!editCurrencyData) return;
     try {
       const apiUrl = "http://18.138.168.43:10312/api/execset";
       const params = {
@@ -469,25 +305,27 @@ function CurrencyTables(): JSX.Element {
           Country: editCurrencyData.country,
           Ratio: editCurrencyData.ratio,
           Rate: editCurrencyData.rate,
-          Status: editCurrencyData.status ? "1" : "0", // Convert boolean to string "1" or "0"
+          Status: editCurrencyData.status ? "1" : "0",
         }),
       };
 
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
+      console.log(response.Status);
 
-      // Optionally handle the response (e.g., show a success message)
-      if (response.Status === 1) {
-        // Update the table data or handle success
+      if (response.Status === "1") {
         alert("Currency data updated successfully!");
-        // } else {
-        //   alert("An error occurred, please try again.");
+        fetchCurrencyData();
       }
     } catch (error) {
       console.error("Error during API call:", error);
     } finally {
-      handleEditClose(); // Close the edit dialog
+      handleEditClose();
     }
+  };
+
+  const handleCreateSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsSwitchOn(event.target.checked); // Update this function for the "Add New Currency" dialog
   };
 
   const currencyOptions = [
@@ -503,10 +341,6 @@ function CurrencyTables(): JSX.Element {
 
   const selectedDialogCountry =
     currencyOptions.find((option) => option.value === selectedCurrency)?.country || "";
-
-  const handleStatusChange = (id: number, checked: boolean) => {
-    console.log(`Status changed for ID: ${id} - New Status: ${checked}`);
-  };
 
   return (
     <DashboardLayout>
@@ -628,7 +462,7 @@ function CurrencyTables(): JSX.Element {
             label="Ratio"
             variant="outlined"
             value={ratio}
-            onChange={handleRatioChange}
+            onChange={handleNewRatioChange}
             sx={{ mt: 2 }}
           />
           <TextField
@@ -636,11 +470,13 @@ function CurrencyTables(): JSX.Element {
             label="Rate"
             variant="outlined"
             value={rate}
-            onChange={handleRateChange}
+            onChange={handleNewRateChange}
             sx={{ mt: 2 }}
           />
           <FormControlLabel
-            control={<Switch checked={isSwitchOn} onChange={handleSwitchChange} color="primary" />}
+            control={
+              <Switch checked={isSwitchOn} onChange={handleCreateSwitchChange} color="primary" />
+            }
             label="Show"
             sx={{ mt: 2 }}
           />
@@ -675,38 +511,18 @@ function CurrencyTables(): JSX.Element {
             <Select
               labelId="edit-currency-select-label"
               label="Currency"
-              value={editCurrencyData?.currency || ""}
-              onChange={(e) => {
-                const currency = e.target.value;
-                setEditCurrencyData({
-                  ...editCurrencyData,
-                  currency,
-                });
-              }}
-              renderValue={(selected) => {
-                const selectedCurrencyOption = currencyOptions.find(
-                  (option) => option.value === selected
-                );
-                return (
-                  <Box display="flex" alignItems="center" sx={{ height: "45px" }}>
-                    <Flag
-                      code={selectedCurrencyOption?.countryCode}
-                      style={{ width: 24, height: 16, marginRight: "8px" }}
-                    />
-                    {selectedCurrencyOption?.label}
-                  </Box>
-                );
-              }}
+              value={editCurrencyData?.currency}
+              disabled
               sx={{
                 "& .MuiSelect-select": {
                   display: "flex",
                   alignItems: "center",
-                  minHeight: "45px", // Ensure minimum height
-                  height: "45px", // Specific height
-                  padding: "0 8px", // Add padding
+                  minHeight: "46px",
+                  height: "46px",
+                  padding: "0 8px",
                 },
                 "& .MuiInputBase-root": {
-                  height: "45px", // Consistent height for the root
+                  height: "46px",
                 },
               }}
             >
@@ -722,12 +538,10 @@ function CurrencyTables(): JSX.Element {
             fullWidth
             label="Country"
             variant="outlined"
-            value={
-              currencyOptions.find((option) => option.value === editCurrencyData?.currency)
-                ?.country || ""
-            }
+            value={editCurrencyData?.country}
+            disabled
             InputProps={{
-              readOnly: true, // Make the country field read-only
+              readOnly: true,
             }}
             sx={{ mt: 2 }}
           />
@@ -735,39 +549,23 @@ function CurrencyTables(): JSX.Element {
             fullWidth
             label="Rate"
             variant="outlined"
-            value={editCurrencyData?.rate || ""}
-            // onChange={(e) => setEditCurrencyData({ ...editCurrencyData, rate: e.target.value })}
-            onChange={(e) => {
-              const newRate = e.target.value;
-              // Allow numbers and decimals with up to 5 decimal places
-              if (/^\d*\.?\d{0,5}$/.test(newRate)) {
-                setEditCurrencyData({ ...editCurrencyData, rate: newRate });
-              }
-            }}
+            value={editCurrencyData?.rate}
+            onChange={handleRateChange}
             sx={{ mt: 2 }}
           />
           <TextField
             fullWidth
             label="Ratio"
             variant="outlined"
-            value={editCurrencyData?.ratio || ""}
-            // onChange={(e) => setEditCurrencyData({ ...editCurrencyData, ratio: e.target.value })}
-            onChange={(e) => {
-              const newRatio = e.target.value;
-              // Allow only integers
-              if (/^\d*$/.test(newRatio)) {
-                setEditCurrencyData({ ...editCurrencyData, ratio: newRatio });
-              }
-            }}
+            value={editCurrencyData?.ratio}
+            onChange={handleRatioChange}
             sx={{ mt: 2 }}
           />
           <FormControlLabel
             control={
               <Switch
                 checked={editCurrencyData?.status}
-                onChange={(e) =>
-                  setEditCurrencyData({ ...editCurrencyData, status: e.target.checked })
-                }
+                onChange={handleSwitchChange}
                 color="primary"
               />
             }

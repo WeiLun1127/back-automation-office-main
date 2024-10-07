@@ -30,6 +30,7 @@ import routes from "routes";
 
 export type Pathname =
   | "apiControl"
+  | "accessibility"
   | "companyList"
   | "authentication"
   | "createMasterAccount"
@@ -244,6 +245,8 @@ export default function App() {
   const getRouteElement = (route: Pathname) => {
     switch (route) {
       case "apiControl":
+        return <ApiControl />;
+      case "accessibility":
         return <ApiControl />;
       case "companyList":
         return <CompanyList />;

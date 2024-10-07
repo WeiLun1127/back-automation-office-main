@@ -471,7 +471,7 @@ const MasterList = () => {
       </MDBox>
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>
+        <DialogTitle style={{ color: "black" }}>
           Edit User
           <IconButton
             aria-label="close"
@@ -487,8 +487,11 @@ const MasterList = () => {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            You are editing the details for User ID: {selectedUserId}.
+          <DialogContentText
+            paddingLeft="10px"
+            style={{ color: "black", textDecoration: "underline" }}
+          >
+            {selectedUserId}
           </DialogContentText>
           <TextField
             fullWidth
@@ -500,6 +503,20 @@ const MasterList = () => {
           />
           <TextField fullWidth label="Phone Number" variant="outlined" sx={{ mt: 2 }} />
           <TextField fullWidth label="Email" variant="outlined" sx={{ mt: 2 }} />
+          <TextField
+            fullWidth
+            label="Remark"
+            variant="outlined"
+            sx={{
+              mt: 2,
+              "& .MuiOutlinedInput-root": {
+                minHeight: "80px", // Adjust height here
+                "& fieldset": {
+                  borderWidth: "2px", // Optional: Increase border thickness
+                },
+              },
+            }}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleEditSaveClick(selectedUserId)} color="primary">
@@ -509,7 +526,7 @@ const MasterList = () => {
       </Dialog>
 
       <Dialog open={lockDialogOpen} onClose={handleLockClose}>
-        <DialogTitle>
+        <DialogTitle style={{ color: "black" }}>
           Change Password
           <IconButton
             aria-label="close"
@@ -536,7 +553,7 @@ const MasterList = () => {
             disabled
             sx={{ mt: 2 }}
           />
-          <TextField
+          {/* <TextField
             fullWidth
             label="Username"
             variant="outlined"
@@ -546,7 +563,7 @@ const MasterList = () => {
             }}
             disabled
             sx={{ mt: 2 }}
-          />
+          /> */}
           <TextField
             fullWidth
             label="New Password"

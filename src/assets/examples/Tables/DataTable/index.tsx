@@ -1,26 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
-
 import { useAsyncDebounce, useGlobalFilter, usePagination, useSortBy, useTable } from "react-table";
-
 import Autocomplete from "@mui/material/Autocomplete";
 import Icon from "@mui/material/Icon";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
-
 import MDBox from "components/MDBox";
 import MDInput from "components/MDInput";
 import MDPagination from "components/MDPagination";
 import MDTypography from "components/MDTypography";
-
 import DataTableBodyCell from "assets/examples/Tables/DataTable/DataTableBodyCell";
 import DataTableHeadCell from "assets/examples/Tables/DataTable/DataTableHeadCell";
-
 import FilterListIcon from "@mui/icons-material/FilterList";
 import Button from "@mui/material/Button";
 import dayjs from "dayjs";
-
 import ClearButton from "@mui/icons-material/Clear";
 import CloseIcon from "@mui/icons-material/Close";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -37,7 +31,6 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 import MDDatePicker from "components/MDDatePicker";
-
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CircleIcon from "@mui/icons-material/Circle";
@@ -50,6 +43,8 @@ import StoreIcon from "@mui/icons-material/Store";
 import SellIcon from "@mui/icons-material/Sell";
 import Flag from "react-flagkit";
 import { styled } from "@mui/material/styles";
+import { faGlobe } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const CustomLabel = styled("span")(({ theme }) => ({
   color: "black", // Set font color to black
@@ -108,7 +103,6 @@ interface Props {
   editRows?: number[];
   onEditRow?: (row: number) => void;
   onStatusChange?: (row: number, status: string) => void;
-  //Filter Properties
   applyFilters?: ({
     selectedCreatedDate,
     selectedUpdatedDate,
@@ -135,7 +129,6 @@ function DataTable({
   editRows,
   onEditRow,
   onStatusChange,
-  //Filter Properties
   applyFilters,
 }: Props): JSX.Element {
   let defaultValue: any;
@@ -228,7 +221,6 @@ function DataTable({
     entriesEnd = pageSize * (pageIndex + 1);
   }
 
-  // State to manage the selected filter option
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogExpanded, setDialogExpanded] = useState(false);
@@ -389,7 +381,6 @@ function DataTable({
               />
             </MDBox>
           )}
-          {/* Filter Button */}
           {canFilter && (
             <MDBox display="flex" alignItems="center" ml={2}>
               <Button
@@ -409,6 +400,12 @@ function DataTable({
               >
                 Filters
               </Button>
+
+              <MDBox display="flex" justifyContent="flex-end" p={2}>
+                <IconButton aria-label="filter">
+                  <FontAwesomeIcon icon={faGlobe} style={{ marginLeft: 8 }} />
+                </IconButton>
+              </MDBox>
 
               <Dialog
                 open={openDialog}

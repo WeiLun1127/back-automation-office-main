@@ -79,12 +79,10 @@ const Transactions = () => {
   };
 
   const onStatusChange = (rowId: number, newStatus: string) => {
-    // If the row is already in the statusChange array, update the status
     const updatedStatusChange = statusChange.map((change) =>
       change.rowId === rowId ? { ...change, newStatus } : change
     );
 
-    // If the row is not in the statusChange array, add it
     if (!statusChange.some((change) => change.rowId === rowId)) {
       updatedStatusChange.push({ rowId, newStatus });
     }
@@ -101,7 +99,6 @@ const Transactions = () => {
       );
       console.log("Response Payload:", response.data);
 
-      // Update the local state with the new status
       setTableData((prevTableData) =>
         prevTableData.map((data) =>
           data.id === rowData.id ? { ...data, status: newStatus } : data

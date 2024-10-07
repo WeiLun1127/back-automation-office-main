@@ -33,6 +33,14 @@ const routes = [
       {
         id: "002",
         parentId: "001",
+        name: "Accessibility",
+        key: "accessibility",
+        route: "accessibility",
+        component: <ApiControl />,
+      },
+      {
+        id: "003",
+        parentId: "001",
         name: "Company List",
         key: "company-list",
         route: "companyList",

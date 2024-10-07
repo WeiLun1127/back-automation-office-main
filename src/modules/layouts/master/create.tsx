@@ -320,7 +320,7 @@ const CreateMasterAccount = () => {
 
                 <Grid item xs={12}>
                   <MDBox display="flex" alignItems="center">
-                    <MDTypography variant="button">Show</MDTypography>
+                    <MDTypography variant="button">Status</MDTypography>
                     <Icon style={{ marginLeft: 8, marginRight: 8 }}>visibility</Icon>
                     <Switch
                       checked={isSwitchOn} // Bind the checked state to isSwitchOn
