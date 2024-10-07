@@ -300,13 +300,10 @@ const CreateMasterAccount = () => {
                     )}
                     value={selectedOptions.map((optionValue) =>
                       controlOptions.find((option) => option.value === optionValue)
-                    )} // Map selected values to the corresponding options
+                    )}
                     onChange={(event, value) =>
                       setSelectedOptions(value.map((option) => option.value))
                     }
-                    // onChange={(event, value) =>
-                    //   setSelectedOptions(value.map((option) => option.value))
-                    // }
                   />
                 </Grid>
 

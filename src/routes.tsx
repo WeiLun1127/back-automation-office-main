@@ -11,7 +11,17 @@ import MerchantList from "modules/layouts/merchant";
 import CreateMerchantAccount from "modules/layouts/merchant/create";
 import Transactions from "modules/layouts/report";
 import Authentication from "modules/layouts/security";
-
+import businessIcon from "././assets/images/routes-logo/business.svg";
+import masterIcon from "././assets/images/routes-logo/master.svg";
+import reportIcon from "././assets/images/routes-logo/report.svg";
+import securityIcon from "././assets/images/routes-logo/security.svg";
+import merchantIcon from "././assets/images/routes-logo/merchant.svg";
+import agentIcon from "././assets/images/routes-logo/agent.svg";
+import accountProviderIcon from "././assets/images/routes-logo/accountProvider.svg";
+import productIcon from "././assets/images/routes-logo/products.svg";
+import currencyIcon from "././assets/images/routes-logo/currency.svg";
+import commissionIcon from "././assets/images/routes-logo/commission.svg";
+import logoutIcon from "././assets/images/routes-logo/logout.svg";
 // Images
 
 const routes = [
@@ -20,7 +30,7 @@ const routes = [
     type: "collapse",
     name: "Company Level",
     key: "company-level",
-    icon: <Icon fontSize="medium">business</Icon>,
+    icon: <img src={businessIcon} alt="business" width="24" height="24" />,
     collapse: [
       {
         id: "001",
@@ -53,7 +63,7 @@ const routes = [
     type: "collapse",
     name: "Master",
     key: "master",
-    icon: <Icon fontSize="medium">group</Icon>,
+    icon: <img src={masterIcon} alt="master" width="24" height="24" />,
     collapse: [
       {
         id: "001",
@@ -78,7 +88,7 @@ const routes = [
     type: "collapse",
     name: "Report",
     key: "report",
-    icon: <Icon fontSize="medium">assessment</Icon>,
+    icon: <img src={reportIcon} alt="report" width="24" height="24" />,
     collapse: [
       {
         id: "001",
@@ -95,7 +105,7 @@ const routes = [
     type: "collapse",
     name: "Security",
     key: "security",
-    icon: <Icon fontSize="medium">security</Icon>,
+    icon: <img src={securityIcon} alt="security" width="24" height="24" />,
     collapse: [
       {
         id: "001",
@@ -107,112 +117,112 @@ const routes = [
       },
     ],
   },
-  {
-    id: "005",
-    type: "collapse",
-    name: "Merchant",
-    key: "merchant",
-    icon: <Icon fontSize="medium">shopping_cart</Icon>,
-    collapse: [
-      {
-        id: "001",
-        parentId: "005",
-        name: "Create Account",
-        key: "create-merchant-account",
-        route: "createMerchantAccount",
-        component: <CreateMerchantAccount />,
-      },
-      {
-        id: "002",
-        parentId: "005",
-        name: "Merchant List",
-        key: "merchant-list",
-        route: "merchantList",
-        component: <MerchantList />,
-      },
-    ],
-  },
-  {
-    id: "006",
-    type: "collapse",
-    name: "Account Provider",
-    key: "account-provider",
-    icon: <Icon fontSize="medium">account_box</Icon>,
-    collapse: [
-      {
-        id: "001",
-        parentId: "006",
-        name: "Create Account",
-        key: "create-account-provider",
-        route: "createAccountProvider",
-        component: <CreateAccountProvider />,
-      },
-      {
-        id: "002",
-        parentId: "006",
-        name: "Provider List",
-        key: "account-provider-list",
-        route: "accountProviderList",
-        component: <AccountProviderList />,
-      },
-    ],
-  },
-  {
-    id: "007",
-    type: "collapse",
-    name: "Agent",
-    key: "agent",
-    icon: <Icon fontSize="medium">account_circle</Icon>,
-    collapse: [
-      {
-        id: "001",
-        parentId: "007",
-        name: "Create Account",
-        key: "create-agent",
-        route: "createAgent",
-        component: <CreateAccountProvider />,
-      },
-      {
-        id: "002",
-        parentId: "007",
-        name: "Agent List",
-        key: "agent-list",
-        route: "agentList",
-        component: <AccountProviderList />,
-      },
-    ],
-  },
-  {
-    id: "008",
-    type: "collapse",
-    name: "Commission Broker",
-    key: "Commission",
-    icon: <Icon fontSize="medium">monetization_on</Icon>,
-    collapse: [
-      {
-        id: "001",
-        parentId: "008",
-        name: "Create Account",
-        key: "create-commission",
-        route: "createCommission",
-        component: <CreateAccountProvider />,
-      },
-      {
-        id: "002",
-        parentId: "008",
-        name: "Commission List",
-        key: "commission-list",
-        route: "commissionList",
-        component: <AccountProviderList />,
-      },
-    ],
-  },
+  // {
+  //   id: "005",
+  //   type: "collapse",
+  //   name: "Merchant",
+  //   key: "merchant",
+  //   icon: <img src={merchantIcon} alt="merchant" width="24" height="24" />,
+  //   collapse: [
+  //     {
+  //       id: "001",
+  //       parentId: "005",
+  //       name: "Create Account",
+  //       key: "create-merchant-account",
+  //       route: "createMerchantAccount",
+  //       component: <CreateMerchantAccount />,
+  //     },
+  //     {
+  //       id: "002",
+  //       parentId: "005",
+  //       name: "Merchant List",
+  //       key: "merchant-list",
+  //       route: "merchantList",
+  //       component: <MerchantList />,
+  //     },
+  //   ],
+  // },
+  // {
+  //   id: "006",
+  //   type: "collapse",
+  //   name: "Account Provider",
+  //   key: "account-provider",
+  //   icon: <img src={accountProviderIcon} alt="accountProvider" width="24" height="24" />,
+  //   collapse: [
+  //     {
+  //       id: "001",
+  //       parentId: "006",
+  //       name: "Create Account",
+  //       key: "create-account-provider",
+  //       route: "createAccountProvider",
+  //       component: <CreateAccountProvider />,
+  //     },
+  //     {
+  //       id: "002",
+  //       parentId: "006",
+  //       name: "Provider List",
+  //       key: "account-provider-list",
+  //       route: "accountProviderList",
+  //       component: <AccountProviderList />,
+  //     },
+  //   ],
+  // },
+  // {
+  //   id: "007",
+  //   type: "collapse",
+  //   name: "Agent",
+  //   key: "agent",
+  //   icon: <img src={agentIcon} alt="agent" width="24" height="24" />,
+  //   collapse: [
+  //     {
+  //       id: "001",
+  //       parentId: "007",
+  //       name: "Create Account",
+  //       key: "create-agent",
+  //       route: "createAgent",
+  //       component: <CreateAccountProvider />,
+  //     },
+  //     {
+  //       id: "002",
+  //       parentId: "007",
+  //       name: "Agent List",
+  //       key: "agent-list",
+  //       route: "agentList",
+  //       component: <AccountProviderList />,
+  //     },
+  //   ],
+  // },
+  // {
+  //   id: "008",
+  //   type: "collapse",
+  //   name: "Commission Broker",
+  //   key: "Commission",
+  //   icon: <img src={commissionIcon} alt="commissionBroker" width="24" height="24" />,
+  //   collapse: [
+  //     {
+  //       id: "001",
+  //       parentId: "008",
+  //       name: "Create Account",
+  //       key: "create-commission",
+  //       route: "createCommission",
+  //       component: <CreateAccountProvider />,
+  //     },
+  //     {
+  //       id: "002",
+  //       parentId: "008",
+  //       name: "Commission List",
+  //       key: "commission-list",
+  //       route: "commissionList",
+  //       component: <AccountProviderList />,
+  //     },
+  //   ],
+  // },
   {
     id: "009",
     type: "collapse",
     name: "Currency",
     key: "currency",
-    icon: <Icon fontSize="medium">attach_money</Icon>,
+    icon: <img src={currencyIcon} alt="currency" width="24" height="24" />,
     collapse: [
       {
         id: "001",
@@ -229,7 +239,7 @@ const routes = [
     type: "collapse",
     name: "Products",
     key: "products",
-    icon: <Icon fontSize="medium">shopping_basket</Icon>,
+    icon: <img src={productIcon} alt="products" width="24" height="24" />,
     collapse: [
       {
         id: "001",
@@ -250,7 +260,7 @@ const routes = [
     type: "item",
     name: "Logout",
     key: "logout",
-    icon: <Icon fontSize="medium">logout</Icon>,
+    icon: <img src={logoutIcon} alt="logout" width="24" height="24" />,
   },
 ];
 

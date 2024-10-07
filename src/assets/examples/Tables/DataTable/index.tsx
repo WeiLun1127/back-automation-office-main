@@ -424,6 +424,7 @@ function DataTable({
                     alignItems: "center",
                     position: "relative",
                   }}
+                  style={{ color: "black" }}
                 >
                   Filter Options
                   <IconButton
@@ -459,6 +460,7 @@ function DataTable({
                     <Typography
                       variant="h6"
                       color=""
+                      style={{ color: "black" }}
                       gutterBottom
                       sx={{ marginRight: 2, minWidth: "8rem" }}
                     >
@@ -496,7 +498,12 @@ function DataTable({
                 />
                 <DialogContent sx={{ overflow: "visible" }}>
                   <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
-                    <Typography variant="h6" gutterBottom sx={{ marginRight: 2, minWidth: "8rem" }}>
+                    <Typography
+                      style={{ color: "black" }}
+                      variant="h6"
+                      gutterBottom
+                      sx={{ marginRight: 2, minWidth: "8rem" }}
+                    >
                       Updated By
                       <IconButton size="small" sx={{ marginLeft: 1, marginRight: 2 }}>
                         <CalendarTodayIcon />
@@ -531,7 +538,7 @@ function DataTable({
                 />
                 <DialogContent sx={{ overflow: "visible" }}>
                   <Box sx={{ marginBottom: 2 }}>
-                    <Typography variant="h6" gutterBottom>
+                    <Typography style={{ color: "black" }} variant="h6" gutterBottom>
                       Currency
                       <AttachMoneyIcon sx={{ marginLeft: 0.5, marginRight: 1, color: "grey" }} />
                     </Typography>
@@ -555,7 +562,10 @@ function DataTable({
                             />
                           }
                           label={
-                            <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <Box
+                              style={{ color: "grey" }}
+                              sx={{ display: "flex", alignItems: "center" }}
+                            >
                               <Box sx={{ marginRight: 1 }}>
                                 <Flag country={option.country} style={{ width: 24, height: 16 }} />
                               </Box>
@@ -592,7 +602,7 @@ function DataTable({
                   <>
                     <DialogContent sx={{ overflow: "visible" }}>
                       <Box sx={{ marginBottom: 2 }}>
-                        <Typography variant="h6" gutterBottom>
+                        <Typography style={{ color: "black" }} variant="h6" gutterBottom>
                           Roles
                           <PeopleIcon sx={{ marginLeft: 1, marginRight: 1, color: "grey" }} />
                         </Typography>
@@ -616,7 +626,10 @@ function DataTable({
                               }
                               // label={option}
                               label={
-                                <Box sx={{ display: "flex", alignItems: "center" }}>
+                                <Box
+                                  style={{ color: "grey" }}
+                                  sx={{ display: "flex", alignItems: "center" }}
+                                >
                                   <Box sx={{ marginRight: 1 }}>
                                     {roleIcons[option]} {/* Display role icon */}
                                   </Box>
@@ -637,7 +650,7 @@ function DataTable({
                     />
                     <DialogContent sx={{ overflow: "visible" }}>
                       <Box sx={{ marginBottom: 2 }}>
-                        <Typography variant="h6" gutterBottom>
+                        <Typography style={{ color: "black" }} variant="h6" gutterBottom>
                           Status
                           <CircleIcon sx={{ marginLeft: 1, marginRight: 1, color: "LightGreen" }} />
                         </Typography>
