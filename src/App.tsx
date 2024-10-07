@@ -15,10 +15,13 @@ import ApiControl from "modules/layouts/company";
 import CompanyList from "modules/layouts/company/companyList";
 import CurrencyTables from "modules/layouts/currency";
 import MasterList from "modules/layouts/master";
+import MasterControl from "modules/layouts/master/control";
 import CreateMasterAccount from "modules/layouts/master/create";
 import MerchantList from "modules/layouts/merchant";
 import CreateMerchantAccount from "modules/layouts/merchant/create";
-import Transactions from "modules/layouts/report";
+import ProductTables from "modules/layouts/product";
+import TransactionsReport from "modules/layouts/report";
+import TransactionSummary from "modules/layouts/report/summary";
 import Authentication from "modules/layouts/security";
 import Illustration from "modules/layouts/signin/illustration";
 import theme from "modules/settings/theme-settings/theme";
@@ -35,7 +38,9 @@ export type Pathname =
   | "authentication"
   | "createMasterAccount"
   | "masterList"
-  | "transactions"
+  | "masterControl"
+  | "transactionReport"
+  | "transactionSummary"
   | "createMerchantAccount"
   | "merchantList"
   | "createAccountProvider"
@@ -256,8 +261,12 @@ export default function App() {
         return <CreateMasterAccount />;
       case "masterList":
         return <MasterList />;
-      case "transactions":
-        return <Transactions />;
+      case "masterControl":
+        return <MasterControl />;
+      case "transactionSummary":
+        return <TransactionSummary />;
+      case "transactionReport":
+        return <TransactionsReport />;
       case "createMerchantAccount":
         return <CreateMerchantAccount />;
       case "merchantList":
@@ -277,7 +286,7 @@ export default function App() {
       case "currency":
         return <CurrencyTables />;
       case "products":
-        return <Transactions />;
+        return <ProductTables />;
       default:
         return <Navigate to="/" />;
     }

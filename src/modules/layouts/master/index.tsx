@@ -512,11 +512,12 @@ const MasterList = () => {
               "& .MuiOutlinedInput-root": {
                 minHeight: "80px", // Adjust height here
                 "& fieldset": {
-                  borderWidth: "2px", // Optional: Increase border thickness
+                  borderWidth: "1px", // Optional: Increase border thickness
                 },
               },
             }}
           />
+          <TextField fullWidth label="Time Zone" variant="outlined" sx={{ mt: 2 }} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleEditSaveClick(selectedUserId)} color="primary">

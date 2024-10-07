@@ -135,7 +135,6 @@ const CreateMasterAccount = () => {
           Control: JSON.stringify(controlArray),
           Tfa: isTfaSwitchOn ? "1" : "0",
           Class: "mtr",
-          // Prefix: prefix,
           Status: isSwitchOn ? "1" : "0", // Convert boolean to string "1" or "0"
         }),
       };
@@ -146,11 +145,9 @@ const CreateMasterAccount = () => {
       if (response.Status === "1") {
         alert("Master Account Created Successfully");
 
-        //Remove User Input
         setUserId("");
         setPassword("");
         setConfirmPassword("");
-        // setPrefix("");
         setName("");
         setSelectedOptions([]);
         setIsSwitchOn(false);
@@ -185,7 +182,6 @@ const CreateMasterAccount = () => {
                     onChange={(e: { target: { value: SetStateAction<string> } }) =>
                       setUserId(e.target.value)
                     }
-                    InputProps={{ style: { maxWidth: "500px" } }}
                   />
                 </Grid>
 
@@ -198,7 +194,6 @@ const CreateMasterAccount = () => {
                     onChange={(e: { target: { value: SetStateAction<string> } }) =>
                       setName(e.target.value)
                     }
-                    InputProps={{ style: { maxWidth: "500px" } }}
                   />
                 </Grid>
 
@@ -211,7 +206,6 @@ const CreateMasterAccount = () => {
                     value={password}
                     onChange={handlePasswordChange}
                     InputProps={{
-                      style: { maxWidth: "500px" },
                       endAdornment: (
                         <IconButton
                           onMouseDown={handleMouseDownPassword}
@@ -236,7 +230,6 @@ const CreateMasterAccount = () => {
                     error={!!passwordError}
                     helperText={passwordError}
                     InputProps={{
-                      style: { maxWidth: "500px" },
                       endAdornment: (
                         <IconButton
                           onMouseDown={handleMouseDownPassword}
@@ -250,23 +243,6 @@ const CreateMasterAccount = () => {
                   />
                 </Grid>
 
-                {/* <Grid item xs={12}>
-                  <MDInput
-                    fullWidth
-                    variant="standard"
-                    label="Prefix"
-                    value={prefix} // Bind value to state
-                    onChange={(e: { target: { value: string } }) =>
-                      setPrefix(e.target.value.toUpperCase())
-                    } // Update state and convert to uppercase
-                    InputProps={{ style: { maxWidth: "500px" } }}
-                    inputProps={{
-                      maxLength: 3,
-                      pattern: "[A-Za-z]{3}",
-                    }}
-                  />
-                </Grid> */}
-
                 <Grid item xs={12}>
                   <MDInput
                     fullWidth
@@ -275,7 +251,6 @@ const CreateMasterAccount = () => {
                     value="MTR"
                     InputProps={{
                       readOnly: true,
-                      style: { maxWidth: "500px" },
                     }}
                   />
                 </Grid>
@@ -283,20 +258,13 @@ const CreateMasterAccount = () => {
                 <Grid item xs={12}>
                   <Autocomplete
                     multiple
-                    // options={controlOptions}
                     options={controlOptions.filter(
                       (option) => !selectedOptions.includes(option.value)
                     )}
                     disableCloseOnSelect
                     getOptionLabel={(option) => option.label}
                     renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        variant="standard"
-                        label="Control"
-                        style={{ maxWidth: "500px" }}
-                        fullWidth
-                      />
+                      <TextField {...params} variant="standard" label="Control" fullWidth />
                     )}
                     value={selectedOptions.map((optionValue) =>
                       controlOptions.find((option) => option.value === optionValue)
@@ -305,6 +273,10 @@ const CreateMasterAccount = () => {
                       setSelectedOptions(value.map((option) => option.value))
                     }
                   />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <MDInput fullWidth variant="standard" label="Time Zone" />
                 </Grid>
 
                 <Grid item xs={12}>

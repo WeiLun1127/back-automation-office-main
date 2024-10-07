@@ -45,6 +45,7 @@ function CurrencyTables(): JSX.Element {
       { Header: "rate", accessor: "rate", width: "10%" },
       { Header: "ratio", accessor: "ratio", width: "10%" },
       { Header: "status", accessor: "status", width: "10%" },
+      { Header: "updated on", accessor: "updatedOn", width: "10%" },
       { Header: "action", accessor: "action", width: "7%" },
     ],
     rows: [],

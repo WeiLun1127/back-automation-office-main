@@ -32,7 +32,7 @@ type Transaction = {
   status: string;
 };
 
-const Transactions = () => {
+const TransactionsReport = () => {
   const [data, setData] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [editRows, setEditRows] = useState([]);
@@ -202,4 +202,4 @@ const Transactions = () => {
   );
 };
 
-export default Transactions;
+export default TransactionsReport;

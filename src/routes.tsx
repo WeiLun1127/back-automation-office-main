@@ -9,7 +9,6 @@ import MasterList from "modules/layouts/master";
 import CreateMasterAccount from "modules/layouts/master/create";
 import MerchantList from "modules/layouts/merchant";
 import CreateMerchantAccount from "modules/layouts/merchant/create";
-import Transactions from "modules/layouts/report";
 import Authentication from "modules/layouts/security";
 import businessIcon from "././assets/images/routes-logo/business.svg";
 import masterIcon from "././assets/images/routes-logo/master.svg";
@@ -22,6 +21,11 @@ import productIcon from "././assets/images/routes-logo/products.svg";
 import currencyIcon from "././assets/images/routes-logo/currency.svg";
 import commissionIcon from "././assets/images/routes-logo/commission.svg";
 import logoutIcon from "././assets/images/routes-logo/logout.svg";
+import productTables from "modules/layouts/product";
+import ProductTables from "modules/layouts/product";
+import MasterControl from "modules/layouts/master/control";
+import TransactionsReport from "modules/layouts/report";
+import TransactionSummary from "modules/layouts/report/summary";
 // Images
 
 const routes = [
@@ -68,7 +72,7 @@ const routes = [
       {
         id: "001",
         parentId: "002",
-        name: "Create Account",
+        name: "Create Master",
         key: "create-master-account",
         route: "createMasterAccount",
         component: <CreateMasterAccount />,
@@ -80,6 +84,14 @@ const routes = [
         key: "master-list",
         route: "masterList",
         component: <MasterList />,
+      },
+      {
+        id: "003",
+        parentId: "002",
+        name: "Master Control",
+        key: "master-control",
+        route: "masterControl",
+        component: <MasterControl />,
       },
     ],
   },
@@ -93,10 +105,18 @@ const routes = [
       {
         id: "001",
         parentId: "003",
-        name: "Transactions",
-        key: "transactions",
-        route: "transactions",
-        component: <Transactions />,
+        name: "Summary",
+        key: "transaction-summary",
+        route: "transactionSummary",
+        component: <TransactionSummary />,
+      },
+      {
+        id: "002",
+        parentId: "003",
+        name: "Report",
+        key: "transaction-report",
+        route: "transactionReport",
+        component: <TransactionsReport />,
       },
     ],
   },
@@ -247,7 +267,7 @@ const routes = [
         name: "Product List",
         key: "products",
         route: "products",
-        component: <Authentication />,
+        component: <ProductTables />,
       },
     ],
   },
