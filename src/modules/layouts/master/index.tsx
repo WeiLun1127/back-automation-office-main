@@ -14,6 +14,10 @@ import {
   Checkbox,
   FormControlLabel,
   Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import { CheckBox, Close as CloseIcon } from "@mui/icons-material"; // Import Close Icon
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
@@ -43,6 +47,35 @@ const MasterList = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [statusClickCount, setStatusClickCount] = useState(0); // Track the number of clicks
+  const [selectedTimeZone, setSelectedTimeZone] = useState("");
+
+  const timeZones = [
+    { label: "(UTC-12:00) Baker Island", value: "UTC-12:00" },
+    { label: "(UTC-11:00) Niue, Samoa", value: "UTC-11:00" },
+    { label: "(UTC-10:00) Hawaii", value: "UTC-10:00" },
+    { label: "(UTC-09:00) Alaska", value: "UTC-09:00" },
+    { label: "(UTC-08:00) Pacific Time (US & Canada)", value: "UTC-08:00" },
+    { label: "(UTC-07:00) Mountain Time (US & Canada)", value: "UTC-07:00" },
+    { label: "(UTC-06:00) Central Time (US & Canada)", value: "UTC-06:00" },
+    { label: "(UTC-05:00) Eastern Time (US & Canada)", value: "UTC-05:00" },
+    { label: "(UTC-04:00) Atlantic Time (Canada), Venezuela", value: "UTC-04:00" },
+    { label: "(UTC-03:00) Buenos Aires, Brazil", value: "UTC-03:00" },
+    { label: "(UTC-02:00) South Georgia & the South Sandwich Islands", value: "UTC-02:00" },
+    { label: "(UTC-01:00) Azores, Cape Verde", value: "UTC-01:00" },
+    { label: "(UTC+00:00) London, Dublin, Lisbon", value: "UTC+00:00" },
+    { label: "(UTC+01:00) Berlin, Madrid, Paris", value: "UTC+01:00" },
+    { label: "(UTC+02:00) Cairo, Johannesburg", value: "UTC+02:00" },
+    { label: "(UTC+03:00) Moscow, Nairobi, Baghdad", value: "UTC+03:00" },
+    { label: "(UTC+04:00) Abu Dhabi, Muscat", value: "UTC+04:00" },
+    { label: "(UTC+05:00) Karachi, Tashkent", value: "UTC+05:00" },
+    { label: "(UTC+06:00) Dhaka, Almaty", value: "UTC+06:00" },
+    { label: "(UTC+07:00) Bangkok, Hanoi, Jakarta", value: "UTC+07:00" },
+    { label: "(UTC+08:00) Beijing, Singapore", value: "UTC+08:00" },
+    { label: "(UTC+09:00) Tokyo, Seoul", value: "UTC+09:00" },
+    { label: "(UTC+10:00) Sydney, Guam", value: "UTC+10:00" },
+    { label: "(UTC+11:00) Solomon Islands", value: "UTC+11:00" },
+    { label: "(UTC+12:00) Fiji, New Zealand", value: "UTC+12:00" },
+  ];
 
   const handleEditClick = async (userId: string) => {
     setSelectedUserId(userId);
@@ -513,7 +546,24 @@ const MasterList = () => {
               },
             }}
           />
-          <TextField fullWidth label="Time Zone" variant="outlined" sx={{ mt: 2 }} />
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel>Time Zone</InputLabel>
+            <Select
+              label="Time Zone"
+              value={selectedTimeZone}
+              onChange={(e) => setSelectedTimeZone(e.target.value)}
+              sx={{
+                minWidth: 60, // Adjust the width of the dropdown
+                height: 45, // Adjust the height of the dropdown field
+              }}
+            >
+              {timeZones.map((zone) => (
+                <MenuItem key={zone.value} value={zone.value}>
+                  {zone.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleEditSaveClick(selectedUserId)} color="primary">
