@@ -34,6 +34,7 @@
     "flatpickr": "4.6.13",
     "formik": "2.2.9",
     "html-react-parser": "3.0.16",
+    "qrcode.react": "^4.0.1",
     "react": ">=16.8.0",
     "react-chartjs-2": "3.0.4",
     "react-dom": ">=16.8.0",
