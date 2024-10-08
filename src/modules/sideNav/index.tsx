@@ -354,28 +354,31 @@ function Sidenav({
             </MDTypography>
           </MDBox>
         </MDBox>
-        <MDBox mt={2}>
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-              style: { backgroundColor: "white" }, // Ensures white background
-            }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                backgroundColor: "white", // Ensures white background for the root element
-              },
-            }}
-          />
-        </MDBox>
+
+        {!miniSidenav && (
+          <MDBox mt={2}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+                style: { backgroundColor: "white" }, // Ensures white background
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: "white", // Ensures white background for the root element
+                },
+              }}
+            />
+          </MDBox>
+        )}
       </MDBox>
       <Divider
         light={
