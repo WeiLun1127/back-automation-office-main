@@ -209,20 +209,16 @@ const MasterList = () => {
   }, []);
 
   const handleStatusHeaderClick = () => {
-    // const newFilterStatus = filterStatus === "0" ? "1" : "0";
-    // setFilterStatus(newFilterStatus);
-    // fetchTableData(newFilterStatus, searchValue);
-
     let newFilterStatus = "";
     let newClickCount = statusClickCount + 1;
 
     if (newClickCount === 1) {
-      newFilterStatus = "1"; // First click: filter active
+      newFilterStatus = "1";
     } else if (newClickCount === 2) {
-      newFilterStatus = "0"; // Second click: filter inactive
+      newFilterStatus = "0";
     } else {
-      newFilterStatus = ""; // Third click: no filtering
-      newClickCount = 0; // Reset count after third click
+      newFilterStatus = "";
+      newClickCount = 0;
     }
 
     setStatusClickCount(newClickCount);

@@ -32,8 +32,8 @@ const routes = [
   {
     id: "001",
     type: "collapse",
-    name: "Company Level",
-    key: "company-level",
+    name: "Dashboard",
+    key: "dashboard",
     icon: <img src={businessIcon} alt="business" width="24" height="24" />,
     collapse: [
       {

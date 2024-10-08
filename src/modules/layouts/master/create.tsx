@@ -5,9 +5,13 @@ import {
   Autocomplete,
   Card,
   Checkbox,
+  FormControl,
   Grid,
   Icon,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Switch,
   TextField,
 } from "@mui/material";
@@ -18,7 +22,10 @@ import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
+import React from "react";
 import { SetStateAction, useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
+import MDSnackbar from "components/MDSnackbar";
 
 const CreateMasterAccount = () => {
   const [password, setPassword] = useState("");
@@ -31,6 +38,45 @@ const CreateMasterAccount = () => {
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [isTfaSwitchOn, setIsTfaSwitchOn] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [success, setSuccess] = useState(false);
+
+  const timeZones = [
+    { label: "(UTC-12:00) Baker Island", value: "UTC-12:00" },
+    { label: "(UTC-11:00) Niue, Samoa", value: "UTC-11:00" },
+    { label: "(UTC-10:00) Hawaii", value: "UTC-10:00" },
+    { label: "(UTC-09:00) Alaska", value: "UTC-09:00" },
+    { label: "(UTC-08:00) Pacific Time (US & Canada)", value: "UTC-08:00" },
+    { label: "(UTC-07:00) Mountain Time (US & Canada)", value: "UTC-07:00" },
+    { label: "(UTC-06:00) Central Time (US & Canada)", value: "UTC-06:00" },
+    { label: "(UTC-05:00) Eastern Time (US & Canada)", value: "UTC-05:00" },
+    { label: "(UTC-04:00) Atlantic Time (Canada), Venezuela", value: "UTC-04:00" },
+    { label: "(UTC-03:00) Buenos Aires, Brazil", value: "UTC-03:00" },
+    { label: "(UTC-02:00) South Georgia & the South Sandwich Islands", value: "UTC-02:00" },
+    { label: "(UTC-01:00) Azores, Cape Verde", value: "UTC-01:00" },
+    { label: "(UTC+00:00) London, Dublin, Lisbon", value: "UTC+00:00" },
+    { label: "(UTC+01:00) Berlin, Madrid, Paris", value: "UTC+01:00" },
+    { label: "(UTC+02:00) Cairo, Johannesburg", value: "UTC+02:00" },
+    { label: "(UTC+03:00) Moscow, Nairobi, Baghdad", value: "UTC+03:00" },
+    { label: "(UTC+04:00) Abu Dhabi, Muscat", value: "UTC+04:00" },
+    { label: "(UTC+05:00) Karachi, Tashkent", value: "UTC+05:00" },
+    { label: "(UTC+06:00) Dhaka, Almaty", value: "UTC+06:00" },
+    { label: "(UTC+07:00) Bangkok, Hanoi, Jakarta", value: "UTC+07:00" },
+    { label: "(UTC+08:00) Beijing, Singapore", value: "UTC+08:00" },
+    { label: "(UTC+09:00) Tokyo, Seoul", value: "UTC+09:00" },
+    { label: "(UTC+10:00) Sydney, Guam", value: "UTC+10:00" },
+    { label: "(UTC+11:00) Solomon Islands", value: "UTC+11:00" },
+    { label: "(UTC+12:00) Fiji, New Zealand", value: "UTC+12:00" },
+  ];
+
+  const [selectedTimeZone, setSelectedTimeZone] = React.useState("");
+
+  const handleClearTimeZone = () => {
+    setSelectedTimeZone(""); // Clear the selected time zone
+  };
+
+  const handleTimeZoneChange = (event: { target: { value: React.SetStateAction<string> } }) => {
+    setSelectedTimeZone(event.target.value);
+  };
 
   const handlePasswordChange = (e: { target: { value: SetStateAction<string> } }) => {
     setPassword(e.target.value);
@@ -108,11 +154,10 @@ const CreateMasterAccount = () => {
     setIsTfaSwitchOn(event.target.checked); // Update switch state
   };
 
-  const storedUsername = localStorage.getItem("username");
-  const storedToken = localStorage.getItem("token");
-  localStorage.setItem("userId", userId);
-
   const handleNextButtonClick = async () => {
+    const storedUsername = localStorage.getItem("username");
+    const storedToken = localStorage.getItem("token");
+    localStorage.setItem("userId", userId);
     if (password !== confirmPassword) {
       setPasswordError("Passwords do not match.");
       return;
@@ -143,7 +188,7 @@ const CreateMasterAccount = () => {
 
       // Check if response.Status is 1
       if (response.Status === "1") {
-        alert("Master Account Created Successfully");
+        setSuccess(true);
 
         setUserId("");
         setPassword("");
@@ -276,7 +321,31 @@ const CreateMasterAccount = () => {
                 </Grid>
 
                 <Grid item xs={12}>
-                  <MDInput fullWidth variant="standard" label="Time Zone" />
+                  <MDBox display="flex" alignItems="center">
+                    <FormControl fullWidth variant="standard">
+                      <InputLabel id="time-zone-label">Time Zone</InputLabel>
+                      <Select
+                        labelId="time-zone-label"
+                        value={selectedTimeZone}
+                        onChange={handleTimeZoneChange}
+                      >
+                        {timeZones.map((zone, index) => (
+                          <MenuItem key={index} value={zone.value}>
+                            {zone.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    {selectedTimeZone && (
+                      <IconButton
+                        onClick={handleClearTimeZone}
+                        aria-label="clear time zone"
+                        sx={{ marginLeft: 1 }}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    )}
+                  </MDBox>
                 </Grid>
 
                 <Grid item xs={12}>
@@ -321,6 +390,14 @@ const CreateMasterAccount = () => {
           </Card>
         </Grid>
       </Grid>
+      {/* Conditionally render the MDSnackbar */}
+      <MDSnackbar
+        open={success}
+        fontSize="small"
+        color="success"
+        title="Master Account Created Successfully"
+        close={() => setSuccess(false)} // Close the snackbar
+      />
     </DashboardLayout>
   );
 };
