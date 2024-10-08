@@ -10,6 +10,7 @@ import { SetStateAction, useState } from "react";
 import { apiHandler } from "api/apiHandler";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { QRCodeSVG } from "qrcode.react";
 
 const Authentication = () => {
   // States to manage input values
@@ -19,13 +20,13 @@ const Authentication = () => {
 
   const [showPasswords, setShowPasswords] = useState(false);
   const [is2FAEnabled, setIs2FAEnabled] = useState(false);
-
-  const storedUsername = localStorage.getItem("username");
-  const storedToken = localStorage.getItem("token");
-  const storedUserId = localStorage.getItem("userId");
+  const [totpUri, setTotpUri] = useState(""); // State to store TOTP URI
+  const [totpKey, setTotpKey] = useState("");
 
   // Event handler for the "Next" button
   const handleNextClick = async () => {
+    const storedUsername = localStorage.getItem("username");
+    const storedToken = localStorage.getItem("token");
     if (!currentPassword || !newPassword) {
       console.error("Both the current password and new password fields must be filled.");
       alert("Both the current password and new password fields must be filled."); // Show an alert or any other UI feedback
@@ -44,17 +45,17 @@ const Authentication = () => {
       Uid: storedUsername, // Use the stored username
       Token: storedToken, // Use the stored token
       Data: JSON.stringify({
-        // Uid: storedUsername, （"test"） // Use the stored username
         FilterUid: storedUsername,
       }),
     };
 
     try {
-      // Call the apiHandler function
       const response = await apiHandler(apiUrl, params);
+      const storedUsername = localStorage.getItem("username");
+      const storedToken = localStorage.getItem("token");
       console.log("API Response:", response);
-      // Handle the response as needed (e.g., navigate to another page, show a success message, etc.)
       const parsedData = JSON.parse(response.Data);
+      console.log(parsedData.OtpAuth);
       if (response.Status === "1" && currentPassword === parsedData.Pass) {
         console.log("Success Message");
         // Define parameters for the second API call
@@ -68,9 +69,7 @@ const Authentication = () => {
             Pass: newPassword, // New password entered by the user
             Control: parsedData.Control,
             Tfa: is2FAEnabled ? "1" : "0",
-            // Tfakey: parsedData.TfaKey,
             Class: parsedData.Class,
-            // Prefix: parsedData.Prefix,
             Status: parsedData.Status,
           }),
         };
@@ -94,6 +93,49 @@ const Authentication = () => {
       }
     } catch (error) {
       console.error("API Error:", error);
+    }
+  };
+
+  const extractSecretFromTotpUri = (uri: string) => {
+    // Decode the URI
+    const decodedUri = decodeURIComponent(uri);
+    const regex = /secret=([^&]+)/; // Regular expression to extract the secret
+    const match = decodedUri.match(regex);
+    return match ? match[1] : null; // Return the secret if found, else return null
+  };
+
+  const handle2FACheckboxChange = async (e: { target: { checked: any } }) => {
+    const storedUsername = localStorage.getItem("username");
+    const storedToken = localStorage.getItem("token");
+    const isChecked = e.target.checked;
+    setIs2FAEnabled(isChecked);
+
+    if (isChecked) {
+      // Fetch OTP Auth data from the API
+      const apiUrl = "http://18.138.168.43:10311/api/execmem";
+      const params = {
+        EXECF: "GETAUTHDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({ FilterUid: storedUsername }),
+      };
+
+      try {
+        const response = await apiHandler(apiUrl, params);
+        const parsedData = JSON.parse(response.Data);
+        console.log(parsedData.OtpAuth);
+        if (response.Status === "1") {
+          setTotpUri(parsedData.OtpAuth);
+          const secret = extractSecretFromTotpUri(parsedData.OtpAuth);
+          console.log("Extracted Secret:", secret);
+          setTotpKey(secret);
+        }
+      } catch (error) {
+        console.error("Error fetching OTP Auth data:", error);
+      }
+    } else {
+      setTotpUri("");
+      setTotpKey("");
     }
   };
 
@@ -176,7 +218,8 @@ const Authentication = () => {
                 <MDBox display="flex" alignItems="center">
                   <Checkbox
                     checked={is2FAEnabled}
-                    onChange={(e) => setIs2FAEnabled(e.target.checked)} // Track checkbox change
+                    // onChange={(e) => setIs2FAEnabled(e.target.checked)} // Track checkbox change
+                    onChange={handle2FACheckboxChange}
                   />
                   <MDTypography variant="button">Enable 2FA</MDTypography>
                   <SecurityIcon style={{ marginLeft: 8, marginRight: 8 }} />
@@ -193,10 +236,27 @@ const Authentication = () => {
             >
               <MDBox ml="auto">
                 <MDButton variant="gradient" color="dark" size="small" onClick={handleNextClick}>
-                  Next
+                  Save
                 </MDButton>
               </MDBox>
             </MDBox>
+            {is2FAEnabled && totpUri && (
+              <MDBox mt={1} display="flex" flexDirection="column" alignItems="center">
+                <MDTypography style={{ color: "grey" }} variant="body2" textAlign="center" mb={2}>
+                  Scan this QR code with the Google Authenticator app
+                </MDTypography>
+                <QRCodeSVG value={totpUri} size={218} />
+                <MDTypography
+                  style={{ color: "grey" }}
+                  variant="body2"
+                  textAlign="center"
+                  mb={2}
+                  mt={2}
+                >
+                  KEY: {totpKey}
+                </MDTypography>
+              </MDBox>
+            )}
           </MDBox>
         </Card>
       </Grid>
