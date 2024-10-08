@@ -75,23 +75,25 @@ function ProductTables(): JSX.Element {
         status: <Switch defaultChecked />,
         updated_on: "2024-10-07",
         action: (
-          <Icon
-            style={{ cursor: "pointer", fontSize: 20 }}
-            onClick={() =>
-              handleEditClickOpen({
-                id: "001",
-                reference: "REF12345",
-                country: "USA",
-                code: "US001",
-                display_name: "Product A",
-                profit_type: "Fixed",
-                max_margin: "20%",
-                status: true,
-              })
-            }
-          >
-            edit
-          </Icon>
+          <div style={{ paddingLeft: "12px" }}>
+            <Icon
+              style={{ cursor: "pointer", fontSize: 20 }}
+              onClick={() =>
+                handleEditClickOpen({
+                  id: "001",
+                  reference: "REF12345",
+                  country: "USA",
+                  code: "US001",
+                  display_name: "Product A",
+                  profit_type: "Fixed",
+                  max_margin: "20%",
+                  status: true,
+                })
+              }
+            >
+              edit
+            </Icon>
+          </div>
         ),
       },
     ],

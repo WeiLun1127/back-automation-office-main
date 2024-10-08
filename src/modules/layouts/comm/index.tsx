@@ -23,6 +23,7 @@ import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import { apiHandler } from "api/apiHandler";
 import SecurityIcon from "@mui/icons-material/Security";
+import MDSnackbar from "components/MDSnackbar";
 
 const MasterList = () => {
   const [open, setOpen] = useState(false); // State for controlling the dialog visibility
@@ -46,6 +47,9 @@ const MasterList = () => {
   const [confirmPassword, setConfirmPassword] = useState(""); // State for confirming the new password
   const [passwordError, setPasswordError] = useState("");
 
+  const [success, setSuccess] = useState(false);
+  const [snackBarTitle, setSnackBarTitle] = useState("");
+
   // Function to handle the edit button click
   const handleEditClick = (userId: string) => {
     setSelectedUserId(userId); // Set the selected user ID (optional)
@@ -63,6 +67,20 @@ const MasterList = () => {
     setSelectedUserId(userId); // Set the selected user ID
 
     await fetchUserData();
+  };
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess(false); // Automatically hide the snackbar after 3 seconds
+      }, 3000);
+
+      return () => clearTimeout(timer); // Cleanup the timer on component unmount or when success changes
+    }
+  }, [success]);
+
+  const getSnackbarColor = () => {
+    return snackBarTitle.toLowerCase().includes("error") ? "error" : "success";
   };
 
   useEffect(() => {
@@ -207,9 +225,6 @@ const MasterList = () => {
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
       const parsedData = JSON.parse(response.Data);
-      // console.log("Parsed Data:", parsedData);
-      // console.log("Uid:", parsedData.Uid);
-      // console.log("Name:", parsedData.Name);
 
       setDialogUserID(parsedData.Uid);
       setDialogUsername(parsedData.Name);
@@ -219,15 +234,6 @@ const MasterList = () => {
       setDialogClass(parsedData.Class);
       setDialogStatus(parsedData.Status);
       setIs2FAEnabled(parsedData.Status === "1");
-
-      // console.log("Pass:", parsedData.Pass);
-      // console.log("Control:", parsedData.Control);
-      // console.log("Tfa:", parsedData.Tfa);
-      // console.log("TfaKey:", parsedData.TfaKey);
-      // console.log("Class:", parsedData.Class);
-      // console.log("Prefix:", parsedData.Prefix);
-      // console.log("Status:", parsedData.Status);
-      // console.log("OtpAuth:", parsedData.OtpAuth);
 
       setIs2FAEnabled(parsedData.Tfa === "1");
     } catch (error) {
@@ -257,14 +263,21 @@ const MasterList = () => {
       };
       const response = await apiHandler(apiUrl, params);
       if (response.Status === "1") {
-        alert("2FA has been reset successfully.");
-        await fetchTableData();
+        // alert("2FA has been reset successfully.");
+        // await fetchTableData();
+        setSnackBarTitle("2FA has been reset successfully.");
+        setSuccess(true);
+        fetchTableData();
       } else {
-        alert("Please make sure 2fa is enable before reset.");
+        // alert("Please make sure 2fa is enable before reset.");
+        setSnackBarTitle("Error. Please make sure 2fa is enable before reset.");
+        setSuccess(true);
       }
-      fetchTableData(filterStatus, searchValue);
+      fetchTableData();
     } catch (error) {
       console.error("Error during API call:", error);
+      setSnackBarTitle("Error. Please try again shortly.");
+      setSuccess(true);
     }
   };
 
@@ -310,7 +323,9 @@ const MasterList = () => {
         const response = await apiHandler(apiUrl, params);
         console.log("API Response:", response);
         if (response.Status === "1") {
-          alert("Details Updated Successfully.");
+          // alert("Details Updated Successfully.");
+          setSnackBarTitle("Details Updated Successfully.");
+          setSuccess(true);
           setCurrentPassword("");
           setNewPassword("");
           setConfirmPassword("");
@@ -322,7 +337,11 @@ const MasterList = () => {
       } catch (error) {
         console.error("Error during API call:", error);
       }
-    } else alert("Please make sure you have input a correct password");
+    } else {
+      // alert("Please make sure you have input a correct password");
+      setSnackBarTitle("Error. Please make sure you have input a correct password.");
+      setSuccess(true);
+    }
   };
 
   const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -518,6 +537,12 @@ const MasterList = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <MDSnackbar
+        open={success}
+        color={getSnackbarColor()}
+        title={snackBarTitle}
+        close={() => setSuccess(false)} // Close the snackbar
+      />
     </DashboardLayout>
   );
 };

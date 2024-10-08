@@ -27,6 +27,7 @@ import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import { apiHandler } from "api/apiHandler";
 import SecurityIcon from "@mui/icons-material/Security";
+import MDSnackbar from "components/MDSnackbar";
 
 const MasterList = () => {
   const [open, setOpen] = useState(false); // State for controlling the dialog visibility
@@ -48,6 +49,8 @@ const MasterList = () => {
   const [passwordError, setPasswordError] = useState("");
   const [statusClickCount, setStatusClickCount] = useState(0); // Track the number of clicks
   const [selectedTimeZone, setSelectedTimeZone] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [snackBarTitle, setSnackBarTitle] = useState("");
 
   const timeZones = [
     { label: "(UTC-12:00) Baker Island", value: "UTC-12:00" },
@@ -104,15 +107,15 @@ const MasterList = () => {
         }),
       };
       const response = await apiHandler(apiUrl, params);
-      // if (response.Status === "1") {
-      //   alert("User Details Updated Successfully.");
-      // } else {
-      //   alert("Error Update User Details.");
-      // }
-      alert("User Details Updated Successfully.");
+      setSnackBarTitle("User Details Updated Successfully.");
+      setSuccess(true); // Show success snackbar
       handleClose();
+      // alert("User Details Updated Successfully.");
+      // handleClose();
     } catch (error) {
-      console.error("Error during API call:", error);
+      // console.error("Error during API call:", error);
+      setSnackBarTitle("Error updating user details.");
+      setSuccess(true);
     }
   };
 
@@ -270,6 +273,20 @@ const MasterList = () => {
     }
   };
 
+  const getSnackbarColor = () => {
+    return snackBarTitle.toLowerCase().includes("error") ? "error" : "success";
+  };
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess(false); // Automatically hide the snackbar after 3 seconds
+      }, 3000);
+
+      return () => clearTimeout(timer); // Cleanup the timer on component unmount or when success changes
+    }
+  }, [success]);
+
   const handleStatusChange = async (userId: string, newStatus: string) => {
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
@@ -288,13 +305,19 @@ const MasterList = () => {
 
       const response = await apiHandler(apiUrl, params);
       if (response.Status === "1") {
-        alert("User status updated successfully.");
-        fetchTableData(); // Refresh the table data after status change
+        // alert("User status updated successfully.");
+        setSnackBarTitle("User status updated successfully.");
+        setSuccess(true);
+        setTimeout(() => fetchTableData(), 1000); // Refresh the table data after status change
       } else {
-        alert("Error updating user status.");
+        // alert("Error updating user status.");
+        setSnackBarTitle("Error updating user status.");
+        setSuccess(true);
       }
     } catch (error) {
       console.error("Error during status update:", error);
+      setSnackBarTitle("Error updating user status.");
+      setSuccess(true);
     }
   };
 
@@ -364,15 +387,23 @@ const MasterList = () => {
             }),
           };
           const response = await apiHandler(apiUrl, params);
-          alert("2FA Reset Successfully.");
+          // alert("2FA Reset Successfully.");
+          setSnackBarTitle("2FA Reset Successfully.");
+          setSuccess(true);
         } catch (error) {
           console.error("Error during API call:", error);
+          setSnackBarTitle("Error resetting 2FA.");
+          setSuccess(true);
         }
       } else {
-        alert("Please make sure you enable 2FA.");
+        // alert("Please make sure you enable 2FA.");
+        setSnackBarTitle("Please make sure you enable 2FA.");
+        setSuccess(true);
       }
     } catch (error) {
       console.error("Error during API call:", error);
+      setSnackBarTitle("Error resetting 2FA.");
+      setSuccess(true);
     }
   };
 
@@ -415,7 +446,9 @@ const MasterList = () => {
       };
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
-      alert("Details Updated Successfully.");
+      // alert("Details Updated Successfully.");
+      setSnackBarTitle("Details Updated Successfully.");
+      setSuccess(true);
       setNewPassword("");
       setConfirmPassword("");
       handleLockClose();
@@ -653,6 +686,12 @@ const MasterList = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <MDSnackbar
+        open={success}
+        color={getSnackbarColor()}
+        title={snackBarTitle}
+        close={() => setSuccess(false)} // Close the snackbar
+      />
     </DashboardLayout>
   );
 };

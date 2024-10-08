@@ -26,40 +26,44 @@ import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
 import React, { useEffect, useState } from "react";
 
-function MasterControl(): JSX.Element {
-  const [addOpen, setAddOpen] = useState(false);
-
-  const handleAddClickOpen = () => {
-    setAddOpen(true);
-  };
-
-  const handleAddClose = () => {
-    setAddOpen(false);
-  };
+function TraReport(): JSX.Element {
+  const [open, setOpen] = useState(false);
 
   const [tableData, setTableData] = useState({
     columns: [
       { Header: "id", accessor: "id", width: "3%" },
-      { Header: "username", accessor: "reference", width: "7%" },
-      { Header: "userid", accessor: "country", width: "7%" },
-      { Header: "allowed currencies", accessor: "allowed_currencies", width: "7%" },
-      { Header: "action", accessor: "action", width: "7%" },
+      { Header: "system ref", accessor: "system_ref", width: "7%" },
+      { Header: "merchant ref", accessor: "merchant_ref", width: "7%" },
+      { Header: "currency", accessor: "currency", width: "7%" },
+      { Header: "amount", accessor: "amount", width: "7%" },
+      { Header: "type", accessor: "type", width: "7%" },
+      { Header: "product", accessor: "product", width: "7%" },
+      { Header: "from", accessor: "from", width: "7%" },
+      { Header: "to", accessor: "to", width: "7%" },
+      { Header: "status", accessor: "status", width: "7%" },
+      { Header: "created on", accessor: "created_on", width: "7%" },
       { Header: "updated on", accessor: "updated_on", width: "7%" },
+      { Header: "action", accessor: "action", width: "5%" },
     ],
     rows: [
       {
-        id: "001",
-        reference: "john_doe",
-        country: "US123",
-        allowed_currencies: "USD, EUR",
+        id: "1",
+        system_ref: "SYS123456",
+        merchant_ref: "MERCHANT001",
+        currency: "USD",
+        amount: "$150.00",
+        type: "payment",
+        product: "Product A",
+        from: "John Doe",
+        to: "Jane Smith",
+        status: "Completed",
+        created_on: "2023-09-01",
+        updated_on: "2023-09-02",
         action: (
           <div style={{ paddingLeft: "12px" }}>
-            <Icon style={{ cursor: "pointer", fontSize: 20 }} onClick={handleAddClickOpen}>
-              add
-            </Icon>
+            <Icon style={{ cursor: "pointer", fontSize: 20 }}>edit</Icon>
           </div>
         ),
-        updated_on: "2024-10-07",
       },
     ],
   });
@@ -77,30 +81,16 @@ function MasterControl(): JSX.Element {
               alignItems="center"
               lineHeight={1}
             >
-              <MDTypography variant="h5" fontWeight="medium" style={{ color: "black" }}>
-                Master Controls
+              <MDTypography variant="h5" fontWeight="medium">
+                Report
               </MDTypography>
             </MDBox>
             <DataTable table={tableData} canSearch />
           </Card>
         </MDBox>
       </MDBox>
-      {/* Dialog Implementation */}
-      <Dialog open={addOpen} onClose={handleAddClose}>
-        <DialogTitle style={{ color: "black" }}>Master Control</DialogTitle>
-        <DialogContent>
-          {/* You can add form fields here for the new entry */}
-          <p>Add new user details here...</p>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleAddClose}>Cancel</Button>
-          <Button onClick={handleAddClose} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
     </DashboardLayout>
   );
 }
 
-export default MasterControl;
+export default TraReport;

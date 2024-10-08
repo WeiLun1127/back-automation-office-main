@@ -23,6 +23,7 @@ import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
 import DataTable from "assets/examples/Tables/DataTable";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
+import MDSnackbar from "components/MDSnackbar";
 import MDTypography from "components/MDTypography";
 import React, { useEffect, useState } from "react";
 import Flag from "react-world-flags";
@@ -37,6 +38,9 @@ function CurrencyTables(): JSX.Element {
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [editCurrencyData, setEditCurrencyData] = useState(null);
 
+  const [success, setSuccess] = useState(false);
+  const [snackBarTitle, setSnackBarTitle] = useState("");
+
   const [tableData, setTableData] = useState({
     columns: [
       { Header: "id", accessor: "id", width: "3%" },
@@ -50,6 +54,20 @@ function CurrencyTables(): JSX.Element {
     ],
     rows: [],
   });
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess(false); // Automatically hide the snackbar after 3 seconds
+      }, 3000);
+
+      return () => clearTimeout(timer); // Cleanup the timer on component unmount or when success changes
+    }
+  }, [success]);
+
+  const getSnackbarColor = () => {
+    return snackBarTitle.toLowerCase().includes("error") ? "error" : "success";
+  };
 
   const fetchCurrencyData = async () => {
     const storedToken = localStorage.getItem("token");
@@ -104,12 +122,14 @@ function CurrencyTables(): JSX.Element {
           ),
           action: (
             <MDBox display="flex" gap={1} alignItems="center">
-              <Icon
-                style={{ cursor: "pointer", fontSize: 20 }}
-                onClick={() => handleEditClick(item.Currency)}
-              >
-                edit
-              </Icon>
+              <div style={{ paddingLeft: "12px" }}>
+                <Icon
+                  style={{ cursor: "pointer", fontSize: 20 }}
+                  onClick={() => handleEditClick(item.Currency)}
+                >
+                  edit
+                </Icon>
+              </div>
             </MDBox>
           ),
         })
@@ -154,11 +174,15 @@ function CurrencyTables(): JSX.Element {
       console.log("API Response:", response);
 
       if (response.Status === "1") {
-        alert("Currency status updated successfully!");
+        // alert("Currency status updated successfully!");
+        setSnackBarTitle("Currency status updated successfully.");
+        setSuccess(true);
         fetchCurrencyData(); // Refresh the table data
       }
     } catch (error) {
       console.error("Error updating currency status:", error);
+      setSnackBarTitle("Error updating currency status.");
+      setSuccess(true);
     }
   };
 
@@ -280,14 +304,20 @@ function CurrencyTables(): JSX.Element {
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
       if (response.Status === "1") {
-        alert("Currency added successfully!");
+        // alert("Currency added successfully!");
+        setSnackBarTitle("Currency added successfully.");
+        setSuccess(true);
         fetchCurrencyData(); // Refresh the table data after successful submission
         handleClose(); // Close the dialog
       } else {
-        alert("Failed to add currency.");
+        // alert("Failed to add currency.");
+        setSnackBarTitle("Error adding currency.");
+        setSuccess(true);
       }
     } catch (error) {
       console.error("Error during API call:", error);
+      setSnackBarTitle("Error occured. Please Try again shortly.");
+      setSuccess(true);
     }
   };
 
@@ -315,11 +345,15 @@ function CurrencyTables(): JSX.Element {
       console.log(response.Status);
 
       if (response.Status === "1") {
-        alert("Currency data updated successfully!");
+        // alert("Currency data updated successfully!");
+        setSnackBarTitle("Currency data updated successfully.");
+        setSuccess(true);
         fetchCurrencyData();
       }
     } catch (error) {
       console.error("Error during API call:", error);
+      setSnackBarTitle("Error occured. Please try again shortly.");
+      setSuccess(true);
     } finally {
       handleEditClose();
     }
@@ -580,6 +614,12 @@ function CurrencyTables(): JSX.Element {
           </Button>
         </DialogActions>
       </Dialog>
+      <MDSnackbar
+        open={success}
+        color={getSnackbarColor()}
+        title={snackBarTitle}
+        close={() => setSuccess(false)} // Close the snackbar
+      />
     </DashboardLayout>
   );
 }

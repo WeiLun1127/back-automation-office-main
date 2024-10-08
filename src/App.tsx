@@ -4,6 +4,7 @@ import Configurator from "assets/examples/Configurator/Configurator";
 import brandDark from "assets/images/logo-ct-dark.png";
 import brandWhite from "assets/images/logo-ct.png";
 import axios from "axios";
+import MDSnackbar from "components/MDSnackbar";
 import { setMiniSidenav, useMaterialUIController } from "context";
 import AccountProviderList from "modules/layouts/accountProvider";
 import CreateAccountProvider from "modules/layouts/accountProvider/create";
@@ -21,6 +22,7 @@ import MerchantList from "modules/layouts/merchant";
 import CreateMerchantAccount from "modules/layouts/merchant/create";
 import ProductTables from "modules/layouts/product";
 import TransactionsReport from "modules/layouts/report";
+import TraReport from "modules/layouts/report/report";
 import TransactionSummary from "modules/layouts/report/summary";
 import Authentication from "modules/layouts/security";
 import Illustration from "modules/layouts/signin/illustration";
@@ -65,6 +67,22 @@ export default function App() {
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const [success, setSuccess] = useState(false);
+  const [snackBarTitle, setSnackBarTitle] = useState("");
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess(false); // Automatically hide the snackbar after 3 seconds
+      }, 3000);
+
+      return () => clearTimeout(timer); // Cleanup the timer on component unmount or when success changes
+    }
+  }, [success]);
+
+  const getSnackbarColor = () => {
+    return snackBarTitle.toLowerCase().includes("error") ? "error" : "success";
+  };
 
   const handleSignIn = async (username: string, password: string) => {
     const authApi = "http://18.138.168.43:10311/api/auth";
@@ -126,18 +144,24 @@ export default function App() {
             navigate("/");
           } else {
             console.error("Token not found");
-            alert("Token not found during login.");
+            // alert("Token not found during login.");
+            setSnackBarTitle("Error, Token Not Found.");
+            setSuccess(true);
           }
         } else {
           console.error("Login failed:", data.Value.Data.Message);
-          alert("Login failed");
+          // alert("Login failed");
+          setSnackBarTitle("Error Occured. Login Failed.");
+          setSuccess(true);
         }
       } else {
         console.error("Unexpected response status:", response.statusText);
       }
     } catch (error) {
       console.error("Error during login", error);
-      alert("An error occurred during login. Please try again.");
+      // alert("An error occurred during login. Please try again.");
+      setSnackBarTitle("An error occurred during login. Please try again.");
+      setSuccess(true);
     }
   };
 
@@ -266,7 +290,8 @@ export default function App() {
       case "transactionSummary":
         return <TransactionSummary />;
       case "transactionReport":
-        return <TransactionsReport />;
+        // return <TransactionsReport />;
+        return <TraReport />;
       case "createMerchantAccount":
         return <CreateMerchantAccount />;
       case "merchantList":
@@ -320,6 +345,12 @@ export default function App() {
           </Routes>
         </>
       )}
+      <MDSnackbar
+        open={success}
+        color={getSnackbarColor()}
+        title={snackBarTitle}
+        close={() => setSuccess(false)} // Close the snackbar
+      />
     </ThemeProvider>
   );
 }

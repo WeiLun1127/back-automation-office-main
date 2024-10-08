@@ -26,6 +26,7 @@ import ProductTables from "modules/layouts/product";
 import MasterControl from "modules/layouts/master/control";
 import TransactionsReport from "modules/layouts/report";
 import TransactionSummary from "modules/layouts/report/summary";
+import TraReport from "modules/layouts/report/report";
 // Images
 
 const routes = [
@@ -116,7 +117,8 @@ const routes = [
         name: "Report",
         key: "transaction-report",
         route: "transactionReport",
-        component: <TransactionsReport />,
+        // component: <TransactionsReport />,
+        component: <TraReport />,
       },
     ],
   },
