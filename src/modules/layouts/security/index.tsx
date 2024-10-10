@@ -11,6 +11,7 @@ import { apiHandler } from "api/apiHandler";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { QRCodeSVG } from "qrcode.react";
+import MDSnackbar from "components/MDSnackbar";
 
 const Authentication = () => {
   // States to manage input values
@@ -23,20 +24,31 @@ const Authentication = () => {
   const [totpUri, setTotpUri] = useState(""); // State to store TOTP URI
   const [totpKey, setTotpKey] = useState("");
 
+  const [success, setSuccess] = useState(false);
+  const [snackBarTitle, setSnackBarTitle] = useState("");
+
+  const getSnackbarColor = () => {
+    return snackBarTitle.toLowerCase().includes("error") ? "error" : "success";
+  };
+
   // Event handler for the "Next" button
   const handleNextClick = async () => {
     const storedUsername = localStorage.getItem("username");
     const storedToken = localStorage.getItem("token");
     if (!currentPassword || !newPassword) {
       console.error("Both the current password and new password fields must be filled.");
-      alert("Both the current password and new password fields must be filled."); // Show an alert or any other UI feedback
+      setSnackBarTitle("Error. Both the current password and new password fields must be filled.");
+      setSuccess(true);
+      // alert("Both the current password and new password fields must be filled."); // Show an alert or any other UI feedback
       return; // Exit the function if either field is empty
     }
 
     // Check if the new password is the same as the current password
     if (currentPassword === newPassword) {
       console.error("The new password cannot be the same as the current password.");
-      alert("The new password cannot be the same as the current password."); // Show an alert or any other UI feedback
+      setSnackBarTitle("Error. The new password cannot be the same as the current password.");
+      setSuccess(true);
+      // alert("The new password cannot be the same as the current password."); // Show an alert or any other UI feedback
       return; // Exit the function if the passwords are the same
     }
     const apiUrl = "http://18.138.168.43:10311/api/execmem";
@@ -78,18 +90,24 @@ const Authentication = () => {
         console.log("Update API Response:", updateResponse);
         if (updateResponse.Status === "1") {
           console.log("Password updated successfully");
-          alert("Password updated successfully");
+          // alert("Password updated successfully");
+          setSnackBarTitle("Password Updated Successfully.");
+          setSuccess(true);
 
           setCurrentPassword("");
           setNewPassword("");
           setConfirmNewPassword("");
         } else {
           console.log("Failed to update password");
-          alert("Failed to update password.");
+          setSnackBarTitle("Error updating password.");
+          setSuccess(true);
+          // alert("Failed to update password.");
         }
       } else {
         console.log("Failure: Incorrect password");
-        alert("Please make sure current password is entered correctly");
+        setSnackBarTitle("Error. Please make sure current password is entered correctly ");
+        setSuccess(true);
+        // alert("Please make sure current password is entered correctly");
       }
     } catch (error) {
       console.error("API Error:", error);
@@ -260,6 +278,12 @@ const Authentication = () => {
           </MDBox>
         </Card>
       </Grid>
+      <MDSnackbar
+        open={success}
+        color={getSnackbarColor()}
+        title={snackBarTitle}
+        close={() => setSuccess(false)} // Close the snackbar
+      />
     </DashboardLayout>
   );
 };

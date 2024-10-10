@@ -433,6 +433,7 @@ function CurrencyTables(): JSX.Element {
         <DialogContent>
           <FormControl
             fullWidth
+            margin="dense"
             sx={{
               mt: 1,
               "& .MuiOutlinedInput-root": {

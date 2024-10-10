@@ -18,6 +18,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Autocomplete,
 } from "@mui/material";
 import { CheckBox, Close as CloseIcon } from "@mui/icons-material"; // Import Close Icon
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
@@ -28,6 +29,7 @@ import MDButton from "components/MDButton";
 import { apiHandler } from "api/apiHandler";
 import SecurityIcon from "@mui/icons-material/Security";
 import MDSnackbar from "components/MDSnackbar";
+import { stringify } from "querystring";
 
 const MasterList = () => {
   const [open, setOpen] = useState(false); // State for controlling the dialog visibility
@@ -51,6 +53,58 @@ const MasterList = () => {
   const [selectedTimeZone, setSelectedTimeZone] = useState("");
   const [success, setSuccess] = useState(false);
   const [snackBarTitle, setSnackBarTitle] = useState("");
+
+  const [tuneDialogOpen, setTuneDialogOpen] = useState(false); // For controlling the tune dialog visibility
+  const [controlData, setControlData] = useState(null); // State for storing control data from the API
+  const [tuneDialogControl, setTuneDialogControl] = useState(""); // Control selected in the dropdown in Tune
+  const [tuneDialogUserId, setTuneDialogUserId] = useState("");
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+
+  const controlOptions = [
+    { label: "Dashboard", value: "dashboard" },
+    { label: "Accessibility", value: "accessibility" },
+    { label: "Master", value: "master" },
+    { label: "Company List", value: "companyList" },
+    { label: "Api Control", value: "apiControl" },
+    { label: "Master List", value: "masterList" },
+    { label: "Master Control", value: "masterControl" },
+    { label: "Create Master Account", value: "createMasterAccount" },
+    { label: "Transactions", value: "transactions" },
+    { label: "Authentication", value: "authenthication" },
+    { label: "Create Merchant", value: "createMerchant" },
+    { label: "Merchant List", value: "merchantList" },
+    { label: "Create Account Provider", value: "createAccountProvider" },
+    { label: "Account Provider List", value: "accountProviderList" },
+    { label: "Create Agent", value: "createAgent" },
+    { label: "Agent List", value: "agentList" },
+    { label: "Create Commission", value: "createCommission" },
+    { label: "Commission List", value: "commissionList" },
+    { label: "Currency List", value: "currencyList" },
+    { label: "Product List", value: "productList" },
+  ];
+
+  const controlMapping: { [key: string]: string[] } = {
+    dashboard: ["001"],
+    apiControl: ["001.001"],
+    accessibility: ["001.002"],
+    companyList: ["001.003"],
+    master: ["002"],
+    createMasterAccount: ["002.001"],
+    masterList: ["002.002"],
+    masterControl: ["002.003"],
+    transactions: ["003", "003.001"],
+    authenthication: ["004", "004.001"],
+    createMerchant: ["005", "005.001"],
+    merchantList: ["005", "005.002"],
+    createAccountProvider: ["006", "006.001"],
+    accountProviderList: ["006", "006.002"],
+    createAgent: ["007", "007.001"],
+    agentList: ["007", "007.002"],
+    createCommission: ["008", "008.001"],
+    commissionList: ["008", "008.002"],
+    currencyList: ["009", "009.001"],
+    productList: ["010", "010.001"],
+  };
 
   const timeZones = [
     { label: "(UTC-12:00) Baker Island", value: "UTC-12:00" },
@@ -79,6 +133,49 @@ const MasterList = () => {
     { label: "(UTC+11:00) Solomon Islands", value: "UTC+11:00" },
     { label: "(UTC+12:00) Fiji, New Zealand", value: "UTC+12:00" },
   ];
+
+  const handleTuneClick = async (userId: any) => {
+    setSelectedUserId(userId);
+    setTuneDialogOpen(true);
+    setTuneDialogUserId(userId);
+    try {
+      const storedToken = localStorage.getItem("token");
+      const storedUsername = localStorage.getItem("username");
+      const apiUrl = "http://18.138.168.43:10311/api/execmem";
+      const params = {
+        EXECF: "GETAUTHDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          FilterUid: userId,
+        }),
+      };
+      const response = await apiHandler(apiUrl, params);
+      console.log("API Response:", response);
+
+      const decodedString = response.Data.replace(/\\u0022/g, '"')
+        .replace('"[{', "[{")
+        .replace('}]"', "}]");
+      const parsedData = JSON.parse(decodedString);
+      console.log("Control Data:", parsedData.Control);
+
+      const controlKeys = parsedData.Control.map((item: any) => Object.keys(item)[0]);
+      console.log(controlKeys);
+
+      // Map control values to control names using the controlMapping
+      const controlNames = controlKeys.map((key: string) => {
+        const option = controlOptions.find((opt) => controlMapping[opt.value].includes(key));
+        return option ? option.label : key; // Fallback to key if no label is found
+      });
+
+      console.log("Mapped Control Names:", controlNames);
+
+      // Set the control names instead of the control values
+      setControlData(controlNames);
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
+  };
 
   const handleEditClick = async (userId: string) => {
     setSelectedUserId(userId);
@@ -143,6 +240,11 @@ const MasterList = () => {
   const handleClose = () => {
     setOpen(false);
     fetchTableData();
+  };
+
+  const handleTuneClose = () => {
+    setTuneDialogOpen(false);
+    setSelectedOptions([]);
   };
 
   const handleLockClose = () => {
@@ -213,6 +315,12 @@ const MasterList = () => {
                 onClick={() => handleEditClick(item.Uid)}
               >
                 edit
+              </Icon>
+              <Icon
+                style={{ cursor: "pointer", fontSize: 20 }}
+                onClick={() => handleTuneClick(item.Uid)}
+              >
+                tune
               </Icon>
               <MDButton
                 variant="outlined"
@@ -508,6 +616,43 @@ const MasterList = () => {
     rows: tableRows,
   };
 
+  const controlTuneSaveClick = async (userId: string) => {
+    const storedUsername = localStorage.getItem("username");
+    const storedToken = localStorage.getItem("token");
+    try {
+      const apiUrl = "http://18.138.168.43:10311/api/execmem";
+      const selectedControlValues = selectedOptions.flatMap((option) => controlMapping[option]);
+      const controlArray = selectedControlValues.map((control) => ({
+        [control]: "1",
+      }));
+      const params = {
+        EXECF: "SETAUTHDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          Uid: userId,
+          Control: JSON.stringify(controlArray),
+        }),
+      };
+      const response = await apiHandler(apiUrl, params);
+      console.log("API Response:", response);
+
+      // Check if response.Status is 1
+      if (response.Status === "1") {
+        // setSuccess(true);
+        setSnackBarTitle("Control Updated Successfully");
+        setSuccess(true);
+      } else {
+        // alert("Error Occured. Please Try Again Shortly");
+        setSnackBarTitle("Error Occured. Please Try Again Shortly");
+        setSuccess(true);
+      }
+      setSelectedOptions([]);
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -600,6 +745,65 @@ const MasterList = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleEditSaveClick(selectedUserId)} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={tuneDialogOpen}
+        onClose={handleTuneClose}
+        fullWidth={true}
+        maxWidth="lg" // Sets the max width to a larger size
+        sx={{
+          "& .MuiDialog-paper": {
+            // Customize dialog paper size
+            width: "600px", // Set custom width
+            height: "400px", // Set custom height
+          },
+        }}
+      >
+        <DialogTitle>
+          Control Data
+          <IconButton
+            aria-label="close"
+            onClick={handleTuneClose}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            disabled
+            label="UserId"
+            variant="outlined"
+            value={tuneDialogUserId}
+            sx={{ mt: 2 }}
+          />
+          <Autocomplete
+            sx={{ paddingLeft: 1, maxWidth: 550, mt: 2 }}
+            multiple
+            options={controlOptions.filter((option) => !selectedOptions.includes(option.value))}
+            disableCloseOnSelect
+            getOptionLabel={(option) => option.label}
+            renderInput={(params) => (
+              <TextField {...params} variant="standard" label="Control" fullWidth />
+            )}
+            value={selectedOptions.map((optionValue) =>
+              controlOptions.find((option) => option.value === optionValue)
+            )}
+            onChange={(event, value) => setSelectedOptions(value.map((option) => option.value))}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => controlTuneSaveClick(selectedUserId)} color="primary">
             Save
           </Button>
         </DialogActions>

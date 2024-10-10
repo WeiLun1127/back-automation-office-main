@@ -39,6 +39,7 @@ const CreateMasterAccount = () => {
   const [isTfaSwitchOn, setIsTfaSwitchOn] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
+  const [snackBarTitle, setSnackBarTitle] = useState("");
 
   const timeZones = [
     { label: "(UTC-12:00) Baker Island", value: "UTC-12:00" },
@@ -67,6 +68,10 @@ const CreateMasterAccount = () => {
     { label: "(UTC+11:00) Solomon Islands", value: "UTC+11:00" },
     { label: "(UTC+12:00) Fiji, New Zealand", value: "UTC+12:00" },
   ];
+
+  const getSnackbarColor = () => {
+    return snackBarTitle.toLowerCase().includes("error") ? "error" : "success";
+  };
 
   const [selectedTimeZone, setSelectedTimeZone] = React.useState("");
 
@@ -188,8 +193,9 @@ const CreateMasterAccount = () => {
 
       // Check if response.Status is 1
       if (response.Status === "1") {
+        // setSuccess(true);
+        setSnackBarTitle("Master Account Created Successfully");
         setSuccess(true);
-
         setUserId("");
         setPassword("");
         setConfirmPassword("");
@@ -198,7 +204,9 @@ const CreateMasterAccount = () => {
         setIsSwitchOn(false);
         setIsTfaSwitchOn(false);
       } else {
-        alert("Error Occured. Please Try Again Shortly");
+        // alert("Error Occured. Please Try Again Shortly");
+        setSnackBarTitle("Error Occured. Please Try Again Shortly");
+        setSuccess(true);
       }
     } catch (error) {
       console.error("Error during API call:", error);
@@ -393,9 +401,8 @@ const CreateMasterAccount = () => {
       {/* Conditionally render the MDSnackbar */}
       <MDSnackbar
         open={success}
-        fontSize="small"
-        color="success"
-        title="Master Account Created Successfully"
+        color={getSnackbarColor()}
+        title={snackBarTitle}
         close={() => setSuccess(false)} // Close the snackbar
       />
     </DashboardLayout>

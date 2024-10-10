@@ -37,6 +37,24 @@ function MasterControl(): JSX.Element {
     setAddOpen(false);
   };
 
+  const tableData1 = {
+    columns: [
+      { Header: "Currency", accessor: "currency", width: "7%" },
+      { Header: "Allow", accessor: "allow", width: "7%" },
+    ],
+    rows: [{ currency: "MYR", allow: "allow" }],
+  };
+
+  const tableData2 = {
+    columns: [
+      { Header: "Currency", accessor: "currency", width: "7%" },
+      { Header: "Product", accessor: "product", width: "7%" },
+      { Header: "Type", accessor: "type", width: "7%" },
+      { Header: "Allow", accessor: "allow", width: "7%" },
+    ],
+    rows: [{ currency: "MYR", product: "DUITNOW", type: "Web", allow: "allow" }],
+  };
+
   const [tableData, setTableData] = useState({
     columns: [
       { Header: "id", accessor: "id", width: "3%" },
@@ -86,11 +104,50 @@ function MasterControl(): JSX.Element {
         </MDBox>
       </MDBox>
       {/* Dialog Implementation */}
-      <Dialog open={addOpen} onClose={handleAddClose}>
+      <Dialog
+        open={addOpen}
+        onClose={handleAddClose}
+        maxWidth="md"
+        fullWidth={true}
+        sx={{ "& .MuiDialogContent-root": { height: "450px" } }}
+      >
         <DialogTitle style={{ color: "black" }}>Master Control</DialogTitle>
         <DialogContent>
-          {/* You can add form fields here for the new entry */}
-          <p>Add new user details here...</p>
+          <TextField
+            margin="dense"
+            label="UserID"
+            fullWidth
+            // disabled
+            InputProps={{
+              // readOnly: true,
+              style: { width: "250px" },
+            }}
+          />
+          <TextField
+            margin="dense"
+            label="Username"
+            fullWidth
+            // disabled
+            InputProps={{
+              // readOnly: true,
+              style: { width: "250px" },
+            }}
+          />
+          <Box style={{ marginBottom: "20px" }}></Box>
+          <Box display="flex" justifyContent="space-between">
+            <Box width="30%">
+              {/* <MDTypography variant="h6" style={{ marginLeft: "16px" }}>
+                Table 1
+              </MDTypography> */}
+              <DataTable table={tableData1} showEntriesPerPage={false} />
+            </Box>
+            <Box width="60%">
+              {/* <MDTypography variant="h6" style={{ marginLeft: "16px" }}>
+                Table 2
+              </MDTypography> */}
+              <DataTable table={tableData2} showEntriesPerPage={false} />
+            </Box>
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleAddClose}>Cancel</Button>

@@ -26,14 +26,32 @@ import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
 import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
+import Flag from "react-flagkit";
+import axios from "axios";
 
 function ProductTables(): JSX.Element {
   const [editOpen, setEditOpen] = useState(false); // To control the dialog open state
   const [addOpen, setAddOpen] = useState(false); // To control the add dialog open state
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedCountry, setSelectedCountry] = useState<string>(""); // State for country selection
+  const [products, setProducts] = useState<any[]>([]); // New state for products
+  const [selectedProductData, setSelectedProductData] = useState<any>(null); // New state for selected product data
+
+  const countries = [
+    { name: "Korea", code: "KR" },
+    { name: "Vietnam", code: "VN" },
+    { name: "Malaysia", code: "MY" },
+    { name: "Singapore", code: "SG" },
+    { name: "Thailand", code: "TH" },
+    { name: "Japan", code: "JP" },
+    { name: "India", code: "IN" },
+    { name: "Indonesia", code: "ID" },
+    { name: "Cambodia", code: "KH" },
+  ];
 
   const handleEditClickOpen = (product: any) => {
     setSelectedProduct(product); // Store the product being edited
+    setSelectedCountry(product.country);
     setEditOpen(true); // Open the dialog
   };
 
@@ -44,10 +62,94 @@ function ProductTables(): JSX.Element {
 
   const handleAddClickOpen = () => {
     setAddOpen(true); // Open the add dialog
+    setSelectedCountry("");
+    setSelectedProductData(null);
+  };
+
+  type CountryName =
+    | "Korea"
+    | "Vietnam"
+    | "Malaysia"
+    | "Singapore"
+    | "Thailand"
+    | "Japan"
+    | "India"
+    | "Indonesia"
+    | "Cambodia";
+
+  // Update the currency mapping with CountryName as keys
+  const currencyMapping: Record<CountryName, string> = {
+    Korea: "KRW",
+    Vietnam: "VND",
+    Malaysia: "MYR",
+    Singapore: "SGD",
+    Thailand: "THB",
+    Japan: "JPY",
+    India: "INR",
+    Indonesia: "IDR",
+    Cambodia: "KHR",
+  };
+
+  const handleCountryChange = async (event: SelectChangeEvent<string>) => {
+    // setSelectedCountry(event.target.value);
+    const selectedCountry = event.target.value as CountryName;
+    setSelectedCountry(selectedCountry);
+    const selectedCountryCurrency = currencyMapping[selectedCountry];
+
+    if (selectedCountryCurrency) {
+      // Call the API with the necessary parameters
+      try {
+        const storedUsername = localStorage.getItem("username");
+        const storedToken = localStorage.getItem("token");
+        const response = await axios.post("http://18.138.168.43:10312/api/execset", {
+          EXECF: "GETPRODSBYCURR",
+          Uid: storedUsername,
+          Token: storedToken,
+          Data: JSON.stringify({ Currency: selectedCountryCurrency }),
+        });
+        console.log("API Response:", response.data);
+        // Extract the 'Data' string and manipulate it to remove the outer structure
+        const filteredDataString = response.data.Data; // Original string
+        let filteredData = filteredDataString.slice(filteredDataString.indexOf("[")); // Keep from the first '[' onward
+
+        // Check and remove the extra '}' at the end if it exists
+        if (filteredData.endsWith("}")) {
+          filteredData = filteredData.slice(0, -1); // Remove the last character
+        }
+
+        if (filteredData.endsWith('"')) {
+          filteredData = filteredData.slice(0, -1); // Remove the last character
+        }
+
+        // If you need to remove any trailing whitespace or newline characters:
+        filteredData = filteredData.trim(); // Clean up any whitespace
+
+        console.log("Filtered Data:", filteredData);
+        const dataArray = JSON.parse(filteredData);
+        setProducts(dataArray);
+
+        dataArray.forEach((item: { Code: any; Name: any; Type: any; Status: any }) => {
+          console.log("Code:", item.Code);
+          console.log("Name:", item.Name);
+          console.log("Type:", item.Type);
+          console.log("Status:", item.Status);
+          console.log("-----"); // Separator for readability
+        });
+      } catch (error) {
+        console.error("API call failed:", error);
+      }
+    }
   };
 
   const handleAddClose = () => {
     setAddOpen(false); // Close the add dialog
+    setSelectedCountry("");
+  };
+
+  const handleProductSelect = (event: SelectChangeEvent<string>) => {
+    const selectedProductCode = event.target.value;
+    const productData = products.find((product) => product.Code === selectedProductCode);
+    setSelectedProductData(productData); // Update selected product data
   };
 
   const [tableData, setTableData] = useState({
@@ -144,29 +246,72 @@ function ProductTables(): JSX.Element {
           </IconButton>
         </DialogTitle>
         <DialogContent>
+          <FormControl
+            fullWidth
+            margin="dense"
+            sx={{
+              mt: 1,
+              "& .MuiOutlinedInput-root": {
+                minHeight: "44px", // Ensure consistent min-height
+                borderWidth: "2px", // Consistent border width (optional)
+              },
+            }}
+          >
+            <InputLabel id="country">Country</InputLabel>
+            <Select
+              labelId="country"
+              label="Country"
+              value={selectedCountry}
+              onChange={handleCountryChange}
+            >
+              {countries.map(({ name, code }) => (
+                <MenuItem key={code} value={name} style={{ margin: "5px 0" }}>
+                  <Box display="flex" alignItems="center">
+                    <Flag country={code} size={20} style={{ marginRight: "10px" }} />
+                    {name}
+                  </Box>
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl
+            fullWidth
+            margin="dense"
+            sx={{
+              mt: 1,
+              "& .MuiOutlinedInput-root": {
+                minHeight: "44px", // Ensure consistent min-height
+                borderWidth: "2px", // Consistent border width (optional)
+              },
+            }}
+          >
+            <InputLabel id="product-select-label">Product</InputLabel>
+            <Select
+              labelId="product-select-label"
+              label="Product"
+              value={selectedProductData?.Code || ""}
+              onChange={handleProductSelect}
+            >
+              {products.map((product) => (
+                <MenuItem key={product.Code} value={product.Code}>
+                  {product.Name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* Displaying the selected product details */}
           <TextField
             margin="dense"
-            label="Country"
+            label="Display Name"
             fullWidth
-            defaultValue="" // Add default value as needed
-          />
-          <TextField
-            margin="dense"
-            label="Product"
-            fullWidth
-            defaultValue="" // Add default value as needed
+            value={selectedProductData?.Name || ""}
           />
           <TextField
             margin="dense"
             label="Profit Type"
             fullWidth
-            defaultValue="" // Add default value as needed
-          />
-          <TextField
-            margin="dense"
-            label="Display Name"
-            fullWidth
-            defaultValue="" // Add default value as needed
+            value={selectedProductData?.Type || ""}
           />
           <TextField
             margin="dense"
@@ -176,7 +321,7 @@ function ProductTables(): JSX.Element {
           />
           <FormControlLabel
             label="Status"
-            control={<Switch checked={false} />} // Default status as needed
+            control={<Switch checked={selectedProductData?.Status || false} />} // Default status as needed
           />
         </DialogContent>
         <DialogActions>
