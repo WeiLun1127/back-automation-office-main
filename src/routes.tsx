@@ -56,14 +56,6 @@ const routes = [
         route: "accessibility",
         component: <ApiControl />,
       },
-      // {
-      //   id: "003",
-      //   parentId: "001",
-      //   name: "Company List",
-      //   key: "company-list",
-      //   route: "companyList",
-      //   component: <CompanyList />,
-      // },
     ],
   },
   {
