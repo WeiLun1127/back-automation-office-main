@@ -27,6 +27,9 @@ import MasterControl from "modules/layouts/master/control";
 import TransactionsReport from "modules/layouts/report";
 import TransactionSummary from "modules/layouts/report/summary";
 import TraReport from "modules/layouts/report/report";
+import dashboardIcon from "././assets/images/routes-logo/dashboard.svg";
+import Api from "modules/layouts/controllers/api";
+import AgentProduct from "modules/layouts/agent/product";
 // Images
 
 const routes = [
@@ -35,12 +38,12 @@ const routes = [
     type: "collapse",
     name: "Dashboard",
     key: "dashboard",
-    icon: <img src={businessIcon} alt="business" width="24" height="24" />,
+    icon: <img src={dashboardIcon} alt="dashboard" width="24" height="24" />,
     collapse: [
       {
         id: "001",
         parentId: "001",
-        name: "API Control",
+        name: "API Controller",
         key: "api-control",
         route: "apiControl",
         component: <ApiControl />,
@@ -66,13 +69,30 @@ const routes = [
   {
     id: "002",
     type: "collapse",
+    name: "Controllers",
+    key: "controller",
+    icon: <img src={businessIcon} alt="business" width="24" height="24" />,
+    collapse: [
+      {
+        id: "001",
+        parentId: "002",
+        name: "API",
+        key: "api",
+        route: "api",
+        component: <Api />,
+      },
+    ],
+  },
+  {
+    id: "003",
+    type: "collapse",
     name: "Master",
     key: "master",
     icon: <img src={masterIcon} alt="master" width="24" height="24" />,
     collapse: [
       {
         id: "001",
-        parentId: "002",
+        parentId: "003",
         name: "Create Master",
         key: "create-master-account",
         route: "createMasterAccount",
@@ -80,7 +100,7 @@ const routes = [
       },
       {
         id: "002",
-        parentId: "002",
+        parentId: "003",
         name: "Master List",
         key: "master-list",
         route: "masterList",
@@ -88,7 +108,7 @@ const routes = [
       },
       {
         id: "003",
-        parentId: "002",
+        parentId: "003",
         name: "Master Control",
         key: "master-control",
         route: "masterControl",
@@ -97,7 +117,7 @@ const routes = [
     ],
   },
   {
-    id: "003",
+    id: "004",
     type: "collapse",
     name: "Report",
     key: "report",
@@ -105,7 +125,7 @@ const routes = [
     collapse: [
       {
         id: "001",
-        parentId: "003",
+        parentId: "004",
         name: "Summary",
         key: "transaction-summary",
         route: "transactionSummary",
@@ -113,7 +133,7 @@ const routes = [
       },
       {
         id: "002",
-        parentId: "003",
+        parentId: "004",
         name: "Report",
         key: "transaction-report",
         route: "transactionReport",
@@ -123,7 +143,7 @@ const routes = [
     ],
   },
   {
-    id: "004",
+    id: "005",
     type: "collapse",
     name: "Security",
     key: "security",
@@ -131,7 +151,7 @@ const routes = [
     collapse: [
       {
         id: "001",
-        parentId: "004",
+        parentId: "005",
         name: "Authentication",
         key: "authentication",
         route: "authentication",
@@ -164,56 +184,64 @@ const routes = [
   //     },
   //   ],
   // },
-  // {
-  //   id: "006",
-  //   type: "collapse",
-  //   name: "Account Provider",
-  //   key: "account-provider",
-  //   icon: <img src={accountProviderIcon} alt="accountProvider" width="24" height="24" />,
-  //   collapse: [
-  //     {
-  //       id: "001",
-  //       parentId: "006",
-  //       name: "Create Account",
-  //       key: "create-account-provider",
-  //       route: "createAccountProvider",
-  //       component: <CreateAccountProvider />,
-  //     },
-  //     {
-  //       id: "002",
-  //       parentId: "006",
-  //       name: "Provider List",
-  //       key: "account-provider-list",
-  //       route: "accountProviderList",
-  //       component: <AccountProviderList />,
-  //     },
-  //   ],
-  // },
-  // {
-  //   id: "007",
-  //   type: "collapse",
-  //   name: "Agent",
-  //   key: "agent",
-  //   icon: <img src={agentIcon} alt="agent" width="24" height="24" />,
-  //   collapse: [
-  //     {
-  //       id: "001",
-  //       parentId: "007",
-  //       name: "Create Account",
-  //       key: "create-agent",
-  //       route: "createAgent",
-  //       component: <CreateAccountProvider />,
-  //     },
-  //     {
-  //       id: "002",
-  //       parentId: "007",
-  //       name: "Agent List",
-  //       key: "agent-list",
-  //       route: "agentList",
-  //       component: <AccountProviderList />,
-  //     },
-  //   ],
-  // },
+  {
+    id: "006",
+    type: "collapse",
+    name: "Account Provider",
+    key: "account-provider",
+    icon: <img src={accountProviderIcon} alt="accountProvider" width="24" height="24" />,
+    collapse: [
+      {
+        id: "001",
+        parentId: "006",
+        name: "Create Provider",
+        key: "create-account-provider",
+        route: "createAccountProvider",
+        component: <CreateAccountProvider />,
+      },
+      {
+        id: "002",
+        parentId: "006",
+        name: "Provider List",
+        key: "account-provider-list",
+        route: "accountProviderList",
+        component: <AccountProviderList />,
+      },
+    ],
+  },
+  {
+    id: "007",
+    type: "collapse",
+    name: "Agent",
+    key: "agent",
+    icon: <img src={agentIcon} alt="agent" width="24" height="24" />,
+    collapse: [
+      {
+        id: "001",
+        parentId: "007",
+        name: "Create Agent",
+        key: "create-agent",
+        route: "createAgent",
+        component: <CreateAccountProvider />,
+      },
+      {
+        id: "002",
+        parentId: "007",
+        name: "Agent List",
+        key: "agent-list",
+        route: "agentList",
+        component: <AccountProviderList />,
+      },
+      {
+        id: "003",
+        parentId: "007",
+        name: "Products",
+        key: "agent-products",
+        route: "agentProducts",
+        component: <AgentProduct />,
+      },
+    ],
+  },
   // {
   //   id: "008",
   //   type: "collapse",

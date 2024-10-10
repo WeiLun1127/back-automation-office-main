@@ -10,10 +10,12 @@ import AccountProviderList from "modules/layouts/accountProvider";
 import CreateAccountProvider from "modules/layouts/accountProvider/create";
 import AgentList from "modules/layouts/agent";
 import CreateAgentAccount from "modules/layouts/agent/create";
+import AgentProduct from "modules/layouts/agent/product";
 import CommissionList from "modules/layouts/comm";
 import CreateCommissionAccount from "modules/layouts/comm/create";
 import ApiControl from "modules/layouts/company";
 import CompanyList from "modules/layouts/company/companyList";
+import Api from "modules/layouts/controllers/api";
 import CurrencyTables from "modules/layouts/currency";
 import MasterList from "modules/layouts/master";
 import MasterControl from "modules/layouts/master/control";
@@ -37,6 +39,7 @@ export type Pathname =
   | "apiControl"
   | "accessibility"
   | "companyList"
+  | "api"
   | "authentication"
   | "createMasterAccount"
   | "masterList"
@@ -49,6 +52,7 @@ export type Pathname =
   | "accountProviderList"
   | "createAgent"
   | "agentList"
+  | "agentProducts"
   | "createCommission"
   | "commissionList"
   | "currency"
@@ -279,6 +283,8 @@ export default function App() {
         return <ApiControl />;
       case "companyList":
         return <CompanyList />;
+      case "api":
+        return <Api />;
       case "authentication":
         return <Authentication />;
       case "createMasterAccount":
@@ -304,6 +310,8 @@ export default function App() {
         return <CreateAgentAccount />;
       case "agentList":
         return <AgentList />;
+      case "agentProducts":
+        return <AgentProduct />;
       case "createCommission":
         return <CreateCommissionAccount />;
       case "commissionList":

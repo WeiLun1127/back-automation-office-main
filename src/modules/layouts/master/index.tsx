@@ -19,6 +19,7 @@ import {
   MenuItem,
   Select,
   Autocomplete,
+  Typography,
 } from "@mui/material";
 import { CheckBox, Close as CloseIcon } from "@mui/icons-material"; // Import Close Icon
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
@@ -672,6 +673,9 @@ const MasterList = () => {
                 borderRadius: "5px",
               }}
             />
+            <Typography variant="h6" sx={{ marginTop: 5 }}>
+              Master List
+            </Typography>
           </MDBox>
           <DataTable table={dataTableData} />
         </Card>
