@@ -35,6 +35,11 @@ function AgentProduct(): JSX.Element {
   const [myShareValue, setMyShareValue] = useState("0.005");
   const [tempMyShareValue, setTempMyShareValue] = useState(myShareValue);
   const [allowChecked, setAllowChecked] = useState(true); // for the checkbox state
+  const [accGroup, setAccGroup] = useState("");
+
+  const handleAccGroupChange = (event: SelectChangeEvent) => {
+    setAccGroup(event.target.value); // update the selected value
+  };
 
   const handleAddClickOpen = () => {
     setAddOpen(true);
@@ -90,7 +95,8 @@ function AgentProduct(): JSX.Element {
       { Header: "Product", accessor: "product", width: "3%" },
       { Header: "Type", accessor: "type", width: "3%" },
       { Header: "MyShare %", accessor: "my_share", width: "3%" },
-      { Header: "Max% Allow", accessor: "max_allow", width: "3%" },
+      { Header: "Max%", accessor: "max_allow", width: "3%" },
+      { Header: "Acc.Group", accessor: "acc_group", width: "3%" },
       { Header: "Allow", accessor: "allow", width: "3%" },
     ],
     rows: [
@@ -127,6 +133,49 @@ function AgentProduct(): JSX.Element {
           </MDBox>
         ),
         max_allow: "0.235%",
+        acc_group: (
+          <FormControl
+            fullWidth
+            size="small"
+            variant="outlined"
+            sx={{
+              mt: 1,
+              "& .MuiOutlinedInput-root": {
+                minHeight: "30px", // Ensure consistent min-height
+                borderWidth: "1px", // Consistent border width (optional)
+              },
+            }}
+          >
+            <InputLabel>Acc Group</InputLabel>
+            <Select
+              label="Acc Group"
+              value={accGroup}
+              onChange={handleAccGroupChange}
+              style={{ width: "150px" }}
+            >
+              <MenuItem disabled>APUserId1</MenuItem>
+              <MenuItem value="AccGrpName1" sx={{ pl: 4 }}>
+                AccGrpName1
+              </MenuItem>
+              <MenuItem value="AccGrpName2" sx={{ pl: 4 }}>
+                AccGrpName2
+              </MenuItem>
+              <MenuItem value="AccGrpName3" sx={{ pl: 4 }}>
+                AccGrpName3
+              </MenuItem>
+              <MenuItem disabled>APUserId2</MenuItem>
+              <MenuItem value="AccGrpName4" sx={{ pl: 4 }}>
+                AccGrpName4
+              </MenuItem>
+              <MenuItem value="AccGrpName5" sx={{ pl: 4 }}>
+                AccGrpName5
+              </MenuItem>
+              <MenuItem value="AccGrpName6" sx={{ pl: 4 }}>
+                AccGrpName6
+              </MenuItem>
+            </Select>
+          </FormControl>
+        ),
         allow: <Checkbox checked={allowChecked} onChange={handleAllowCheckboxChange} />,
       },
     ],

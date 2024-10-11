@@ -14,6 +14,12 @@ import {
   Checkbox,
   FormControlLabel,
   Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Autocomplete,
+  Typography,
 } from "@mui/material";
 import { CheckBox, Close as CloseIcon } from "@mui/icons-material"; // Import Close Icon
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
@@ -23,8 +29,10 @@ import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import { apiHandler } from "api/apiHandler";
 import SecurityIcon from "@mui/icons-material/Security";
+import MDSnackbar from "components/MDSnackbar";
+import { stringify } from "querystring";
 
-const MasterList = () => {
+const AgentList = () => {
   const [open, setOpen] = useState(false); // State for controlling the dialog visibility
   const [lockDialogOpen, setLockDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null); // State to store the selected user ID
@@ -32,7 +40,6 @@ const MasterList = () => {
   const [filterStatus, setFilterStatus] = useState("1"); // Default to "1"
   const [searchValue, setSearchValue] = useState("");
   const [is2FAEnabled, setIs2FAEnabled] = useState(false);
-
   const [dialogUserID, setDialogUserID] = useState("");
   const [dialogUsername, setDialogUsername] = useState("");
   const [dialogPass, setDialogPass] = useState("");
@@ -40,53 +47,237 @@ const MasterList = () => {
   const [dialogTfa, setDialogTfa] = useState("");
   const [dialogClass, setDialogClass] = useState("");
   const [dialogStatus, setDialogStatus] = useState("");
-
-  const [currentPassword, setCurrentPassword] = useState(""); // State for the current password
   const [newPassword, setNewPassword] = useState(""); // State for the new password
-  const [confirmPassword, setConfirmPassword] = useState(""); // State for confirming the new password
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [statusClickCount, setStatusClickCount] = useState(0); // Track the number of clicks
+  const [selectedTimeZone, setSelectedTimeZone] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [snackBarTitle, setSnackBarTitle] = useState("");
 
-  // Function to handle the edit button click
-  const handleEditClick = (userId: string) => {
-    setSelectedUserId(userId); // Set the selected user ID (optional)
-    setOpen(true); // Open the dialog
+  const [tuneDialogOpen, setTuneDialogOpen] = useState(false); // For controlling the tune dialog visibility
+  const [keyDialogOpen, setKeyDialogOpen] = useState(false);
+  const [yesDialogOpen, setYesDialogOpen] = useState(false);
+  const [controlData, setControlData] = useState(null); // State for storing control data from the API
+  const [tuneDialogControl, setTuneDialogControl] = useState(""); // Control selected in the dropdown in Tune
+  const [tuneDialogUserId, setTuneDialogUserId] = useState("");
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+
+  const controlOptions = [
+    { label: "Dashboard", value: "dashboard" },
+    { label: "Accessibility", value: "accessibility" },
+    { label: "Master", value: "master" },
+    { label: "Company List", value: "companyList" },
+    { label: "Api Control", value: "apiControl" },
+    { label: "Master List", value: "masterList" },
+    { label: "Master Control", value: "masterControl" },
+    { label: "Create Master Account", value: "createMasterAccount" },
+    { label: "Transactions", value: "transactions" },
+    { label: "Authentication", value: "authenthication" },
+    { label: "Create Merchant", value: "createMerchant" },
+    { label: "Merchant List", value: "merchantList" },
+    { label: "Create Account Provider", value: "createAccountProvider" },
+    { label: "Account Provider List", value: "accountProviderList" },
+    { label: "Create Agent", value: "createAgent" },
+    { label: "Agent List", value: "agentList" },
+    { label: "Create Commission", value: "createCommission" },
+    { label: "Commission List", value: "commissionList" },
+    { label: "Currency List", value: "currencyList" },
+    { label: "Product List", value: "productList" },
+  ];
+
+  const controlMapping: { [key: string]: string[] } = {
+    dashboard: ["001"],
+    apiControl: ["001.001"],
+    accessibility: ["001.002"],
+    companyList: ["001.003"],
+    master: ["002"],
+    createMasterAccount: ["002.001"],
+    masterList: ["002.002"],
+    masterControl: ["002.003"],
+    transactions: ["003", "003.001"],
+    authenthication: ["004", "004.001"],
+    createMerchant: ["005", "005.001"],
+    merchantList: ["005", "005.002"],
+    createAccountProvider: ["006", "006.001"],
+    accountProviderList: ["006", "006.002"],
+    createAgent: ["007", "007.001"],
+    agentList: ["007", "007.002"],
+    createCommission: ["008", "008.001"],
+    commissionList: ["008", "008.002"],
+    currencyList: ["009", "009.001"],
+    productList: ["010", "010.001"],
+  };
+
+  const timeZones = [
+    { label: "(UTC-12:00) Baker Island", value: "UTC-12:00" },
+    { label: "(UTC-11:00) Niue, Samoa", value: "UTC-11:00" },
+    { label: "(UTC-10:00) Hawaii", value: "UTC-10:00" },
+    { label: "(UTC-09:00) Alaska", value: "UTC-09:00" },
+    { label: "(UTC-08:00) Pacific Time (US & Canada)", value: "UTC-08:00" },
+    { label: "(UTC-07:00) Mountain Time (US & Canada)", value: "UTC-07:00" },
+    { label: "(UTC-06:00) Central Time (US & Canada)", value: "UTC-06:00" },
+    { label: "(UTC-05:00) Eastern Time (US & Canada)", value: "UTC-05:00" },
+    { label: "(UTC-04:00) Atlantic Time (Canada), Venezuela", value: "UTC-04:00" },
+    { label: "(UTC-03:00) Buenos Aires, Brazil", value: "UTC-03:00" },
+    { label: "(UTC-02:00) South Georgia & the South Sandwich Islands", value: "UTC-02:00" },
+    { label: "(UTC-01:00) Azores, Cape Verde", value: "UTC-01:00" },
+    { label: "(UTC+00:00) London, Dublin, Lisbon", value: "UTC+00:00" },
+    { label: "(UTC+01:00) Berlin, Madrid, Paris", value: "UTC+01:00" },
+    { label: "(UTC+02:00) Cairo, Johannesburg", value: "UTC+02:00" },
+    { label: "(UTC+03:00) Moscow, Nairobi, Baghdad", value: "UTC+03:00" },
+    { label: "(UTC+04:00) Abu Dhabi, Muscat", value: "UTC+04:00" },
+    { label: "(UTC+05:00) Karachi, Tashkent", value: "UTC+05:00" },
+    { label: "(UTC+06:00) Dhaka, Almaty", value: "UTC+06:00" },
+    { label: "(UTC+07:00) Bangkok, Hanoi, Jakarta", value: "UTC+07:00" },
+    { label: "(UTC+08:00) Beijing, Singapore", value: "UTC+08:00" },
+    { label: "(UTC+09:00) Tokyo, Seoul", value: "UTC+09:00" },
+    { label: "(UTC+10:00) Sydney, Guam", value: "UTC+10:00" },
+    { label: "(UTC+11:00) Solomon Islands", value: "UTC+11:00" },
+    { label: "(UTC+12:00) Fiji, New Zealand", value: "UTC+12:00" },
+  ];
+
+  const handleTuneClick = async (userId: any) => {
+    setSelectedUserId(userId);
+    setTuneDialogOpen(true);
+    setTuneDialogUserId(userId);
+    try {
+      const storedToken = localStorage.getItem("token");
+      const storedUsername = localStorage.getItem("username");
+      const apiUrl = "http://18.138.168.43:10311/api/execmem";
+      const params = {
+        EXECF: "GETAUTHDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          FilterUid: userId,
+        }),
+      };
+      const response = await apiHandler(apiUrl, params);
+      console.log("API Response:", response);
+
+      const decodedString = response.Data.replace(/\\u0022/g, '"')
+        .replace('"[{', "[{")
+        .replace('}]"', "}]");
+      const parsedData = JSON.parse(decodedString);
+      console.log("Control Data:", parsedData.Control);
+
+      const controlKeys = parsedData.Control.map((item: any) => Object.keys(item)[0]);
+      console.log(controlKeys);
+
+      // Map control values to control names using the controlMapping
+      const controlNames = controlKeys.map((key: string) => {
+        const option = controlOptions.find((opt) => controlMapping[opt.value].includes(key));
+        return option ? option.label : key; // Fallback to key if no label is found
+      });
+
+      console.log("Mapped Control Names:", controlNames);
+
+      // Set the control names instead of the control values
+      setControlData(controlNames);
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
+  };
+
+  const handleKeyClick = async (userId: any) => {
+    setSelectedUserId(userId);
+    setKeyDialogOpen(true);
+  };
+
+  const handleEditClick = async (userId: string) => {
+    setSelectedUserId(userId);
+    setOpen(true);
+    // await fetchUserData(userId);
+  };
+
+  const handleEditSaveClick = async (userId: string) => {
+    const storedToken = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
+
+    try {
+      const apiUrl = "http://18.138.168.43:10311/api/execmem";
+      const params = {
+        EXECF: "SETAUTHDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          Uid: userId,
+          Name: dialogUsername,
+          Pass: dialogPass,
+          Control: dialogControl,
+          Tfa: dialogTfa,
+          Class: dialogClass,
+          Status: dialogStatus,
+        }),
+      };
+      const response = await apiHandler(apiUrl, params);
+      setSnackBarTitle("User Details Updated Successfully.");
+      setSuccess(true); // Show success snackbar
+      handleClose();
+      // alert("User Details Updated Successfully.");
+      // handleClose();
+    } catch (error) {
+      // console.error("Error during API call:", error);
+      setSnackBarTitle("Error updating user details.");
+      setSuccess(true);
+    }
+  };
+
+  const handleYesClick = async (userId: any) => {
+    setSelectedUserId(userId);
+    setYesDialogOpen(true);
+  };
+
+  const handleYesClose = () => {
+    setYesDialogOpen(false);
+    setKeyDialogOpen(false);
   };
 
   const handle2FAChange = (event: {
     target: { checked: boolean | ((prevState: boolean) => boolean) };
   }) => {
+    const isChecked = event.target.checked;
     setIs2FAEnabled(event.target.checked);
+    setDialogTfa(isChecked ? "1" : "0");
+    fetchTableData();
   };
 
   const handleLockClick = async (userId: string) => {
     setLockDialogOpen(true); // Open the lock dialog
-    setSelectedUserId(userId); // Set the selected user ID
-
-    await fetchUserData();
+    setSelectedUserId(userId);
+    await fetchUserData(userId);
   };
 
   useEffect(() => {
     if (selectedUserId) {
-      fetchUserData();
+      fetchUserData(selectedUserId);
     }
   }, [selectedUserId]);
 
-  // Function to close the dialog
   const handleClose = () => {
     setOpen(false);
-    fetchTableData(filterStatus, searchValue);
+    fetchTableData();
+  };
+
+  const handleTuneClose = () => {
+    setTuneDialogOpen(false);
+    setSelectedOptions([]);
+  };
+
+  const handleKeyClose = () => {
+    setKeyDialogOpen(false);
+    fetchTableData();
   };
 
   const handleLockClose = () => {
     setLockDialogOpen(false);
-    setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
     setPasswordError("");
-    fetchTableData(filterStatus, searchValue);
+    fetchTableData();
   };
 
-  // Fetch data from API and populate table rows
   const fetchTableData = async (FilterStatus = "", searchValue = "") => {
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
@@ -98,8 +289,8 @@ const MasterList = () => {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          FilterClass: "agt",
-          FilterName: searchValue,
+          FilterClass: "mtr",
+          FilterName: searchValue || "",
           FilterUid: "",
           FilterStatus: FilterStatus,
         }),
@@ -128,8 +319,12 @@ const MasterList = () => {
           last_update: item.LastUpdateOnUTC,
           last_ip: item.LastIP,
           last_login: item.LastLoginOnUTC,
-          // status: item.Status,
-          status: <Switch checked={item.Status === "1"} disabled />,
+          status: (
+            <Switch
+              checked={item.Status === "1"}
+              onChange={() => handleStatusChange(item.Uid, item.Status === "1" ? "0" : "1")}
+            />
+          ),
           action: (
             <MDBox display="flex" gap={2} alignItems="center">
               <Icon
@@ -143,6 +338,18 @@ const MasterList = () => {
                 onClick={() => handleEditClick(item.Uid)}
               >
                 edit
+              </Icon>
+              <Icon
+                style={{ cursor: "pointer", fontSize: 20 }}
+                onClick={() => handleTuneClick(item.Uid)}
+              >
+                tune
+              </Icon>
+              <Icon
+                style={{ cursor: "pointer", fontSize: 20 }}
+                onClick={() => handleKeyClick(item.Uid)} // Function to handle key icon click
+              >
+                key
               </Icon>
               <MDButton
                 variant="outlined"
@@ -170,13 +377,24 @@ const MasterList = () => {
     }
   };
 
-  // Call fetchTableData when the component mounts
   useEffect(() => {
     fetchTableData();
-  }, []); // Empty dependency array to run only once on mount
+  }, []);
 
   const handleStatusHeaderClick = () => {
-    const newFilterStatus = filterStatus === "0" ? "1" : "0";
+    let newFilterStatus = "";
+    let newClickCount = statusClickCount + 1;
+
+    if (newClickCount === 1) {
+      newFilterStatus = "1";
+    } else if (newClickCount === 2) {
+      newFilterStatus = "0";
+    } else {
+      newFilterStatus = "";
+      newClickCount = 0;
+    }
+
+    setStatusClickCount(newClickCount);
     setFilterStatus(newFilterStatus);
     fetchTableData(newFilterStatus, searchValue);
   };
@@ -184,16 +402,65 @@ const MasterList = () => {
   const handleSearchChange = (e: { target: { value: any } }) => {
     const value = e.target.value;
     setSearchValue(value);
-    fetchTableData(filterStatus, value);
+    // fetchTableData(filterStatus, value);
+    if (value.trim() === "") {
+      fetchTableData(); // Fetch without the search value
+    } else {
+      fetchTableData(filterStatus, value); // Fetch with the search value
+    }
   };
 
-  const fetchUserData = async () => {
+  const getSnackbarColor = () => {
+    return snackBarTitle.toLowerCase().includes("error") ? "error" : "success";
+  };
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess(false); // Automatically hide the snackbar after 3 seconds
+      }, 3000);
+
+      return () => clearTimeout(timer); // Cleanup the timer on component unmount or when success changes
+    }
+  }, [success]);
+
+  const handleStatusChange = async (userId: string, newStatus: string) => {
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
-    if (!selectedUserId) {
-      console.error("No user selected for fetching data.");
-      return;
+
+    try {
+      const apiUrl = "http://18.138.168.43:10311/api/execmem";
+      const params = {
+        EXECF: "SETAUTHDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          Uid: userId,
+          Status: newStatus, // Update the status based on switch toggle
+        }),
+      };
+
+      const response = await apiHandler(apiUrl, params);
+      if (response.Status === "1") {
+        // alert("User status updated successfully.");
+        setSnackBarTitle("User status updated successfully.");
+        setSuccess(true);
+        setTimeout(() => fetchTableData(), 1000); // Refresh the table data after status change
+      } else {
+        // alert("Error updating user status.");
+        setSnackBarTitle("Error updating user status.");
+        setSuccess(true);
+      }
+    } catch (error) {
+      console.error("Error during status update:", error);
+      setSnackBarTitle("Error updating user status.");
+      setSuccess(true);
     }
+  };
+
+  const fetchUserData = async (userId: string) => {
+    const storedToken = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
     try {
       const apiUrl = "http://18.138.168.43:10311/api/execmem";
       const params = {
@@ -201,15 +468,12 @@ const MasterList = () => {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          FilterUid: selectedUserId,
+          FilterUid: userId,
         }),
       };
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
       const parsedData = JSON.parse(response.Data);
-      // console.log("Parsed Data:", parsedData);
-      // console.log("Uid:", parsedData.Uid);
-      // console.log("Name:", parsedData.Name);
 
       setDialogUserID(parsedData.Uid);
       setDialogUsername(parsedData.Name);
@@ -218,16 +482,6 @@ const MasterList = () => {
       setDialogTfa(parsedData.Tfa);
       setDialogClass(parsedData.Class);
       setDialogStatus(parsedData.Status);
-      setIs2FAEnabled(parsedData.Status === "1");
-
-      // console.log("Pass:", parsedData.Pass);
-      // console.log("Control:", parsedData.Control);
-      // console.log("Tfa:", parsedData.Tfa);
-      // console.log("TfaKey:", parsedData.TfaKey);
-      // console.log("Class:", parsedData.Class);
-      // console.log("Prefix:", parsedData.Prefix);
-      // console.log("Status:", parsedData.Status);
-      // console.log("OtpAuth:", parsedData.OtpAuth);
 
       setIs2FAEnabled(parsedData.Tfa === "1");
     } catch (error) {
@@ -242,29 +496,51 @@ const MasterList = () => {
     try {
       const apiUrl = "http://18.138.168.43:10311/api/execmem";
       const params = {
-        EXECF: "SETAUTHDATA",
+        EXECF: "GETAUTHDATA",
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          Uid: userId,
-          Name: dialogUsername,
-          Pass: dialogPass,
-          Control: dialogControl,
-          Tfa: "0",
-          Class: dialogClass,
-          Status: dialogStatus,
+          FilterUid: userId,
         }),
       };
       const response = await apiHandler(apiUrl, params);
-      if (response.Status === "1") {
-        alert("2FA has been reset successfully.");
-        await fetchTableData();
+      console.log("API Response:", response);
+      const parsedData = JSON.parse(response.Data);
+      if (parsedData.Tfa === "1") {
+        try {
+          const apiUrl = "http://18.138.168.43:10311/api/execmem";
+          const params = {
+            EXECF: "SETAUTHDATA",
+            Uid: storedUsername,
+            Token: storedToken,
+            Data: JSON.stringify({
+              Uid: userId,
+              Name: parsedData.Name,
+              Pass: parsedData.Pass,
+              Control: parsedData.Control,
+              Tfa: "0",
+              Class: parsedData.Class,
+              Status: parsedData.Status,
+            }),
+          };
+          const response = await apiHandler(apiUrl, params);
+          // alert("2FA Reset Successfully.");
+          setSnackBarTitle("2FA Reset Successfully.");
+          setSuccess(true);
+        } catch (error) {
+          console.error("Error during API call:", error);
+          setSnackBarTitle("Error resetting 2FA.");
+          setSuccess(true);
+        }
       } else {
-        alert("Please make sure 2fa is enable before reset.");
+        // alert("Please make sure you enable 2FA.");
+        setSnackBarTitle("Please make sure you enable 2FA.");
+        setSuccess(true);
       }
-      fetchTableData(filterStatus, searchValue);
     } catch (error) {
       console.error("Error during API call:", error);
+      setSnackBarTitle("Error resetting 2FA.");
+      setSuccess(true);
     }
   };
 
@@ -272,8 +548,7 @@ const MasterList = () => {
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
 
-    // Check for empty passwords and spaces
-    if (!currentPassword || !newPassword || !confirmPassword) {
+    if (!newPassword || !confirmPassword) {
       setPasswordError("All password fields are required.");
       return;
     }
@@ -290,39 +565,36 @@ const MasterList = () => {
 
     setPasswordError("");
 
-    if (dialogPass === currentPassword) {
-      try {
-        const apiUrl = "http://18.138.168.43:10311/api/execmem";
-        const params = {
-          EXECF: "SETAUTHDATA",
-          Uid: storedUsername,
-          Token: storedToken,
-          Data: JSON.stringify({
-            Uid: selectedUserId,
-            Name: dialogUsername,
-            Pass: newPassword,
-            Control: dialogControl,
-            Tfa: dialogTfa,
-            Class: dialogClass,
-            Status: is2FAEnabled ? "1" : "0",
-          }),
-        };
-        const response = await apiHandler(apiUrl, params);
-        console.log("API Response:", response);
-        if (response.Status === "1") {
-          alert("Details Updated Successfully.");
-          setCurrentPassword("");
-          setNewPassword("");
-          setConfirmPassword("");
-          handleLockClose();
-          fetchTableData(filterStatus, searchValue); // Pass filter and search value
-        }
-        const parsedData = JSON.parse(response.Data);
-        console.log("Parsed Data:", parsedData);
-      } catch (error) {
-        console.error("Error during API call:", error);
-      }
-    } else alert("Please make sure you have input a correct password");
+    try {
+      const apiUrl = "http://18.138.168.43:10311/api/execmem";
+      const params = {
+        EXECF: "SETAUTHDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          Uid: selectedUserId,
+          Name: dialogUsername,
+          Pass: newPassword,
+          Control: dialogControl,
+          Tfa: dialogTfa,
+          Class: dialogClass,
+          Status: dialogStatus,
+        }),
+      };
+      const response = await apiHandler(apiUrl, params);
+      console.log("API Response:", response);
+      // alert("Details Updated Successfully.");
+      setSnackBarTitle("Details Updated Successfully.");
+      setSuccess(true);
+      setNewPassword("");
+      setConfirmPassword("");
+      handleLockClose();
+      fetchTableData();
+      const parsedData = JSON.parse(response.Data);
+      console.log("Parsed Data:", parsedData);
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
   };
 
   const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -373,6 +645,43 @@ const MasterList = () => {
     rows: tableRows,
   };
 
+  const controlTuneSaveClick = async (userId: string) => {
+    const storedUsername = localStorage.getItem("username");
+    const storedToken = localStorage.getItem("token");
+    try {
+      const apiUrl = "http://18.138.168.43:10311/api/execmem";
+      const selectedControlValues = selectedOptions.flatMap((option) => controlMapping[option]);
+      const controlArray = selectedControlValues.map((control) => ({
+        [control]: "1",
+      }));
+      const params = {
+        EXECF: "SETAUTHDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          Uid: userId,
+          Control: JSON.stringify(controlArray),
+        }),
+      };
+      const response = await apiHandler(apiUrl, params);
+      console.log("API Response:", response);
+
+      // Check if response.Status is 1
+      if (response.Status === "1") {
+        // setSuccess(true);
+        setSnackBarTitle("Control Updated Successfully");
+        setSuccess(true);
+      } else {
+        // alert("Error Occured. Please Try Again Shortly");
+        setSnackBarTitle("Error Occured. Please Try Again Shortly");
+        setSuccess(true);
+      }
+      setSelectedOptions([]);
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -392,13 +701,16 @@ const MasterList = () => {
                 borderRadius: "5px",
               }}
             />
+            <Typography variant="h6" sx={{ marginTop: 5 }}>
+              Agent List
+            </Typography>
           </MDBox>
           <DataTable table={dataTableData} />
         </Card>
       </MDBox>
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>
+        <DialogTitle style={{ color: "black" }}>
           Edit User
           <IconButton
             aria-label="close"
@@ -414,22 +726,123 @@ const MasterList = () => {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            You are editing the details for User ID: {selectedUserId}.
+          <DialogContentText
+            paddingLeft="10px"
+            style={{ color: "black", textDecoration: "underline" }}
+          >
+            {selectedUserId}
           </DialogContentText>
-          <TextField fullWidth label="Name" variant="outlined" sx={{ mt: 2 }} />
+          <TextField
+            fullWidth
+            label="Name"
+            variant="outlined"
+            value={dialogUsername}
+            onChange={(e) => setDialogUsername(e.target.value)}
+            sx={{ mt: 2 }}
+          />
           <TextField fullWidth label="Phone Number" variant="outlined" sx={{ mt: 2 }} />
           <TextField fullWidth label="Email" variant="outlined" sx={{ mt: 2 }} />
+          <TextField
+            fullWidth
+            label="Remark"
+            variant="outlined"
+            sx={{
+              mt: 2,
+              "& .MuiOutlinedInput-root": {
+                minHeight: "80px", // Adjust height here
+                "& fieldset": {
+                  borderWidth: "1px", // Optional: Increase border thickness
+                },
+              },
+            }}
+          />
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel>Time Zone</InputLabel>
+            <Select
+              label="Time Zone"
+              value={selectedTimeZone}
+              onChange={(e) => setSelectedTimeZone(e.target.value)}
+              sx={{
+                minWidth: 60, // Adjust the width of the dropdown
+                height: 45, // Adjust the height of the dropdown field
+              }}
+            >
+              {timeZones.map((zone) => (
+                <MenuItem key={zone.value} value={zone.value}>
+                  {zone.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={() => handleEditSaveClick(selectedUserId)} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={tuneDialogOpen}
+        onClose={handleTuneClose}
+        fullWidth={true}
+        maxWidth="lg" // Sets the max width to a larger size
+        sx={{
+          "& .MuiDialog-paper": {
+            // Customize dialog paper size
+            width: "600px", // Set custom width
+            height: "400px", // Set custom height
+          },
+        }}
+      >
+        <DialogTitle>
+          Control Data
+          <IconButton
+            aria-label="close"
+            onClick={handleTuneClose}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            disabled
+            label="UserId"
+            variant="outlined"
+            value={tuneDialogUserId}
+            sx={{ mt: 2 }}
+          />
+          <Autocomplete
+            sx={{ paddingLeft: 1, maxWidth: 550, mt: 2 }}
+            multiple
+            options={controlOptions.filter((option) => !selectedOptions.includes(option.value))}
+            disableCloseOnSelect
+            getOptionLabel={(option) => option.label}
+            renderInput={(params) => (
+              <TextField {...params} variant="standard" label="Control" fullWidth />
+            )}
+            value={selectedOptions.map((optionValue) =>
+              controlOptions.find((option) => option.value === optionValue)
+            )}
+            onChange={(event, value) => setSelectedOptions(value.map((option) => option.value))}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => controlTuneSaveClick(selectedUserId)} color="primary">
             Save
           </Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={lockDialogOpen} onClose={handleLockClose}>
-        <DialogTitle>
+        <DialogTitle style={{ color: "black" }}>
           Change Password
           <IconButton
             aria-label="close"
@@ -453,33 +866,14 @@ const MasterList = () => {
             InputProps={{
               readOnly: true,
             }}
-            sx={{ mt: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Username"
-            variant="outlined"
-            value={dialogUsername}
-            InputProps={{
-              readOnly: true,
-            }}
-            sx={{ mt: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Current Password"
-            variant="outlined"
-            type="password" // Ensure password is hidden
-            value={currentPassword} // Bind state variable
-            onChange={(e) => setCurrentPassword(e.target.value)}
+            disabled
             sx={{ mt: 2 }}
           />
           <TextField
             fullWidth
             label="New Password"
             variant="outlined"
-            value={newPassword} // Bind state variable
-            // onChange={(e) => setNewPassword(e.target.value)}
+            value={newPassword}
             onChange={handleNewPasswordChange}
             sx={{ mt: 2 }}
           />
@@ -487,10 +881,9 @@ const MasterList = () => {
             fullWidth
             label="Confirm Password"
             variant="outlined"
-            value={confirmPassword} // Bind state variable
-            // onChange={(e) => setConfirmPassword(e.target.value)}
-            onChange={handleConfirmPasswordChange} // Updated handler for confirm password
-            error={!!passwordError} // Show error styling if there's an error
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+            error={!!passwordError}
             helperText={passwordError}
             sx={{ mt: 2 }}
           />
@@ -518,8 +911,118 @@ const MasterList = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog open={keyDialogOpen} onClose={handleYesClose}>
+        <DialogTitle style={{ color: "black" }}>
+          Change API
+          <IconButton
+            aria-label="close"
+            onClick={handleKeyClose}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="UserID"
+            variant="outlined"
+            value={dialogUserID}
+            InputProps={{
+              readOnly: true,
+            }}
+            disabled
+            sx={{ mt: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="Username"
+            variant="outlined"
+            value={dialogUsername}
+            InputProps={{
+              readOnly: true,
+            }}
+            disabled
+            sx={{ mt: 2 }}
+          />
+          <Typography
+            variant="body1"
+            sx={{ mt: 2, textAlign: "center", fontSize: "0.9rem" }} // Smaller body text font size
+          >
+            Are you sure you want to generate a new API key?
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: "center", mt: 2 }}>
+          <Button onClick={handleYesClick}>Yes</Button>
+          <Button onClick={handleKeyClose} sx={{ ml: 2 }}>
+            No
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={yesDialogOpen} onClose={handleYesClose}>
+        <DialogTitle style={{ color: "black" }}>
+          Change API
+          <IconButton
+            aria-label="close"
+            onClick={handleYesClose}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="UserID"
+            variant="outlined"
+            value={dialogUserID}
+            InputProps={{
+              readOnly: true,
+            }}
+            disabled
+            sx={{ mt: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="Username"
+            variant="outlined"
+            value={dialogUsername}
+            InputProps={{
+              readOnly: true,
+            }}
+            disabled
+            sx={{ mt: 2 }}
+          />
+          <Typography
+            variant="body1"
+            sx={{ mt: 2, textAlign: "center", fontSize: "0.9rem" }} // Smaller body text font size
+          >
+            New Key:
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: "center", mt: 2 }}></DialogActions>
+      </Dialog>
+
+      <MDSnackbar
+        open={success}
+        color={getSnackbarColor()}
+        title={snackBarTitle}
+        close={() => setSuccess(false)} // Close the snackbar
+      />
     </DashboardLayout>
   );
 };
 
-export default MasterList;
+export default AgentList;

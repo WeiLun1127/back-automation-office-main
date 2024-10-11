@@ -30,6 +30,8 @@ import TraReport from "modules/layouts/report/report";
 import dashboardIcon from "././assets/images/routes-logo/dashboard.svg";
 import Api from "modules/layouts/controllers/api";
 import AgentProduct from "modules/layouts/agent/product";
+import CreateAgentAccount from "modules/layouts/agent/create";
+import AgentList from "modules/layouts/agent";
 // Images
 
 const routes = [
@@ -214,7 +216,7 @@ const routes = [
         name: "Create Agent",
         key: "create-agent",
         route: "createAgent",
-        component: <CreateAccountProvider />,
+        component: <CreateAgentAccount />,
       },
       {
         id: "002",
@@ -222,7 +224,7 @@ const routes = [
         name: "Agent List",
         key: "agent-list",
         route: "agentList",
-        component: <AccountProviderList />,
+        component: <AgentList />,
       },
       {
         id: "003",
