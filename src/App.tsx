@@ -76,6 +76,7 @@ export default function App() {
   const [userControl, setUserControl] = useState<{ [key: string]: string }[]>(null);
   const [token, setToken] = useState<string | null>(null);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const [welcomeName, setWelcomeName] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
   const [success, setSuccess] = useState(false);
@@ -124,6 +125,8 @@ export default function App() {
 
         // set user control
         console.log("control", authData.Control);
+        console.log("name", authData.Name);
+        setWelcomeName(authData.Name);
         setUserControl(authData.Control);
 
         if (data.Status === "ERR:0") {
@@ -137,6 +140,9 @@ export default function App() {
             setIsAuthenticated(true);
             setUsername(username);
             setToken(initialToken); // Store the token in the state
+
+            setSnackBarTitle(`Welcome Back, ${authData.Name}`);
+            setSuccess(true);
 
             pingApi(username, initialToken);
 
