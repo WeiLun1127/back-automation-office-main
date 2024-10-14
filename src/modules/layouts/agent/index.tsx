@@ -289,7 +289,7 @@ const AgentList = () => {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          FilterClass: "mtr",
+          FilterClass: "agt",
           FilterName: searchValue || "",
           FilterUid: "",
           FilterStatus: FilterStatus,

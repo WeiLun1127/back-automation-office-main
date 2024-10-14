@@ -26,7 +26,7 @@ import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
 import React, { useEffect, useState } from "react";
 
-function MasterControl(): JSX.Element {
+function ProductControl(): JSX.Element {
   const [addOpen, setAddOpen] = useState(false);
 
   const handleAddClickOpen = () => {
@@ -142,9 +142,6 @@ function MasterControl(): JSX.Element {
               <DataTable table={tableData1} showEntriesPerPage={false} />
             </Box>
             <Box width="60%">
-              {/* <MDTypography variant="h6" style={{ marginLeft: "16px" }}>
-                Table 2
-              </MDTypography> */}
               <DataTable table={tableData2} showEntriesPerPage={false} />
             </Box>
           </Box>
@@ -160,4 +157,4 @@ function MasterControl(): JSX.Element {
   );
 }
 
-export default MasterControl;
+export default ProductControl;

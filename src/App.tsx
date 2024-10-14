@@ -6,6 +6,9 @@ import brandWhite from "assets/images/logo-ct.png";
 import axios from "axios";
 import MDSnackbar from "components/MDSnackbar";
 import { setMiniSidenav, useMaterialUIController } from "context";
+import AccountGroupList from "modules/layouts/account/accountGroup";
+import CreateThresholdAccount from "modules/layouts/account/createThreshold";
+import AccountThresholdList from "modules/layouts/account/thresholdList";
 import AccountProviderList from "modules/layouts/accountProvider";
 import CreateAccountProvider from "modules/layouts/accountProvider/create";
 import AgentList from "modules/layouts/agent";
@@ -18,6 +21,7 @@ import CompanyList from "modules/layouts/company/companyList";
 import Api from "modules/layouts/controllers/api";
 import CurrencyTables from "modules/layouts/currency";
 import MasterList from "modules/layouts/master";
+import ProductControl from "modules/layouts/master/control";
 import MasterControl from "modules/layouts/master/control";
 import CreateMasterAccount from "modules/layouts/master/create";
 import MerchantList from "modules/layouts/merchant";
@@ -44,26 +48,25 @@ import routes from "routes";
 
 export type Pathname =
   | "apiControl"
-  | "accessibility"
-  | "companyList"
   | "api"
-  | "authentication"
+  | "accessibility"
   | "createMasterAccount"
   | "masterList"
-  | "masterControl"
-  | "transactionReport"
-  | "transactionSummary"
-  | "createMerchantAccount"
-  | "merchantList"
-  | "createAccountProvider"
-  | "accountProviderList"
+  | "productControl"
   | "createAgent"
   | "agentList"
-  | "agentProducts"
-  | "createCommission"
-  | "commissionList"
-  | "currency"
-  | "products";
+  | "createAccountThreshold"
+  | "accountTresholdList"
+  | "accountGroup"
+  | "productListCompany"
+  | "productListAgent"
+  | "transactionSummary"
+  | "transactionReport"
+  | "currencyList"
+  | "createAccountProvider"
+  | "providerList"
+  | "authentication"
+  | "commissionList";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -292,47 +295,42 @@ export default function App() {
     switch (route) {
       case "apiControl":
         return <ApiControl />;
-      case "accessibility":
-        return <ApiControl />;
-      case "companyList":
-        return <CompanyList />;
       case "api":
         return <Api />;
-      case "authentication":
-        return <Authentication />;
+      case "accessibility":
+        return <ApiControl />;
       case "createMasterAccount":
         return <CreateMasterAccount />;
       case "masterList":
         return <MasterList />;
-      case "masterControl":
-        return <MasterControl />;
-      case "transactionSummary":
-        return <TransactionSummary />;
-      case "transactionReport":
-        // return <TransactionsReport />;
-        return <TraReport />;
-      case "createMerchantAccount":
-        return <CreateMerchantAccount />;
-      case "merchantList":
-        return <MerchantList />;
-      case "createAccountProvider":
-        return <CreateAccountProvider />;
-      case "accountProviderList":
-        return <AccountProviderList />;
+      case "productControl":
+        return <ProductControl />;
       case "createAgent":
         return <CreateAgentAccount />;
       case "agentList":
         return <AgentList />;
-      case "agentProducts":
-        return <AgentProduct />;
-      case "createCommission":
-        return <CreateCommissionAccount />;
-      case "commissionList":
-        return <CommissionList />;
-      case "currency":
-        return <CurrencyTables />;
-      case "products":
+      case "createAccountThreshold":
+        return <CreateThresholdAccount />;
+      case "accountTresholdList":
+        return <AccountThresholdList />;
+      case "accountGroup":
+        return <AccountGroupList />;
+      case "productListCompany":
         return <ProductTables />;
+      case "productListAgent":
+        return <ApiControl />; //
+      case "transactionSummary":
+        return <TransactionSummary />;
+      case "transactionReport":
+        return <TraReport />;
+      case "currencyList":
+        return <CurrencyTables />;
+      case "createAccountProvider":
+        return <CreateAccountProvider />;
+      case "providerList":
+        return <AccountProviderList />;
+      case "authentication":
+        return <Authentication />;
       default:
         return <Navigate to="/" />;
     }
