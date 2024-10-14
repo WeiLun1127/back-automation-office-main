@@ -60,6 +60,7 @@ export type Pathname =
   | "accountGroup"
   | "productListCompany"
   | "productListAgent"
+  | "productAgentControl"
   | "transactionSummary"
   | "transactionReport"
   | "currencyList"
@@ -309,6 +310,8 @@ export default function App() {
         return <CreateAgentAccount />;
       case "agentList":
         return <AgentList />;
+      case "productAgentControl":
+        return <AgentProduct />;
       case "createAccountThreshold":
         return <CreateThresholdAccount />;
       case "accountTresholdList":

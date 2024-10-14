@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -40,6 +41,7 @@ function Api(): JSX.Element {
   const handleClose = () => {
     setOpen(false);
   };
+
   const [tableData, setTableData] = useState({
     columns: [
       { Header: "currency", accessor: "id", width: "3%" },
@@ -81,10 +83,15 @@ function Api(): JSX.Element {
               lineHeight={1}
             >
               <MDTypography variant="h5" fontWeight="medium" style={{ color: "black" }}>
-                API Controller
+                Callback API Controller
               </MDTypography>
             </MDBox>
-            <DataTable table={tableData} canSearch />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="use parent defined APIs "
+              sx={{ marginTop: 1, paddingLeft: 3 }} // Adds spacing between title and checkbox
+            />
+            <DataTable table={tableData} />
           </Card>
         </MDBox>
       </MDBox>
@@ -96,14 +103,13 @@ function Api(): JSX.Element {
         maxWidth="lg" // Sets the max width to a larger size
         sx={{
           "& .MuiDialog-paper": {
-            // Customize dialog paper size
             width: "600px", // Set custom width
             height: "300px", // Set custom height
           },
         }}
       >
         <DialogTitle>
-          Edit API Data
+          Update Callback API URL
           <IconButton
             aria-label="close"
             onClick={handleClose}
@@ -118,7 +124,7 @@ function Api(): JSX.Element {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <TextField fullWidth label="Currency" variant="outlined" sx={{ mt: 2 }} />
+          <TextField fullWidth label="Currency" disabled variant="outlined" sx={{ mt: 2 }} />
           <TextField fullWidth label="API Url" variant="outlined" sx={{ mt: 2 }} />
         </DialogContent>
         <DialogActions>

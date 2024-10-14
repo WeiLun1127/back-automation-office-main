@@ -29,6 +29,7 @@ import MDTypography from "components/MDTypography";
 import React, { useState } from "react";
 import { Close as CloseIcon } from "@mui/icons-material"; // Import Close Icon
 import MDInput from "components/MDInput";
+import SearchIcon from "@mui/icons-material/Search";
 
 function AccountGroupList(): JSX.Element {
   const [horizOpen, setHorizOpen] = useState(false);
@@ -175,7 +176,19 @@ function AccountGroupList(): JSX.Element {
                 Account Group
               </MDTypography>
             </MDBox>
-            <DataTable table={tableData} canSearch />
+            <MDBox display="flex" justifyContent="flex-start" p={3}>
+              <MDInput
+                fullWidth
+                variant="standard"
+                label="Filter Keyword"
+                sx={{ width: 200, marginRight: 3 }}
+              />
+              <MDBox display="flex" alignItems="center">
+                {/* <TextField margin="dense" label="Status" sx={{ width: 200 }} /> */}
+                <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
+              </MDBox>
+            </MDBox>
+            <DataTable table={tableData} />
           </Card>
         </MDBox>
       </MDBox>

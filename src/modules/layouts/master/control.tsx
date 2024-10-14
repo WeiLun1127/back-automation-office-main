@@ -23,8 +23,10 @@ import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
 import DataTable from "assets/examples/Tables/DataTable";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
+import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
 import React, { useEffect, useState } from "react";
+import SearchIcon from "@mui/icons-material/Search";
 
 function ProductControl(): JSX.Element {
   const [addOpen, setAddOpen] = useState(false);
@@ -99,11 +101,22 @@ function ProductControl(): JSX.Element {
                 Master Controls
               </MDTypography>
             </MDBox>
-            <DataTable table={tableData} canSearch />
+            <MDBox display="flex" justifyContent="flex-start" p={3}>
+              <MDInput
+                fullWidth
+                variant="standard"
+                label="Filter Keyword"
+                sx={{ width: 200, marginRight: 3 }}
+              />
+              <MDBox display="flex" alignItems="center">
+                {/* <TextField margin="dense" label="Status" sx={{ width: 200 }} /> */}
+                <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
+              </MDBox>
+            </MDBox>
+            <DataTable table={tableData} />
           </Card>
         </MDBox>
       </MDBox>
-      {/* Dialog Implementation */}
       <Dialog
         open={addOpen}
         onClose={handleAddClose}
@@ -117,9 +130,7 @@ function ProductControl(): JSX.Element {
             margin="dense"
             label="UserID"
             fullWidth
-            // disabled
             InputProps={{
-              // readOnly: true,
               style: { width: "250px" },
             }}
           />
@@ -127,18 +138,13 @@ function ProductControl(): JSX.Element {
             margin="dense"
             label="Username"
             fullWidth
-            // disabled
             InputProps={{
-              // readOnly: true,
               style: { width: "250px" },
             }}
           />
           <Box style={{ marginBottom: "20px" }}></Box>
           <Box display="flex" justifyContent="space-between">
             <Box width="30%">
-              {/* <MDTypography variant="h6" style={{ marginLeft: "16px" }}>
-                Table 1
-              </MDTypography> */}
               <DataTable table={tableData1} showEntriesPerPage={false} />
             </Box>
             <Box width="60%">

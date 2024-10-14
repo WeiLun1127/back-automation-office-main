@@ -27,6 +27,8 @@ import MDButton from "components/MDButton";
 import MDTypography from "components/MDTypography";
 import { Close as CloseIcon } from "@mui/icons-material"; // Import Close Icon
 import React, { useEffect, useState } from "react";
+import MDInput from "components/MDInput";
+import SearchIcon from "@mui/icons-material/Search";
 
 function AccountThresholdList(): JSX.Element {
   const [horizOpen, setHorizOpen] = useState(false);
@@ -112,7 +114,19 @@ function AccountThresholdList(): JSX.Element {
                 Account Threshold List
               </MDTypography>
             </MDBox>
-            <DataTable table={tableData} canSearch />
+            <MDBox display="flex" justifyContent="flex-start" p={3}>
+              <MDInput
+                fullWidth
+                variant="standard"
+                label="Filter Keyword"
+                sx={{ width: 200, marginRight: 3 }}
+              />
+              <MDBox display="flex" alignItems="center">
+                {/* <TextField margin="dense" label="Status" sx={{ width: 200 }} /> */}
+                <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
+              </MDBox>
+            </MDBox>
+            <DataTable table={tableData} />
           </Card>
         </MDBox>
       </MDBox>

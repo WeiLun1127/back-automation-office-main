@@ -30,11 +30,13 @@ import MDButton from "components/MDButton";
 import { apiHandler } from "api/apiHandler";
 import SecurityIcon from "@mui/icons-material/Security";
 import MDSnackbar from "components/MDSnackbar";
-import { stringify } from "querystring";
+import MDInput from "components/MDInput";
+import SearchIcon from "@mui/icons-material/Search";
 
 const AgentList = () => {
   const [open, setOpen] = useState(false); // State for controlling the dialog visibility
   const [lockDialogOpen, setLockDialogOpen] = useState(false);
+  const [horizOpen, setHorizOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null); // State to store the selected user ID
   const [tableRows, setTableRows] = useState([]); // State to store rows for the DataTable
   const [filterStatus, setFilterStatus] = useState("1"); // Default to "1"
@@ -191,6 +193,16 @@ const AgentList = () => {
     // await fetchUserData(userId);
   };
 
+  const handleHorizClick = async (userId: string) => {
+    setSelectedUserId(userId);
+    setHorizOpen(true);
+  };
+
+  const handleHorizClose = () => {
+    setHorizOpen(false);
+    fetchTableData();
+  };
+
   const handleEditSaveClick = async (userId: string) => {
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
@@ -215,10 +227,7 @@ const AgentList = () => {
       setSnackBarTitle("User Details Updated Successfully.");
       setSuccess(true); // Show success snackbar
       handleClose();
-      // alert("User Details Updated Successfully.");
-      // handleClose();
     } catch (error) {
-      // console.error("Error during API call:", error);
       setSnackBarTitle("Error updating user details.");
       setSuccess(true);
     }
@@ -289,7 +298,7 @@ const AgentList = () => {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          FilterClass: "agt",
+          FilterClass: "agt", //agt
           FilterName: searchValue || "",
           FilterUid: "",
           FilterStatus: FilterStatus,
@@ -304,6 +313,7 @@ const AgentList = () => {
           item: {
             Name: any;
             Uid: string;
+            Wallet: any;
             CreatedOnUTC: any;
             LastUpdateOnUTC: any;
             LastIP: any;
@@ -315,6 +325,18 @@ const AgentList = () => {
           id: index + 1, // Generate an ID based on index
           user: item.Name,
           user_id: item.Uid,
+          wallet: (
+            <div style={{ paddingLeft: "12px" }}>
+              {" "}
+              {/* Wrapping Icon in a div with padding */}
+              <Icon
+                style={{ cursor: "pointer", fontSize: 20 }}
+                onClick={() => handleHorizClick(item.Uid)}
+              >
+                more_horiz
+              </Icon>
+            </div>
+          ),
           last_create: item.CreatedOnUTC,
           last_update: item.LastUpdateOnUTC,
           last_ip: item.LastIP,
@@ -626,8 +648,9 @@ const AgentList = () => {
       { Header: "id", accessor: "id", width: "1%", disableSortBy: true },
       { Header: "username", accessor: "user", width: "4%", disableSortBy: true },
       { Header: "userid", accessor: "user_id", width: "7%", disableSortBy: true },
-      { Header: "last create", accessor: "last_create", width: "10%", disableSortBy: true },
-      { Header: "last update", accessor: "last_update", width: "10%", disableSortBy: true },
+      { Header: "wallet", accessor: "wallet", width: "7%", disableSortBy: true },
+      { Header: "created on", accessor: "last_create", width: "10%", disableSortBy: true },
+      { Header: "updated on", accessor: "last_update", width: "10%", disableSortBy: true },
       { Header: "last login", accessor: "last_login", width: "10%", disableSortBy: true },
       { Header: "last ip", accessor: "last_ip", width: "7%", disableSortBy: true },
       {
@@ -689,7 +712,7 @@ const AgentList = () => {
       <MDBox pt={3} pb={3}>
         <Card>
           <MDBox p={2}>
-            <input
+            {/* <input
               type="text"
               value={searchValue}
               onChange={handleSearchChange}
@@ -700,10 +723,22 @@ const AgentList = () => {
                 border: "1px solid #ccc",
                 borderRadius: "5px",
               }}
-            />
+            /> */}
             <Typography variant="h6" sx={{ marginTop: 5 }}>
               Agent List
             </Typography>
+          </MDBox>
+          <MDBox display="flex" justifyContent="flex-start" p={3}>
+            <MDInput
+              fullWidth
+              variant="standard"
+              label="Filter Keyword"
+              sx={{ width: 200, marginRight: 3 }}
+            />
+            <MDBox display="flex" alignItems="center">
+              {/* <TextField margin="dense" label="Status" sx={{ width: 200 }} /> */}
+              <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
+            </MDBox>
           </MDBox>
           <DataTable table={dataTableData} />
         </Card>
@@ -910,6 +945,42 @@ const AgentList = () => {
             Save
           </Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog open={horizOpen} onClose={handleHorizClose}>
+        <DialogTitle style={{ color: "black" }}>
+          Wallet
+          <IconButton
+            aria-label="close"
+            onClick={handleHorizClose}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="UserID"
+            variant="outlined"
+            value={dialogUserID}
+            InputProps={{
+              readOnly: true,
+            }}
+            disabled
+            sx={{ mt: 2 }}
+          />
+          <TextField fullWidth label="Today Balance" variant="outlined" sx={{ mt: 2 }} />
+          <TextField fullWidth label="Yesterday Balance" variant="outlined" sx={{ mt: 2 }} />
+          <TextField fullWidth label="Widthdrawable Balance" variant="outlined" sx={{ mt: 2 }} />
+          <TextField fullWidth label="Cashout Limit" variant="outlined" sx={{ mt: 2 }} />
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: "center", mt: 2 }}></DialogActions>
       </Dialog>
 
       <Dialog open={keyDialogOpen} onClose={handleYesClose}>

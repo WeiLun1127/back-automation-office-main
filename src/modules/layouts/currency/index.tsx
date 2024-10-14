@@ -23,10 +23,12 @@ import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
 import DataTable from "assets/examples/Tables/DataTable";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
+import MDInput from "components/MDInput";
 import MDSnackbar from "components/MDSnackbar";
 import MDTypography from "components/MDTypography";
 import React, { useEffect, useState } from "react";
 import Flag from "react-world-flags";
+import SearchIcon from "@mui/icons-material/Search";
 
 function CurrencyTables(): JSX.Element {
   const [open, setOpen] = useState(false);
@@ -402,7 +404,20 @@ function CurrencyTables(): JSX.Element {
                 Add
               </MDButton>
             </MDBox>
-            <DataTable table={tableData} canSearch />
+            <MDBox display="flex" justifyContent="flex-start" p={3}>
+              <MDInput
+                fullWidth
+                variant="standard"
+                label="Filter Keyword"
+                sx={{ width: 200, marginRight: 3 }}
+              />
+              {/* Container for Status input and Search icon */}
+              <MDBox display="flex" alignItems="center">
+                <TextField margin="dense" label="Status" sx={{ width: 200 }} />
+                <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
+              </MDBox>
+            </MDBox>
+            <DataTable table={tableData} />
           </Card>
         </MDBox>
       </MDBox>

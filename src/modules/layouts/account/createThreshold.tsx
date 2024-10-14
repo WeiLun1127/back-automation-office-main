@@ -230,11 +230,16 @@ const CreateThresholdAccount = () => {
                 </Grid>
 
                 <Grid item xs={10}>
-                  <MDInput fullWidth variant="standard" label="Account Number" />
+                  <MDInput
+                    fullWidth
+                    variant="standard"
+                    label="Account Number"
+                    sx={{ width: 1000 }}
+                  />
                 </Grid>
 
                 <Grid item xs={12}>
-                  <MDInput fullWidth variant="standard" label="Account Name" />
+                  <MDInput fullWidth variant="standard" label="Account Name" sx={{ width: 1000 }} />
                 </Grid>
 
                 <Grid item xs={12}>

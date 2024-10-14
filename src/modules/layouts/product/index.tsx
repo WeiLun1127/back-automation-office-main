@@ -28,6 +28,8 @@ import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import Flag from "react-flagkit";
 import axios from "axios";
+import SearchIcon from "@mui/icons-material/Search";
+import MDInput from "components/MDInput";
 
 function ProductTables(): JSX.Element {
   const [editOpen, setEditOpen] = useState(false); // To control the dialog open state
@@ -226,7 +228,19 @@ function ProductTables(): JSX.Element {
                 Add
               </MDButton>
             </MDBox>
-            <DataTable table={tableData} canSearch />
+            <MDBox display="flex" justifyContent="flex-start" p={3}>
+              <MDInput
+                fullWidth
+                variant="standard"
+                label="Filter Keyword"
+                sx={{ width: 200, marginRight: 3 }}
+              />
+              <MDBox display="flex" alignItems="center">
+                {/* <TextField margin="dense" label="Status" sx={{ width: 200 }} /> */}
+                <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
+              </MDBox>
+            </MDBox>
+            <DataTable table={tableData} />
           </Card>
         </MDBox>
       </MDBox>

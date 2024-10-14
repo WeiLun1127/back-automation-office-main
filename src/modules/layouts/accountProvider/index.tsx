@@ -30,7 +30,8 @@ import MDButton from "components/MDButton";
 import { apiHandler } from "api/apiHandler";
 import SecurityIcon from "@mui/icons-material/Security";
 import MDSnackbar from "components/MDSnackbar";
-import { stringify } from "querystring";
+import MDInput from "components/MDInput";
+import SearchIcon from "@mui/icons-material/Search";
 
 const AccountProviderList = () => {
   const [open, setOpen] = useState(false); // State for controlling the dialog visibility
@@ -661,7 +662,7 @@ const AccountProviderList = () => {
       <MDBox pt={3} pb={3}>
         <Card>
           <MDBox p={2}>
-            <input
+            {/* <input
               type="text"
               value={searchValue}
               onChange={handleSearchChange}
@@ -672,10 +673,22 @@ const AccountProviderList = () => {
                 border: "1px solid #ccc",
                 borderRadius: "5px",
               }}
-            />
+            /> */}
             <Typography variant="h6" sx={{ marginTop: 5 }}>
               Provider List
             </Typography>
+          </MDBox>
+          <MDBox display="flex" justifyContent="flex-start" p={3}>
+            <MDInput
+              fullWidth
+              variant="standard"
+              label="Filter Keyword"
+              sx={{ width: 200, marginRight: 3 }}
+            />
+            <MDBox display="flex" alignItems="center">
+              {/* <TextField margin="dense" label="Status" sx={{ width: 200 }} /> */}
+              <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
+            </MDBox>
           </MDBox>
           <DataTable table={dataTableData} />
         </Card>
