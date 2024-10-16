@@ -4,6 +4,7 @@ import Configurator from "assets/examples/Configurator/Configurator";
 import brandDark from "assets/images/logo-ct-dark.png";
 import brandWhite from "assets/images/logo-ct.png";
 import axios from "axios";
+import MDAlert from "components/MDAlert";
 import MDSnackbar from "components/MDSnackbar";
 import { setMiniSidenav, useMaterialUIController } from "context";
 import AccountGroupList from "modules/layouts/account/accountGroup";
@@ -96,7 +97,7 @@ export default function App() {
     }
   }, [success]);
 
-  const getSnackbarColor = () => {
+  const getAlertColor = () => {
     return snackBarTitle.toLowerCase().includes("error") ? "error" : "success";
   };
 
@@ -371,14 +372,15 @@ export default function App() {
             <Route path="/TotalOutReport" element={<SummaryTotalOutReport />} />
             <Route path="/DuitNowReport" element={<DuitNowReport />} />
           </Routes>
+
+          {/* Replacing MDSnackbar with MDAlert */}
+          {success && (
+            <MDAlert color={getAlertColor()} icon="check" dismissible>
+              {snackBarTitle}
+            </MDAlert>
+          )}
         </>
       )}
-      <MDSnackbar
-        open={success}
-        color={getSnackbarColor()}
-        title={snackBarTitle}
-        close={() => setSuccess(false)} // Close the snackbar
-      />
     </ThemeProvider>
   );
 }
