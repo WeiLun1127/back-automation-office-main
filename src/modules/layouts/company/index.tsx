@@ -3,6 +3,19 @@ import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const ApiControl = () => {
   const renderCard = (
@@ -53,6 +66,32 @@ const ApiControl = () => {
     );
   };
 
+  const lineChartData1 = {
+    labels: ["January", "February", "March", "April", "May", "June"],
+    datasets: [
+      {
+        label: "Dataset 1",
+        data: [65, 59, 80, 81, 56, 55],
+        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        fill: true,
+      },
+    ],
+  };
+
+  const lineChartData2 = {
+    labels: ["January", "February", "March", "April", "May", "June"],
+    datasets: [
+      {
+        label: "Dataset 2",
+        data: [28, 48, 40, 19, 86, 27],
+        borderColor: "rgba(153, 102, 255, 1)",
+        backgroundColor: "rgba(153, 102, 255, 0.2)",
+        fill: true,
+      },
+    ],
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -74,6 +113,15 @@ const ApiControl = () => {
 
             <Grid item xs={12} xl={6}>
               {renderCard("assignment", "dark", "Report", "940", "Updated 4 minutes ago")}
+            </Grid>
+          </Grid>
+
+          <Grid container spacing={3} mt={5}>
+            <Grid item xs={12} xl={6}>
+              <Line data={lineChartData1} />
+            </Grid>
+            <Grid item xs={12} xl={6}>
+              <Line data={lineChartData2} />
             </Grid>
           </Grid>
         </MDBox>

@@ -197,14 +197,14 @@ const routes = [
         route: "productListCompany",
         component: <ProductTables />,
       },
-      {
-        id: "002",
-        parentId: "006",
-        name: "Product List",
-        key: "product-list-agent",
-        route: "productListAgent",
-        component: <ProductTables />,
-      },
+      // {
+      //   id: "002",
+      //   parentId: "006",
+      //   name: "Product List",
+      //   key: "product-list-agent",
+      //   route: "productListAgent",
+      //   component: <ProductTables />,
+      // },
     ],
   },
   {

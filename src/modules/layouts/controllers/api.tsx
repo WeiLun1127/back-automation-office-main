@@ -88,8 +88,8 @@ function Api(): JSX.Element {
             </MDBox>
             <FormControlLabel
               control={<Checkbox />}
-              label="use parent defined APIs "
-              sx={{ marginTop: 1, paddingLeft: 3 }} // Adds spacing between title and checkbox
+              label="use parent defined APIs " // Need to add check self role , if role = agent , then this will show
+              sx={{ marginTop: 1, paddingLeft: 3 }}
             />
             <DataTable table={tableData} />
           </Card>

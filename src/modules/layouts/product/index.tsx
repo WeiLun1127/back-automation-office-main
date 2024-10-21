@@ -31,6 +31,8 @@ import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
 import MDInput from "components/MDInput";
 
+//Need to check for role also for display 2 different tables?
+
 function ProductTables(): JSX.Element {
   const [editOpen, setEditOpen] = useState(false); // To control the dialog open state
   const [addOpen, setAddOpen] = useState(false); // To control the add dialog open state
