@@ -64,6 +64,12 @@ const MasterList = () => {
   const [tuneDialogUserId, setTuneDialogUserId] = useState("");
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
+  const [dialogEditUsername, setDialogEditUsername] = useState(""); // Username in the dialog
+  const [dialogPhone, setDialogPhone] = useState(""); // Phone number in the dialog
+  const [dialogEmail, setDialogEmail] = useState(""); // Email in the dialog
+  const [dialogRemark, setDialogRemark] = useState(""); // Remark in the dialog
+  const [dialogTimeZone, setDialogTimeZone] = useState(""); // Remark in the dialog
+
   const controlOptions = [
     { label: "Controller", value: "controller" },
     { label: "API", value: "api" },
@@ -129,31 +135,31 @@ const MasterList = () => {
   };
 
   const timeZones = [
-    { label: "(UTC-12:00) Baker Island", value: "UTC-12:00" },
-    { label: "(UTC-11:00) Niue, Samoa", value: "UTC-11:00" },
-    { label: "(UTC-10:00) Hawaii", value: "UTC-10:00" },
-    { label: "(UTC-09:00) Alaska", value: "UTC-09:00" },
-    { label: "(UTC-08:00) Pacific Time (US & Canada)", value: "UTC-08:00" },
-    { label: "(UTC-07:00) Mountain Time (US & Canada)", value: "UTC-07:00" },
-    { label: "(UTC-06:00) Central Time (US & Canada)", value: "UTC-06:00" },
-    { label: "(UTC-05:00) Eastern Time (US & Canada)", value: "UTC-05:00" },
-    { label: "(UTC-04:00) Atlantic Time (Canada), Venezuela", value: "UTC-04:00" },
-    { label: "(UTC-03:00) Buenos Aires, Brazil", value: "UTC-03:00" },
-    { label: "(UTC-02:00) South Georgia & the South Sandwich Islands", value: "UTC-02:00" },
-    { label: "(UTC-01:00) Azores, Cape Verde", value: "UTC-01:00" },
-    { label: "(UTC+00:00) London, Dublin, Lisbon", value: "UTC+00:00" },
-    { label: "(UTC+01:00) Berlin, Madrid, Paris", value: "UTC+01:00" },
-    { label: "(UTC+02:00) Cairo, Johannesburg", value: "UTC+02:00" },
-    { label: "(UTC+03:00) Moscow, Nairobi, Baghdad", value: "UTC+03:00" },
-    { label: "(UTC+04:00) Abu Dhabi, Muscat", value: "UTC+04:00" },
-    { label: "(UTC+05:00) Karachi, Tashkent", value: "UTC+05:00" },
-    { label: "(UTC+06:00) Dhaka, Almaty", value: "UTC+06:00" },
-    { label: "(UTC+07:00) Bangkok, Hanoi, Jakarta", value: "UTC+07:00" },
-    { label: "(UTC+08:00) Beijing, Singapore", value: "UTC+08:00" },
-    { label: "(UTC+09:00) Tokyo, Seoul", value: "UTC+09:00" },
-    { label: "(UTC+10:00) Sydney, Guam", value: "UTC+10:00" },
-    { label: "(UTC+11:00) Solomon Islands", value: "UTC+11:00" },
-    { label: "(UTC+12:00) Fiji, New Zealand", value: "UTC+12:00" },
+    { label: "(UTC-12:00) Baker Island", value: "-12" },
+    { label: "(UTC-11:00) Niue, Samoa", value: "-11" },
+    { label: "(UTC-10:00) Hawaii", value: "-10" },
+    { label: "(UTC-09:00) Alaska", value: "-9" },
+    { label: "(UTC-08:00) Pacific Time (US & Canada)", value: "-8" },
+    { label: "(UTC-07:00) Mountain Time (US & Canada)", value: "-7" },
+    { label: "(UTC-06:00) Central Time (US & Canada)", value: "-6" },
+    { label: "(UTC-05:00) Eastern Time (US & Canada)", value: "-5" },
+    { label: "(UTC-04:00) Atlantic Time (Canada), Venezuela", value: "-4" },
+    { label: "(UTC-03:00) Buenos Aires, Brazil", value: "-3" },
+    { label: "(UTC-02:00) South Georgia & the South Sandwich Islands", value: "-2" },
+    { label: "(UTC-01:00) Azores, Cape Verde", value: "-1" },
+    { label: "(UTC+00:00) London, Dublin, Lisbon", value: "0" },
+    { label: "(UTC+01:00) Berlin, Madrid, Paris", value: "1" },
+    { label: "(UTC+02:00) Cairo, Johannesburg", value: "2" },
+    { label: "(UTC+03:00) Moscow, Nairobi, Baghdad", value: "3" },
+    { label: "(UTC+04:00) Abu Dhabi, Muscat", value: "4" },
+    { label: "(UTC+05:00) Karachi, Tashkent", value: "5" },
+    { label: "(UTC+06:00) Dhaka, Almaty", value: "6" },
+    { label: "(UTC+07:00) Bangkok, Hanoi, Jakarta", value: "7" },
+    { label: "(UTC+08:00) Beijing, Singapore", value: "8" },
+    { label: "(UTC+09:00) Tokyo, Seoul", value: "9" },
+    { label: "(UTC+10:00) Sydney, Guam", value: "10" },
+    { label: "(UTC+11:00) Solomon Islands", value: "11" },
+    { label: "(UTC+12:00) Fiji, New Zealand", value: "12" },
   ];
 
   const handleTuneClick = async (userId: any) => {
@@ -199,10 +205,42 @@ const MasterList = () => {
     }
   };
 
+  const mapTimezone = (apiTimezoneValue: number) => {
+    const timezoneOffset = apiTimezoneValue >= 0 ? `+${apiTimezoneValue}` : `${apiTimezoneValue}`;
+
+    const matchedTimezone = timeZones.find((zone) => zone.value === timezoneOffset);
+
+    return matchedTimezone ? matchedTimezone.value : "0"; // Default to UTC+00 if no match found
+  };
+
   const handleEditClick = async (userId: string) => {
     setSelectedUserId(userId);
-    setOpen(true);
-    // await fetchUserData(userId);
+    const storedToken = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
+    try {
+      const apiUrl = "http://18.138.168.43:10311/api/execmem";
+      const params = {
+        EXECF: "GETMEMDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          FilterUid: userId,
+        }),
+      };
+      const response = await apiHandler(apiUrl, params);
+      console.log(response);
+      const parsedData = JSON.parse(response.Data);
+
+      setDialogEditUsername(parsedData.Name);
+      setDialogPhone(parsedData.Contact);
+      setDialogEmail(parsedData.Email);
+      setDialogRemark(parsedData.Remark);
+      const mappedTimezone = mapTimezone(parsedData.Timezone);
+      setSelectedTimeZone(mappedTimezone);
+      setOpen(true);
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
   };
 
   const handleEditSaveClick = async (userId: string) => {
@@ -210,32 +248,35 @@ const MasterList = () => {
     const storedUsername = localStorage.getItem("username");
 
     try {
+      console.log("TimeZone:", selectedTimeZone);
+
       const apiUrl = "http://18.138.168.43:10311/api/execmem";
       const params = {
-        EXECF: "SETAUTHDATA",
+        EXECF: "SETMEMDATA",
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
           Uid: userId,
-          Name: dialogUsername,
-          Pass: dialogPass,
-          Control: dialogControl,
-          Tfa: dialogTfa,
-          Class: dialogClass,
-          Status: dialogStatus,
+          Name: dialogEditUsername,
+          Email: dialogEmail,
+          Contact: dialogPhone,
+          Remark: dialogRemark,
+          Timezone: selectedTimeZone,
         }),
       };
       const response = await apiHandler(apiUrl, params);
       setSnackBarTitle("User Details Updated Successfully.");
       setSuccess(true); // Show success snackbar
       handleClose();
-      // alert("User Details Updated Successfully.");
-      // handleClose();
     } catch (error) {
-      // console.error("Error during API call:", error);
       setSnackBarTitle("Error updating user details.");
       setSuccess(true);
     }
+    setDialogEditUsername("");
+    setDialogPhone("");
+    setDialogEmail("");
+    setDialogRemark("");
+    setSelectedTimeZone("");
   };
 
   const handle2FAChange = (event: {
@@ -261,6 +302,11 @@ const MasterList = () => {
 
   const handleClose = () => {
     setOpen(false);
+    setDialogEditUsername("");
+    setDialogPhone("");
+    setDialogEmail("");
+    setDialogRemark("");
+    setSelectedTimeZone("");
     fetchTableData();
   };
 
@@ -729,16 +775,32 @@ const MasterList = () => {
             fullWidth
             label="Name"
             variant="outlined"
-            value={dialogUsername}
-            onChange={(e) => setDialogUsername(e.target.value)}
+            value={dialogEditUsername}
+            onChange={(e) => setDialogEditUsername(e.target.value)}
             sx={{ mt: 2 }}
           />
-          <TextField fullWidth label="Phone Number" variant="outlined" sx={{ mt: 2 }} />
-          <TextField fullWidth label="Email" variant="outlined" sx={{ mt: 2 }} />
+          <TextField
+            fullWidth
+            label="Phone Number"
+            variant="outlined"
+            value={dialogPhone}
+            onChange={(e) => setDialogPhone(e.target.value)}
+            sx={{ mt: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="Email"
+            variant="outlined"
+            value={dialogEmail}
+            onChange={(e) => setDialogEmail(e.target.value)}
+            sx={{ mt: 2 }}
+          />
           <TextField
             fullWidth
             label="Remark"
             variant="outlined"
+            value={dialogRemark}
+            onChange={(e) => setDialogRemark(e.target.value)}
             sx={{
               mt: 2,
               "& .MuiOutlinedInput-root": {

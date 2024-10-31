@@ -30,6 +30,7 @@ import Flag from "react-flagkit";
 import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
 import MDInput from "components/MDInput";
+import MDSnackbar from "components/MDSnackbar";
 
 //Need to check for role also for display 2 different tables?
 
@@ -38,20 +39,13 @@ function ProductTables(): JSX.Element {
   const [addOpen, setAddOpen] = useState(false); // To control the add dialog open state
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedCountry, setSelectedCountry] = useState<string>(""); // State for country selection
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(""); // State for selected currency
   const [products, setProducts] = useState<any[]>([]); // New state for products
+  const [countryList, setCountryList] = useState<{ name: string; code: string }[]>([]);
   const [selectedProductData, setSelectedProductData] = useState<any>(null); // New state for selected product data
-
-  const countries = [
-    { name: "Korea", code: "KR" },
-    { name: "Vietnam", code: "VN" },
-    { name: "Malaysia", code: "MY" },
-    { name: "Singapore", code: "SG" },
-    { name: "Thailand", code: "TH" },
-    { name: "Japan", code: "JP" },
-    { name: "India", code: "IN" },
-    { name: "Indonesia", code: "ID" },
-    { name: "Cambodia", code: "KH" },
-  ];
+  const [maxMargin, setMaxMargin] = useState<string>(""); // New state for max margin
+  const [success, setSuccess] = useState(false);
+  const [snackBarTitle, setSnackBarTitle] = useState("");
 
   const handleEditClickOpen = (product: any) => {
     setSelectedProduct(product); // Store the product being edited
@@ -68,38 +62,99 @@ function ProductTables(): JSX.Element {
     setAddOpen(true); // Open the add dialog
     setSelectedCountry("");
     setSelectedProductData(null);
+    setProducts([]);
+    fetchCurrencyData();
   };
 
-  type CountryName =
-    | "Korea"
-    | "Vietnam"
-    | "Malaysia"
-    | "Singapore"
-    | "Thailand"
-    | "Japan"
-    | "India"
-    | "Indonesia"
-    | "Cambodia";
+  const fetchCurrencyData = async () => {
+    const storedToken = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
 
-  // Update the currency mapping with CountryName as keys
-  const currencyMapping: Record<CountryName, string> = {
-    Korea: "KRW",
-    Vietnam: "VND",
-    Malaysia: "MYR",
-    Singapore: "SGD",
-    Thailand: "THB",
-    Japan: "JPY",
-    India: "INR",
-    Indonesia: "IDR",
-    Cambodia: "KHR",
+    try {
+      const apiUrl = "http://18.138.168.43:10312/api/execset";
+      const params = {
+        EXECF: "GETCURRSBYSTATUS",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          Currency: "",
+          Status: "",
+        }),
+      };
+      const response = await apiHandler(apiUrl, params);
+      const responseData = JSON.parse(response.Data);
+
+      // Extract country and currency from the response
+      const countryData = responseData.map((item: { Country: string; Currency: string }) => ({
+        name: item.Country,
+        code: item.Currency, // Using currency code as 'code'
+      }));
+
+      // Store country data in state
+      setCountryList(countryData);
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
   };
+
+  // const handleCountryChange = async (event: SelectChangeEvent<string>) => {
+  //   const selectedCountry = event.target.value as CountryName;
+  //   setSelectedCountry(selectedCountry);
+  //   const selectedCountryCurrency = currencyMapping[selectedCountry];
+  //   setSelectedCurrency(selectedCountryCurrency);
+
+  //   if (selectedCountryCurrency) {
+  //     // Call the API with the necessary parameters
+  //     try {
+  //       const storedUsername = localStorage.getItem("username");
+  //       const storedToken = localStorage.getItem("token");
+  //       const response = await axios.post("http://18.138.168.43:10312/api/execset", {
+  //         EXECF: "GETPRODSBYCURR",
+  //         Uid: storedUsername,
+  //         Token: storedToken,
+  //         Data: JSON.stringify({ FilterCurrency: selectedCountryCurrency }),
+  //       });
+  //       console.log("API Response:", response.data);
+  //       // Extract the 'Data' string and manipulate it to remove the outer structure
+  //       const filteredDataString = response.data.Data; // Original string
+  //       let filteredData = filteredDataString.slice(filteredDataString.indexOf("[")); // Keep from the first '[' onward
+
+  //       // Check and remove the extra '}' at the end if it exists
+  //       if (filteredData.endsWith("}")) {
+  //         filteredData = filteredData.slice(0, -1); // Remove the last character
+  //       }
+
+  //       if (filteredData.endsWith('"')) {
+  //         filteredData = filteredData.slice(0, -1); // Remove the last character
+  //       }
+
+  //       // If you need to remove any trailing whitespace or newline characters:
+  //       filteredData = filteredData.trim(); // Clean up any whitespace
+
+  //       console.log("Filtered Data:", filteredData);
+  //       const dataArray = JSON.parse(filteredData);
+  //       setProducts(dataArray);
+
+  //       dataArray.forEach((item: { Code: any; Name: any; Type: any; Status: any }) => {
+  //         console.log("Code:", item.Code);
+  //         console.log("Name:", item.Name);
+  //         console.log("Type:", item.Type);
+  //         console.log("Status:", item.Status);
+  //         console.log("-----"); // Separator for readability
+  //       });
+  //     } catch (error) {
+  //       console.error("API call failed:", error);
+  //     }
+  //   }
+  // };
 
   const handleCountryChange = async (event: SelectChangeEvent<string>) => {
-    // setSelectedCountry(event.target.value);
-    const selectedCountry = event.target.value as CountryName;
+    const selectedCountry = event.target.value;
     setSelectedCountry(selectedCountry);
-    const selectedCountryCurrency = currencyMapping[selectedCountry];
-
+    const selectedCountryCurrency = countryList.find(
+      (country) => country.name === selectedCountry
+    )?.code;
+    setSelectedCurrency(selectedCountryCurrency || "");
     if (selectedCountryCurrency) {
       // Call the API with the necessary parameters
       try {
@@ -109,7 +164,7 @@ function ProductTables(): JSX.Element {
           EXECF: "GETPRODSBYCURR",
           Uid: storedUsername,
           Token: storedToken,
-          Data: JSON.stringify({ Currency: selectedCountryCurrency }),
+          Data: JSON.stringify({ FilterCurrency: selectedCountryCurrency }),
         });
         console.log("API Response:", response.data);
         // Extract the 'Data' string and manipulate it to remove the outer structure
@@ -145,9 +200,16 @@ function ProductTables(): JSX.Element {
     }
   };
 
+  const getSnackbarColor = () => {
+    return snackBarTitle.toLowerCase().includes("error") ? "error" : "success";
+  };
+
   const handleAddClose = () => {
     setAddOpen(false); // Close the add dialog
     setSelectedCountry("");
+    setSelectedCurrency("");
+    setProducts([]);
+    setSelectedProductData(null);
   };
 
   const handleProductSelect = (event: SelectChangeEvent<string>) => {
@@ -156,11 +218,122 @@ function ProductTables(): JSX.Element {
     setSelectedProductData(productData); // Update selected product data
   };
 
+  const [filterKeyword, setFilterKeyword] = useState("");
+
+  const handleAddSaveClick = async () => {
+    const storedToken = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
+
+    try {
+      const apiUrl = "http://18.138.168.43:10312/api/execset";
+      const params = {
+        EXECF: "SETPRODDATA",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          Index: "",
+          Currency: selectedCurrency, //Currency Selected by User
+          ProductCode: selectedProductData?.Code || "", //Product Code displayed
+          DisplayName: selectedProductData?.Name || "", // Display Name displayed
+          ProfitType: selectedProductData?.Type || "", //Profit Type Displayed
+          ProfitValue: maxMargin, //Max margin value entered by user
+          Status: selectedProductData?.Status || "", //status displayed
+        }),
+      };
+      const response = await apiHandler(apiUrl, params);
+      const responseData = JSON.parse(response.Data);
+      console.log(responseData);
+      handleAddClose();
+      setSnackBarTitle("Product Added Successfully.");
+      setSuccess(true); // Show success snackbar
+      // fetchProductData();
+      setTimeout(() => fetchProductData(), 1000);
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
+  };
+
+  const fetchProductData = async () => {
+    const storedToken = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
+
+    try {
+      const apiUrl = "http://18.138.168.43:10312/api/execset";
+      const params = {
+        EXECF: "GETPRODDATALIST",
+        Uid: storedUsername,
+        Token: storedToken,
+        // Data: JSON.stringify({
+        //   FilterDisplayName: "",
+        // }),
+        Data: JSON.stringify({
+          FilterDisplayName: filterKeyword, // Pass the filter keyword entered by the user
+        }),
+      };
+      const response = await apiHandler(apiUrl, params);
+      const responseData = JSON.parse(response.Data);
+      console.log(responseData);
+      // Map API data to fit DataTable format
+      const formattedRows = responseData.map(
+        (
+          item: {
+            Index: any;
+            ProductCode: string;
+            Currency: any;
+            DisplayName: any;
+            ProfitType: any;
+            ProfitValue: any;
+            Status: any;
+            UpdatedOnUTC: any;
+          },
+          index: number
+        ) => ({
+          id: index + 1, // Generate an ID based on index
+          reference: item.Index,
+          country: item.Currency,
+          code: item.ProductCode,
+          display_name: item.DisplayName,
+          profit_type: item.ProfitType,
+          max_margin: item.ProfitValue,
+          status: <Switch checked={item.Status === "1"} />,
+          updated_on: item.UpdatedOnUTC,
+          action: (
+            <div style={{ paddingLeft: "12px" }}>
+              <Icon style={{ cursor: "pointer", fontSize: 20 }} onClick={handleEditClickOpen}>
+                edit
+              </Icon>
+            </div>
+          ),
+        })
+      );
+      setTableData((prev) => ({
+        ...prev,
+        rows: formattedRows,
+      }));
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProductData();
+  }, []); // Empty dependency array means it runs once on mount
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess(false); // Automatically hide the snackbar after 3 seconds
+      }, 3000);
+
+      return () => clearTimeout(timer); // Cleanup the timer on component unmount or when success changes
+    }
+  }, [success]);
+
   const [tableData, setTableData] = useState({
     columns: [
       { Header: "id", accessor: "id", width: "3%" },
       { Header: "reference", accessor: "reference", width: "7%" },
-      { Header: "country", accessor: "country", width: "7%" },
+      { Header: "currency", accessor: "country", width: "7%" },
       { Header: "code", accessor: "code", width: "7%" },
       { Header: "display name", accessor: "display_name", width: "7%" },
       { Header: "profit type", accessor: "profit_type", width: "7%" },
@@ -169,40 +342,7 @@ function ProductTables(): JSX.Element {
       { Header: "updated on", accessor: "updated_on", width: "7%" },
       { Header: "action", accessor: "action", width: "7%" },
     ],
-    rows: [
-      {
-        id: "001",
-        reference: "REF12345",
-        country: "USA",
-        code: "US001",
-        display_name: "Product A",
-        profit_type: "Fixed",
-        max_margin: "20%",
-        status: <Switch defaultChecked />,
-        updated_on: "2024-10-07",
-        action: (
-          <div style={{ paddingLeft: "12px" }}>
-            <Icon
-              style={{ cursor: "pointer", fontSize: 20 }}
-              onClick={() =>
-                handleEditClickOpen({
-                  id: "001",
-                  reference: "REF12345",
-                  country: "USA",
-                  code: "US001",
-                  display_name: "Product A",
-                  profit_type: "Fixed",
-                  max_margin: "20%",
-                  status: true,
-                })
-              }
-            >
-              edit
-            </Icon>
-          </div>
-        ),
-      },
-    ],
+    rows: [],
   });
 
   return (
@@ -236,10 +376,19 @@ function ProductTables(): JSX.Element {
                 variant="standard"
                 label="Filter Keyword"
                 sx={{ width: 200, marginRight: 3 }}
+                value={filterKeyword}
+                onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
+                  setFilterKeyword(e.target.value)
+                }
               />
               <MDBox display="flex" alignItems="center">
                 {/* <TextField margin="dense" label="Status" sx={{ width: 200 }} /> */}
-                <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
+                {/* <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} /> */}
+                <IconButton onClick={fetchProductData}>
+                  {" "}
+                  {/* Trigger API call on click */}
+                  <SearchIcon sx={{ cursor: "pointer" }} />
+                </IconButton>
               </MDBox>
             </MDBox>
             <DataTable table={tableData} />
@@ -280,16 +429,28 @@ function ProductTables(): JSX.Element {
               value={selectedCountry}
               onChange={handleCountryChange}
             >
-              {countries.map(({ name, code }) => (
+              {/* Populate dropdown with fetched countries */}
+              {countryList.map(({ name, code }) => (
                 <MenuItem key={code} value={name} style={{ margin: "5px 0" }}>
                   <Box display="flex" alignItems="center">
-                    <Flag country={code} size={20} style={{ marginRight: "10px" }} />
                     {name}
                   </Box>
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+
+          {/* Currency Input Field */}
+          <TextField
+            margin="dense"
+            label="Currency"
+            fullWidth
+            value={selectedCurrency}
+            disabled
+            InputProps={{
+              readOnly: true, // Make the field read-only
+            }}
+          />
           <FormControl
             fullWidth
             margin="dense"
@@ -333,7 +494,8 @@ function ProductTables(): JSX.Element {
             margin="dense"
             label="Max Margin"
             fullWidth
-            defaultValue="" // Add default value as needed
+            value={maxMargin}
+            onChange={(e) => setMaxMargin(e.target.value)}
           />
           <FormControlLabel
             label="Status"
@@ -341,7 +503,7 @@ function ProductTables(): JSX.Element {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleAddClose} color="primary">
+          <Button onClick={handleAddSaveClick} color="primary">
             Save
           </Button>
         </DialogActions>
@@ -418,6 +580,12 @@ function ProductTables(): JSX.Element {
           </Button>
         </DialogActions>
       </Dialog>
+      <MDSnackbar
+        open={success}
+        color={getSnackbarColor()}
+        title={snackBarTitle}
+        close={() => setSuccess(false)} // Close the snackbar
+      />
     </DashboardLayout>
   );
 }

@@ -33,9 +33,49 @@ import SearchIcon from "@mui/icons-material/Search";
 function AccountThresholdList(): JSX.Element {
   const [horizOpen, setHorizOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [selectedData, setSelectedData] = useState<AccountThresholdData | {}>({});
 
-  const handleEditClickOpen = () => {
-    setEditOpen(true);
+  interface AccountThresholdData {
+    Index: string;
+    Currency: string;
+    BankCode: string;
+    BankAccNumber: string;
+    BankAccName: string;
+    BankAccLoginID: string;
+    BankAccLoginPass: string;
+    SecurityCode: string;
+    Timezone: string;
+    CutoffTime: string;
+    MinTransAmount: string;
+    MaxTransAmount: string;
+    DailyInAmount: string;
+    DailyInTrans: string;
+    DailyOutAmount: string;
+    DailyOutTrans: string;
+    Status: string;
+  }
+
+  const handleEditClickOpen = async (rowIndex: any) => {
+    const storedToken = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
+
+    try {
+      const apiUrl = "http://18.138.168.43:10312/api/execset";
+      const params = {
+        EXECF: "GETACCTHRESDATA",
+        Uid: storedUsername || "com",
+        Token: storedToken || "",
+        Data: JSON.stringify({ FilterIndex: rowIndex }),
+      };
+
+      const response = await apiHandler(apiUrl, params);
+      const responseData = JSON.parse(response.Data);
+      console.log(responseData);
+      setSelectedData(responseData); // Save retrieved data
+      setEditOpen(true); // Open edit dialog
+    } catch (error) {
+      console.error("Error fetching edit data:", error);
+    }
   };
 
   const handleEditClose = () => {
@@ -53,6 +93,7 @@ function AccountThresholdList(): JSX.Element {
   const [tableData, setTableData] = useState({
     columns: [
       { Header: "id", accessor: "id", width: "3%" },
+      { Header: "index", accessor: "index", width: "3%" },
       { Header: "currency", accessor: "currency", width: "3%" },
       { Header: "bank code", accessor: "bank_code", width: "7%" },
       { Header: "acc. name", accessor: "acc_name", width: "7%" },
@@ -66,36 +107,96 @@ function AccountThresholdList(): JSX.Element {
       { Header: "status", accessor: "status", width: "3%" },
       { Header: "action", accessor: "action", width: "3%" },
     ],
-    rows: [
-      {
-        id: "1",
-        currency: "MYR",
-        bank_code: "MBB",
-        acc_name: "Tan Ah Lu",
-        acc_number: "564589781234",
-        running_in_1: "26,652.00 / 30,000",
-        running_in_2: "165 / 200",
-        running_out_1: "22,912.00 / 25,000",
-        running_out_2: "99/200",
-        running: (
-          <div style={{ paddingLeft: "12px" }}>
-            <Icon style={{ cursor: "pointer", fontSize: 20 }} onClick={handleHorizClickOpen}>
-              more_horiz
-            </Icon>
-          </div>
-        ),
-        updated_on: "2024-01-01 20:55:23 GMT+8",
-        status: <Switch defaultChecked />,
-        action: (
-          <div style={{ paddingLeft: "12px" }}>
-            <Icon style={{ cursor: "pointer", fontSize: 20 }} onClick={handleEditClickOpen}>
-              edit
-            </Icon>
-          </div>
-        ),
-      },
-    ],
+    rows: [],
   });
+
+  const fetchThresholdList = async () => {
+    const storedToken = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
+
+    try {
+      const apiUrl = "http://18.138.168.43:10312/api/execset";
+      const params = {
+        EXECF: "GETACCTHRESDATALIST",
+        Uid: storedUsername,
+        Token: storedToken,
+        Data: JSON.stringify({
+          FilterCurrency: "",
+          FilterBankCode: "",
+          FilterBankAccNumber: "",
+          FilterBankAccName: "",
+          FilterStatus: "",
+        }),
+        // Data: JSON.stringify({
+        //   FilterDisplayName: filterKeyword,
+        // }),
+      };
+      const response = await apiHandler(apiUrl, params);
+      const responseData = JSON.parse(response.Data);
+      console.log(responseData);
+      // Map API data to fit DataTable format
+      const formattedRows = responseData.map(
+        (
+          item: {
+            Index: any;
+            Currency: string;
+            BankCode: any;
+            BankAccNumber: any;
+            BankAccName: any;
+            BankAccLoginID: any;
+            MinTransAmount: any;
+            MaxTransAmount: any;
+            DailyInAmount: any;
+            DailyInTrans: any;
+            DailyOutAmount: any;
+            DailyOutTrans: any;
+            Status: any;
+          },
+          index: number
+        ) => ({
+          id: index + 1, // Generate an ID based on index
+          index: item.Index,
+          currency: item.Currency,
+          bank_code: item.BankCode,
+          acc_name: item.BankAccNumber,
+          acc_number: item.BankAccName,
+          running_in_1: item.DailyInAmount,
+          running_in_2: item.DailyInTrans,
+          running_out_1: item.DailyOutAmount,
+          running_out_2: item.DailyOutTrans,
+          running: (
+            <div style={{ paddingLeft: "12px" }}>
+              <Icon style={{ cursor: "pointer", fontSize: 20 }} onClick={handleHorizClickOpen}>
+                more_horiz
+              </Icon>
+            </div>
+          ),
+          // updated_on: item.UpdatedOnUTC,
+          status: <Switch checked={item.Status === "1"} />,
+          action: (
+            <div style={{ paddingLeft: "12px" }}>
+              <Icon
+                style={{ cursor: "pointer", fontSize: 20 }}
+                onClick={() => handleEditClickOpen(item.Index)}
+              >
+                edit
+              </Icon>
+            </div>
+          ),
+        })
+      );
+      setTableData((prev) => ({
+        ...prev,
+        rows: formattedRows,
+      }));
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchThresholdList();
+  }, []);
 
   return (
     <DashboardLayout>
@@ -215,29 +316,94 @@ function AccountThresholdList(): JSX.Element {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <TextField margin="dense" label="Currency" sx={{ width: 680 }} />
-          <TextField margin="dense" label="Bank Code" sx={{ width: 680 }} />
-          <TextField margin="dense" label="Account Number" sx={{ width: 680 }} />
-          <TextField margin="dense" label="Account Name" sx={{ width: 680 }} />
-          <TextField margin="dense" label="Login Id" sx={{ width: 680 }} />
-          <TextField margin="dense" label="Login Password" sx={{ width: 680 }} />
-          <TextField margin="dense" label="Security Code" sx={{ width: 680 }} />
-          <TextField margin="dense" label="TimeZone" sx={{ width: 680 }} />
-          <TextField margin="dense" label="Cut Off Time" sx={{ width: 680 }} />
+          <TextField
+            margin="dense"
+            label="Currency"
+            value={(selectedData as AccountThresholdData).Currency || ""}
+            sx={{ width: 680 }}
+          />
+          <TextField
+            margin="dense"
+            label="Bank Code"
+            value={(selectedData as AccountThresholdData).BankCode || ""}
+            sx={{ width: 680 }}
+          />
+          <TextField
+            margin="dense"
+            label="Account Number"
+            value={(selectedData as AccountThresholdData).BankAccNumber || ""}
+            sx={{ width: 680 }}
+          />
+          <TextField
+            margin="dense"
+            label="Account Name"
+            value={(selectedData as AccountThresholdData).BankAccName || ""}
+            sx={{ width: 680 }}
+          />
+          <TextField
+            margin="dense"
+            label="Login Id"
+            value={(selectedData as AccountThresholdData).BankAccLoginID || ""}
+            sx={{ width: 680 }}
+          />
+          <TextField
+            margin="dense"
+            label="Login Password"
+            value={(selectedData as AccountThresholdData).BankAccLoginPass || ""}
+            sx={{ width: 680 }}
+          />
+          <TextField
+            margin="dense"
+            label="Security Code"
+            value={(selectedData as AccountThresholdData).SecurityCode || ""}
+            sx={{ width: 680 }}
+          />
+          <TextField
+            margin="dense"
+            label="TimeZone"
+            value={(selectedData as AccountThresholdData).Timezone || ""}
+            sx={{ width: 680 }}
+          />
+          <TextField
+            margin="dense"
+            label="Cut Off Time"
+            value={(selectedData as AccountThresholdData).CutoffTime || ""}
+            sx={{ width: 680 }}
+          />
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <TextField margin="dense" label="Daily In Limit $" sx={{ width: 300 }} />
+              <TextField
+                margin="dense"
+                label="Daily In Limit $"
+                value={(selectedData as AccountThresholdData).DailyInAmount || ""}
+                sx={{ width: 300 }}
+              />
             </Grid>
             <Grid item xs={6}>
-              <TextField margin="dense" label="Daily Out Limit $" sx={{ width: 300 }} />
+              <TextField
+                margin="dense"
+                label="Daily Out Limit $"
+                value={(selectedData as AccountThresholdData).DailyOutAmount || ""}
+                sx={{ width: 300 }}
+              />
             </Grid>
           </Grid>
           <Grid container spacing={2}>
             <Grid item xs={6}>
-              <TextField margin="dense" label="Daily In Limit #" sx={{ width: 300 }} />
+              <TextField
+                margin="dense"
+                label="Daily In Limit #"
+                value={(selectedData as AccountThresholdData).DailyInTrans || ""}
+                sx={{ width: 300 }}
+              />
             </Grid>
             <Grid item xs={6}>
-              <TextField margin="dense" label="Daily Out Limit #" sx={{ width: 300 }} />
+              <TextField
+                margin="dense"
+                label="Daily Out Limit #"
+                value={(selectedData as AccountThresholdData).DailyOutTrans || ""}
+                sx={{ width: 300 }}
+              />
             </Grid>
           </Grid>
         </DialogContent>
