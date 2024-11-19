@@ -267,7 +267,7 @@ function ProductTables(): JSX.Element {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          FilterDisplayName: filterKeyword, // Pass the filter keyword entered by the user
+          FilterDisplayName: filterKeyword,
         }),
       };
       const response = await apiHandler(apiUrl, params);

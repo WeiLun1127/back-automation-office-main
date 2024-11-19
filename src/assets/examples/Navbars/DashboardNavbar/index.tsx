@@ -121,11 +121,11 @@ function DashboardNavbar({ absolute = false, light = false, isMini = false }: Pr
             </Icon>
           </IconButton>
         </MDBox>
-        {/* {isMini ? null : (
+        {isMini ? null : (
           <MDBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <MDBox pr={1}>
+            {/* <MDBox pr={1}>
               <MDInput label="Search here" />
-            </MDBox>
+            </MDBox> */}
             <MDBox color={light ? "white" : "inherit"}>
               <IconButton
                 size="small"
@@ -140,7 +140,7 @@ function DashboardNavbar({ absolute = false, light = false, isMini = false }: Pr
               </IconButton>
             </MDBox>
           </MDBox>
-        )} */}
+        )}
       </Toolbar>
     </AppBar>
   );

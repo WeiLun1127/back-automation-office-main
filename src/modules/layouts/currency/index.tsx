@@ -321,7 +321,7 @@ function CurrencyTables(): JSX.Element {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          FilterCurrency: "",
+          FilterCurrency: currency,
           FilterStatus: "",
         }),
       };

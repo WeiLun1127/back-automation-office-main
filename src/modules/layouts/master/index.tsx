@@ -30,10 +30,8 @@ import MDButton from "components/MDButton";
 import { apiHandler } from "api/apiHandler";
 import SecurityIcon from "@mui/icons-material/Security";
 import MDSnackbar from "components/MDSnackbar";
-import { stringify } from "querystring";
 import MDInput from "components/MDInput";
 import SearchIcon from "@mui/icons-material/Search";
-import CreateAgentAccount from "../agent/create";
 import { CircularProgress } from "@mui/material";
 
 const MasterList = () => {
@@ -468,40 +466,6 @@ const MasterList = () => {
       return () => clearTimeout(timer); // Cleanup the timer on component unmount or when success changes
     }
   }, [success]);
-
-  // const handleStatusChange = async (userId: string, newStatus: string) => {
-  //   const storedToken = localStorage.getItem("token");
-  //   const storedUsername = localStorage.getItem("username");
-
-  //   try {
-  //     const apiUrl = "http://18.138.168.43:10311/api/execmem";
-  //     const params = {
-  //       EXECF: "SETAUTHDATA",
-  //       Uid: storedUsername,
-  //       Token: storedToken,
-  //       Data: JSON.stringify({
-  //         Uid: userId,
-  //         Status: newStatus, // Update the status based on switch toggle
-  //       }),
-  //     };
-
-  //     const response = await apiHandler(apiUrl, params);
-  //     if (response.Status === "1") {
-  //       // alert("User status updated successfully.");
-  //       setSnackBarTitle("User status updated successfully.");
-  //       setSuccess(true);
-  //       setTimeout(() => fetchTableData(), 1000); // Refresh the table data after status change
-  //     } else {
-  //       // alert("Error updating user status.");
-  //       setSnackBarTitle("Error updating user status.");
-  //       setSuccess(true);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error during status update:", error);
-  //     setSnackBarTitle("Error updating user status.");
-  //     setSuccess(true);
-  //   }
-  // };
 
   const handleStatusChange = (userId: string, newStatus: string) => {
     setPendingUserId(userId);
