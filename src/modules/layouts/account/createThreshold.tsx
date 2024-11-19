@@ -1,11 +1,7 @@
-import SecurityIcon from "@mui/icons-material/Security";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import CloseIcon from "@mui/icons-material/Close";
 import {
-  Autocomplete,
   Box,
   Card,
-  Checkbox,
   FormControl,
   Grid,
   Icon,
@@ -14,19 +10,15 @@ import {
   MenuItem,
   Select,
   Switch,
-  TextField,
 } from "@mui/material";
-import { apiHandler } from "api/apiHandler";
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "assets/examples/Navbars/DashboardNavbar";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
-import MDTypography from "components/MDTypography";
-import React from "react";
-import { SetStateAction, useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
 import MDSnackbar from "components/MDSnackbar";
+import MDTypography from "components/MDTypography";
+import React, { useState } from "react";
 import Flag from "react-flagkit";
 
 const CreateThresholdAccount = () => {
@@ -166,7 +158,7 @@ const CreateThresholdAccount = () => {
             <MDBox component="form" pb={2} px={2}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <FormControl fullWidth variant="standard" sx={{ width: 500 }}>
+                  <FormControl fullWidth variant="standard" sx={{ maxWidth: 500 }}>
                     <Box mb={3}>
                       <InputLabel id="country-label">Country</InputLabel>
                     </Box>
@@ -207,13 +199,13 @@ const CreateThresholdAccount = () => {
                     label="Currency"
                     disabled
                     value={selectedCurrency}
-                    sx={{ width: 500 }} // Set the value based on selected currency
+                    sx={{ maxWidth: 500 }} // Set the value based on selected currency
                     readOnly // Make the currency input read-only
                   />
                 </Grid>
 
                 <Grid item xs={12}>
-                  <FormControl fullWidth variant="standard" sx={{ width: 500 }}>
+                  <FormControl fullWidth variant="standard" sx={{ maxWidth: 500 }}>
                     <InputLabel id="bank-code-label">Bank Code</InputLabel>
                     <Select
                       labelId="bank-code-label"
@@ -234,34 +226,44 @@ const CreateThresholdAccount = () => {
                     fullWidth
                     variant="standard"
                     label="Account Number"
-                    sx={{ width: 1000 }}
+                    sx={{ maxWidth: 500 }}
                   />
-                </Grid>
-
-                <Grid item xs={12}>
-                  <MDInput fullWidth variant="standard" label="Account Name" sx={{ width: 1000 }} />
-                </Grid>
-
-                <Grid item xs={12}>
-                  <MDInput fullWidth variant="standard" sx={{ width: 500 }} label="Login ID" />
                 </Grid>
 
                 <Grid item xs={12}>
                   <MDInput
                     fullWidth
                     variant="standard"
-                    sx={{ width: 500 }}
+                    label="Account Name"
+                    sx={{ maxWidth: 500 }}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <MDInput fullWidth variant="standard" sx={{ maxWidth: 500 }} label="Login ID" />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <MDInput
+                    fullWidth
+                    variant="standard"
+                    sx={{ maxWidth: 500 }}
                     label="Login Password"
                   />
                 </Grid>
 
                 <Grid item xs={12}>
-                  <MDInput fullWidth variant="standard" sx={{ width: 500 }} label="Security Code" />
+                  <MDInput
+                    fullWidth
+                    variant="standard"
+                    sx={{ maxWidth: 500 }}
+                    label="Security Code"
+                  />
                 </Grid>
 
                 <Grid item xs={12}>
                   <MDBox display="flex" alignItems="center">
-                    <FormControl fullWidth variant="standard" sx={{ width: 500 }}>
+                    <FormControl fullWidth variant="standard" sx={{ maxWidth: 500 }}>
                       <InputLabel id="time-zone-label">Time Zone</InputLabel>
                       <Select
                         labelId="time-zone-label"
@@ -289,7 +291,7 @@ const CreateThresholdAccount = () => {
 
                 <Grid item xs={12}>
                   <MDBox display="flex" alignItems="center">
-                    <FormControl fullWidth variant="standard" sx={{ width: 500 }}>
+                    <FormControl fullWidth variant="standard" sx={{ maxWidth: 500 }}>
                       <InputLabel id="cut-off-time-label">Cut Off Time</InputLabel>
                       <Select
                         labelId="cut-off-time-label"
