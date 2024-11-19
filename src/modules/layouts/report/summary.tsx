@@ -140,7 +140,7 @@ function TransactionSummary(): JSX.Element {
                 Summary
               </MDTypography>
             </MDBox>
-            <DataTable table={tableData} canSearch />
+            <DataTable table={tableData} />
           </Card>
         </MDBox>
       </MDBox>

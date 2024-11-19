@@ -184,7 +184,10 @@ function AccountGroupList(): JSX.Element {
                 sx={{ width: 200, marginRight: 3 }}
               />
               <MDBox display="flex" alignItems="center">
-                {/* <TextField margin="dense" label="Status" sx={{ width: 200 }} /> */}
+                {/* Switch for Status */}
+                <MDBox display="flex" alignItems="center" sx={{ marginRight: 2 }}>
+                  <Switch color="primary" />
+                </MDBox>
                 <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
               </MDBox>
             </MDBox>

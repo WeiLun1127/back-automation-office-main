@@ -20,6 +20,7 @@ import {
   Select,
   Autocomplete,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { CheckBox, Close as CloseIcon } from "@mui/icons-material"; // Import Close Icon
 import DashboardLayout from "assets/examples/LayoutContainers/DashboardLayout";
@@ -64,6 +65,14 @@ const AgentList = () => {
   const [tuneDialogControl, setTuneDialogControl] = useState(""); // Control selected in the dropdown in Tune
   const [tuneDialogUserId, setTuneDialogUserId] = useState("");
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [pendingStatusChange, setPendingStatusChange] = useState({ userId: "", newStatus: "" });
+  const [pendingUserId, setPendingUserId] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const [filterKeyword, setFilterKeyword] = useState(""); // State for filter keyword
+  const [filterSwitchStatus, setFilterSwitchStatus] = useState(true); // State for switch (on/off)
 
   const controlOptions = [
     { label: "Controller", value: "controller" },
@@ -306,6 +315,8 @@ const AgentList = () => {
   };
 
   const fetchTableData = async (FilterStatus = "", searchValue = "") => {
+    setLoading(true);
+
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
 
@@ -317,9 +328,9 @@ const AgentList = () => {
         Token: storedToken,
         Data: JSON.stringify({
           FilterClass: "agt", //agt
-          FilterName: searchValue || "",
+          FilterName: searchValue || filterKeyword,
           FilterUid: "",
-          FilterStatus: FilterStatus,
+          FilterStatus: filterSwitchStatus ? "1" : "0",
         }),
       };
       const response = await apiHandler(apiUrl, params);
@@ -414,12 +425,18 @@ const AgentList = () => {
       setTableRows(formattedRows); // Set the rows for DataTable
     } catch (error) {
       console.error("Error during API call:", error);
+    } finally {
+      setLoading(false); // Set loading to false after the API call finishes
     }
   };
 
+  // useEffect(() => {
+  //   fetchTableData();
+  // }, []);
+
   useEffect(() => {
-    fetchTableData();
-  }, []);
+    fetchTableData(filterSwitchStatus ? "1" : "0", filterKeyword);
+  }, [filterKeyword, filterSwitchStatus]);
 
   const handleStatusHeaderClick = () => {
     let newFilterStatus = "";
@@ -464,7 +481,48 @@ const AgentList = () => {
     }
   }, [success]);
 
-  const handleStatusChange = async (userId: string, newStatus: string) => {
+  // const handleStatusChange = async (userId: string, newStatus: string) => {
+  //   const storedToken = localStorage.getItem("token");
+  //   const storedUsername = localStorage.getItem("username");
+
+  //   try {
+  //     const apiUrl = "http://18.138.168.43:10311/api/execmem";
+  //     const params = {
+  //       EXECF: "SETAUTHDATA",
+  //       Uid: storedUsername,
+  //       Token: storedToken,
+  //       Data: JSON.stringify({
+  //         Uid: userId,
+  //         Status: newStatus, // Update the status based on switch toggle
+  //       }),
+  //     };
+
+  //     const response = await apiHandler(apiUrl, params);
+  //     if (response.Status === "1") {
+  //       // alert("User status updated successfully.");
+  //       setSnackBarTitle("User status updated successfully.");
+  //       setSuccess(true);
+  //       setTimeout(() => fetchTableData(), 1000); // Refresh the table data after status change
+  //     } else {
+  //       // alert("Error updating user status.");
+  //       setSnackBarTitle("Error updating user status.");
+  //       setSuccess(true);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error during status update:", error);
+  //     setSnackBarTitle("Error updating user status.");
+  //     setSuccess(true);
+  //   }
+  // };
+
+  const handleStatusChange = (userId: string, newStatus: string) => {
+    setPendingUserId(userId);
+    setPendingStatusChange({ userId, newStatus });
+    setConfirmationOpen(true);
+  };
+
+  const confirmStatusChange = async () => {
+    const { userId, newStatus } = pendingStatusChange;
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
 
@@ -482,12 +540,10 @@ const AgentList = () => {
 
       const response = await apiHandler(apiUrl, params);
       if (response.Status === "1") {
-        // alert("User status updated successfully.");
         setSnackBarTitle("User status updated successfully.");
         setSuccess(true);
-        setTimeout(() => fetchTableData(), 1000); // Refresh the table data after status change
+        setTimeout(() => fetchTableData(), 1000);
       } else {
-        // alert("Error updating user status.");
         setSnackBarTitle("Error updating user status.");
         setSuccess(true);
       }
@@ -495,6 +551,8 @@ const AgentList = () => {
       console.error("Error during status update:", error);
       setSnackBarTitle("Error updating user status.");
       setSuccess(true);
+    } finally {
+      setConfirmationOpen(false);
     }
   };
 
@@ -730,18 +788,6 @@ const AgentList = () => {
       <MDBox pt={3} pb={3}>
         <Card>
           <MDBox p={2}>
-            {/* <input
-              type="text"
-              value={searchValue}
-              onChange={handleSearchChange}
-              placeholder="Search"
-              style={{
-                padding: "10px",
-                width: "100%",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-              }}
-            /> */}
             <Typography variant="h6" sx={{ marginTop: 5 }}>
               Agent List
             </Typography>
@@ -751,14 +797,36 @@ const AgentList = () => {
               fullWidth
               variant="standard"
               label="Filter Keyword"
+              value={filterKeyword}
+              onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
+                setFilterKeyword(e.target.value)
+              }
               sx={{ width: 200, marginRight: 3 }}
             />
             <MDBox display="flex" alignItems="center">
-              {/* <TextField margin="dense" label="Status" sx={{ width: 200 }} /> */}
+              <MDBox display="flex" alignItems="center" sx={{ marginRight: 2 }}>
+                <Switch
+                  color="primary"
+                  checked={filterSwitchStatus} // Bind the state to the switch
+                  onChange={(e) => setFilterSwitchStatus(e.target.checked)}
+                />
+              </MDBox>
               <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
             </MDBox>
           </MDBox>
-          <DataTable table={dataTableData} />
+          {/* <DataTable table={dataTableData} /> */}
+          {loading ? (
+            <MDBox
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              sx={{ height: "200px" }}
+            >
+              <CircularProgress />
+            </MDBox>
+          ) : (
+            <DataTable table={dataTableData} />
+          )}
         </Card>
       </MDBox>
 
@@ -890,6 +958,24 @@ const AgentList = () => {
         <DialogActions>
           <Button onClick={() => controlTuneSaveClick(selectedUserId)} color="primary">
             Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={confirmationOpen} onClose={() => setConfirmationOpen(false)}>
+        <DialogTitle>Confirm Status Change</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to change the status of userID:{" "}
+            <strong style={{ color: "black" }}>{pendingUserId}</strong> ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmationOpen(false)} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={confirmStatusChange} color="primary">
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

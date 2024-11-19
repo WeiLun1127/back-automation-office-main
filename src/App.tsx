@@ -101,6 +101,10 @@ export default function App() {
     return snackBarTitle.toLowerCase().includes("error") ? "error" : "success";
   };
 
+  const getSnackbarColor = () => {
+    return snackBarTitle.toLowerCase().includes("error") ? "error" : "success";
+  };
+
   const handleSignIn = async (username: string, password: string) => {
     const authApi = "http://18.138.168.43:10311/api/auth";
 
@@ -374,13 +378,19 @@ export default function App() {
           </Routes>
 
           {/* Replacing MDSnackbar with MDAlert */}
-          {success && (
+          {/* {success && (
             <MDAlert color={getAlertColor()} icon="check" dismissible>
               {snackBarTitle}
             </MDAlert>
-          )}
+          )} */}
         </>
       )}
+      <MDSnackbar
+        open={success}
+        color={getSnackbarColor()}
+        title={snackBarTitle}
+        close={() => setSuccess(false)} // Close the snackbar
+      />
     </ThemeProvider>
   );
 }

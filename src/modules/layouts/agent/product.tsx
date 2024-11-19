@@ -34,7 +34,8 @@ function AgentProduct(): JSX.Element {
   const [editMyShare, setEditMyShare] = useState(false);
   const [myShareValue, setMyShareValue] = useState("0.005");
   const [tempMyShareValue, setTempMyShareValue] = useState(myShareValue);
-  const [allowChecked, setAllowChecked] = useState(true); // for the checkbox state
+  const [allowChecked1, setAllowChecked1] = useState(false); // Separate state for tableData1 checkbox
+  const [allowChecked2, setAllowChecked2] = useState(false); // Separate state for tableData2 checkbox
   const [accGroup, setAccGroup] = useState("");
 
   const handleAccGroupChange = (event: SelectChangeEvent) => {
@@ -71,9 +72,14 @@ function AgentProduct(): JSX.Element {
     setTempMyShareValue(event.target.value); // update temp value
   };
 
-  // Handle checkbox change
-  const handleAllowCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAllowChecked(event.target.checked);
+  // Handle checkbox change tableData1
+  const handleAllowCheckboxChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAllowChecked1(event.target.checked);
+  };
+
+  // Handle checkbox change for tableData2
+  const handleAllowCheckboxChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAllowChecked2(event.target.checked);
   };
 
   const tableData1 = {
@@ -84,7 +90,7 @@ function AgentProduct(): JSX.Element {
     rows: [
       {
         currency: "MYR",
-        allow: <Checkbox checked={allowChecked} onChange={handleAllowCheckboxChange} />,
+        allow: <Checkbox checked={allowChecked1} onChange={handleAllowCheckboxChange1} />,
       },
     ],
   };
@@ -176,7 +182,7 @@ function AgentProduct(): JSX.Element {
             </Select>
           </FormControl>
         ),
-        allow: <Checkbox checked={allowChecked} onChange={handleAllowCheckboxChange} />,
+        allow: <Checkbox checked={allowChecked2} onChange={handleAllowCheckboxChange2} />,
       },
     ],
   };
@@ -260,11 +266,34 @@ function AgentProduct(): JSX.Element {
             }}
           />
           <Box style={{ marginBottom: "20px" }}></Box>
-          <Box display="flex" justifyContent="space-between">
+          {/* <Box display="flex" justifyContent="space-between">
             <Box width="30%">
               <DataTable table={tableData1} showEntriesPerPage={false} />
             </Box>
             <Box width="70%">
+              <DataTable table={tableData2} showEntriesPerPage={false} />
+            </Box>
+          </Box> */}
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            flexWrap="wrap"
+            sx={{
+              overflow: "hidden", // Prevent scrolling
+              "& > div": {
+                minWidth: "100%", // Ensure proper wrapping on small screens
+                marginBottom: "20px", // Add spacing between tables
+                "@media (min-width: 600px)": {
+                  minWidth: "30%", // Adjust to original width for larger screens
+                  marginBottom: "0", // Remove spacing for larger screens
+                },
+              },
+            }}
+          >
+            <Box>
+              <DataTable table={tableData1} showEntriesPerPage={false} />
+            </Box>
+            <Box>
               <DataTable table={tableData2} showEntriesPerPage={false} />
             </Box>
           </Box>

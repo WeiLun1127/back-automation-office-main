@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -46,6 +47,9 @@ function ProductTables(): JSX.Element {
   const [maxMargin, setMaxMargin] = useState<string>(""); // New state for max margin
   const [success, setSuccess] = useState(false);
   const [snackBarTitle, setSnackBarTitle] = useState("");
+  const [filterKeyword, setFilterKeyword] = useState(""); // State for filter keyword
+  const [filterSwitchStatus, setFilterSwitchStatus] = useState(true); // State for switch (on/off)
+  const [loading, setLoading] = useState(false);
 
   const handleEditClickOpen = (product: any) => {
     setSelectedProduct(product); // Store the product being edited
@@ -218,8 +222,6 @@ function ProductTables(): JSX.Element {
     setSelectedProductData(productData); // Update selected product data
   };
 
-  const [filterKeyword, setFilterKeyword] = useState("");
-
   const handleAddSaveClick = async () => {
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
@@ -253,7 +255,8 @@ function ProductTables(): JSX.Element {
     }
   };
 
-  const fetchProductData = async () => {
+  const fetchProductData = async (FilterStatus = "", searchValue = "") => {
+    setLoading(true);
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
 
@@ -263,9 +266,6 @@ function ProductTables(): JSX.Element {
         EXECF: "GETPRODDATALIST",
         Uid: storedUsername,
         Token: storedToken,
-        // Data: JSON.stringify({
-        //   FilterDisplayName: "",
-        // }),
         Data: JSON.stringify({
           FilterDisplayName: filterKeyword, // Pass the filter keyword entered by the user
         }),
@@ -273,7 +273,6 @@ function ProductTables(): JSX.Element {
       const response = await apiHandler(apiUrl, params);
       const responseData = JSON.parse(response.Data);
       console.log(responseData);
-      // Map API data to fit DataTable format
       const formattedRows = responseData.map(
         (
           item: {
@@ -312,12 +311,18 @@ function ProductTables(): JSX.Element {
       }));
     } catch (error) {
       console.error("Error during API call:", error);
+    } finally {
+      setLoading(false); // Set loading to false after the API call finishes
     }
   };
 
+  // useEffect(() => {
+  //   fetchProductData();
+  // }, []);
+
   useEffect(() => {
-    fetchProductData();
-  }, []); // Empty dependency array means it runs once on mount
+    fetchProductData(filterSwitchStatus ? "1" : "0", filterKeyword);
+  }, [filterKeyword, filterSwitchStatus]);
 
   useEffect(() => {
     if (success) {
@@ -382,16 +387,29 @@ function ProductTables(): JSX.Element {
                 }
               />
               <MDBox display="flex" alignItems="center">
-                {/* <TextField margin="dense" label="Status" sx={{ width: 200 }} /> */}
-                {/* <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} /> */}
-                <IconButton onClick={fetchProductData}>
-                  {" "}
-                  {/* Trigger API call on click */}
-                  <SearchIcon sx={{ cursor: "pointer" }} />
-                </IconButton>
+                <MDBox display="flex" alignItems="center" sx={{ marginRight: 2 }}>
+                  <Switch
+                    color="primary"
+                    checked={filterSwitchStatus} // Bind the state to the switch
+                    onChange={(e) => setFilterSwitchStatus(e.target.checked)}
+                  />
+                </MDBox>
+                <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
               </MDBox>
             </MDBox>
-            <DataTable table={tableData} />
+            {/* <DataTable table={tableData} /> */}
+            {loading ? (
+              <MDBox
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ height: "200px" }}
+              >
+                <CircularProgress />
+              </MDBox>
+            ) : (
+              <DataTable table={tableData} />
+            )}
           </Card>
         </MDBox>
       </MDBox>

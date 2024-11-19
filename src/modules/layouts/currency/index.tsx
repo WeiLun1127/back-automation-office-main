@@ -1,9 +1,11 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
+  DialogContentText,
   DialogTitle,
   FormControl,
   FormControlLabel,
@@ -42,6 +44,13 @@ function CurrencyTables(): JSX.Element {
 
   const [success, setSuccess] = useState(false);
   const [snackBarTitle, setSnackBarTitle] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [currencyToChangeStatus, setCurrencyToChangeStatus] = useState(null);
+
+  const [filterKeyword, setFilterKeyword] = useState(""); // State for filter keyword
+  const [filterSwitchStatus, setFilterSwitchStatus] = useState(true); // State for switch (on/off)
 
   const [tableData, setTableData] = useState({
     columns: [
@@ -71,7 +80,8 @@ function CurrencyTables(): JSX.Element {
     return snackBarTitle.toLowerCase().includes("error") ? "error" : "success";
   };
 
-  const fetchCurrencyData = async () => {
+  const fetchCurrencyData = async (FilterStatus = "", searchValue = "") => {
+    setLoading(true);
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
 
@@ -82,8 +92,8 @@ function CurrencyTables(): JSX.Element {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          Currency: "",
-          Status: "",
+          FilterCurrency: searchValue || "",
+          FilterStatus: FilterStatus,
         }),
       };
       const response = await apiHandler(apiUrl, params);
@@ -142,18 +152,67 @@ function CurrencyTables(): JSX.Element {
       }));
     } catch (error) {
       console.error("Error during API call:", error);
+    } finally {
+      setLoading(false); // Set loading to false after the API call finishes
     }
   };
 
+  // useEffect(() => {
+  //   fetchCurrencyData();
+  // }, []);
+
   useEffect(() => {
-    fetchCurrencyData();
-  }, []);
+    fetchCurrencyData(filterSwitchStatus ? "1" : "0", filterKeyword);
+  }, [filterKeyword, filterSwitchStatus]);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  const handleStatusChangeCurrencyTable = async (currency: string, currentStatus: boolean) => {
+  // const handleStatusChangeCurrencyTable = async (currency: string, currentStatus: boolean) => {
+  //   const storedUsername = localStorage.getItem("username");
+  //   const storedToken = localStorage.getItem("token");
+
+  //   // Invert the current status
+  //   const updatedStatus = currentStatus ? "0" : "1";
+
+  //   try {
+  //     const apiUrl = "http://18.138.168.43:10312/api/execset";
+  //     const params = {
+  //       EXECF: "SETCURRDATA",
+  //       Uid: storedUsername,
+  //       Token: storedToken,
+  //       Data: JSON.stringify({
+  //         Currency: currency,
+  //         Status: updatedStatus,
+  //       }),
+  //     };
+
+  //     const response = await apiHandler(apiUrl, params);
+  //     console.log("API Response:", response);
+
+  //     if (response.Status === "1") {
+  //       // alert("Currency status updated successfully!");
+  //       setSnackBarTitle("Currency status updated successfully.");
+  //       setSuccess(true);
+  //       fetchCurrencyData(); // Refresh the table data
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating currency status:", error);
+  //     setSnackBarTitle("Error updating currency status.");
+  //     setSuccess(true);
+  //   }
+  // };
+
+  const handleStatusChangeCurrencyTable = (currency: string, currentStatus: boolean) => {
+    setCurrencyToChangeStatus({ currency, currentStatus });
+    setConfirmDialogOpen(true); // Open the confirmation dialog
+  };
+
+  const handleStatusChangeCurrencyTableConfirmed = async (
+    currency: string,
+    currentStatus: boolean
+  ) => {
     const storedUsername = localStorage.getItem("username");
     const storedToken = localStorage.getItem("token");
 
@@ -176,7 +235,6 @@ function CurrencyTables(): JSX.Element {
       console.log("API Response:", response);
 
       if (response.Status === "1") {
-        // alert("Currency status updated successfully!");
         setSnackBarTitle("Currency status updated successfully.");
         setSuccess(true);
         fetchCurrencyData(); // Refresh the table data
@@ -259,15 +317,14 @@ function CurrencyTables(): JSX.Element {
     try {
       const apiUrl = "http://18.138.168.43:10312/api/execset";
       const params = {
-        EXECF: "GETCURRDATA",
+        EXECF: "GETCURRSBYSTATUS",
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          Currency: currency,
-          Status: "", // Convert boolean to string "1" or "0"
+          FilterCurrency: "",
+          FilterStatus: "",
         }),
       };
-
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
       const dataArray = JSON.parse(response.Data);
@@ -306,13 +363,11 @@ function CurrencyTables(): JSX.Element {
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
       if (response.Status === "1") {
-        // alert("Currency added successfully!");
         setSnackBarTitle("Currency added successfully.");
         setSuccess(true);
         fetchCurrencyData(); // Refresh the table data after successful submission
         handleClose(); // Close the dialog
       } else {
-        // alert("Failed to add currency.");
         setSnackBarTitle("Error adding currency.");
         setSuccess(true);
       }
@@ -409,15 +464,36 @@ function CurrencyTables(): JSX.Element {
                 fullWidth
                 variant="standard"
                 label="Filter Keyword"
+                value={filterKeyword}
+                onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
+                  setFilterKeyword(e.target.value)
+                }
                 sx={{ width: 200, marginRight: 3 }}
               />
-              {/* Container for Status input and Search icon */}
               <MDBox display="flex" alignItems="center">
-                <TextField margin="dense" label="Status" sx={{ width: 200 }} />
+                <MDBox display="flex" alignItems="center" sx={{ marginRight: 2 }}>
+                  <Switch
+                    color="primary"
+                    checked={filterSwitchStatus} // Bind the state to the switch
+                    onChange={(e) => setFilterSwitchStatus(e.target.checked)}
+                  />
+                </MDBox>
                 <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
               </MDBox>
             </MDBox>
-            <DataTable table={tableData} />
+            {/* <DataTable table={tableData} /> */}
+            {loading ? (
+              <MDBox
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ height: "200px" }}
+              >
+                <CircularProgress />
+              </MDBox>
+            ) : (
+              <DataTable table={tableData} />
+            )}
           </Card>
         </MDBox>
       </MDBox>
@@ -535,6 +611,37 @@ function CurrencyTables(): JSX.Element {
         <DialogActions>
           <Button onClick={handleSubmit} color="primary">
             Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/*Currency Confirmation Dialog */}
+      <Dialog open={confirmDialogOpen} onClose={() => setConfirmDialogOpen(false)} fullWidth>
+        <DialogTitle>Confirm Status Change</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to change the status of{" "}
+            <strong style={{ color: "black" }}>{currencyToChangeStatus?.currency}</strong> ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDialogOpen(false)} color="secondary">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              if (currencyToChangeStatus) {
+                // Proceed with the status change only if confirmed
+                handleStatusChangeCurrencyTableConfirmed(
+                  currencyToChangeStatus.currency,
+                  currencyToChangeStatus.currentStatus
+                );
+              }
+              setConfirmDialogOpen(false); // Close the confirmation dialog
+            }}
+            color="primary"
+          >
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

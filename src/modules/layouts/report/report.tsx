@@ -85,7 +85,7 @@ function TraReport(): JSX.Element {
                 Report
               </MDTypography>
             </MDBox>
-            <DataTable table={tableData} canSearch />
+            <DataTable table={tableData} />
           </Card>
         </MDBox>
       </MDBox>

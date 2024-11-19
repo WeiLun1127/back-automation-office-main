@@ -34,6 +34,9 @@ function AccountThresholdList(): JSX.Element {
   const [horizOpen, setHorizOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [selectedData, setSelectedData] = useState<AccountThresholdData | {}>({});
+  const [loading, setLoading] = useState(false);
+  const [filterKeyword, setFilterKeyword] = useState(""); // State for filter keyword
+  const [filterSwitchStatus, setFilterSwitchStatus] = useState(true); // State for switch (on/off)
 
   interface AccountThresholdData {
     Index: string;
@@ -110,7 +113,92 @@ function AccountThresholdList(): JSX.Element {
     rows: [],
   });
 
-  const fetchThresholdList = async () => {
+  // const fetchThresholdList = async () => {
+  //   const storedToken = localStorage.getItem("token");
+  //   const storedUsername = localStorage.getItem("username");
+
+  //   try {
+  //     const apiUrl = "http://18.138.168.43:10312/api/execset";
+  //     const params = {
+  //       EXECF: "GETACCTHRESDATALIST",
+  //       Uid: storedUsername,
+  //       Token: storedToken,
+  //       Data: JSON.stringify({
+  //         FilterCurrency: "",
+  //         FilterBankCode: "",
+  //         FilterBankAccNumber: "",
+  //         FilterBankAccName: "",
+  //         FilterStatus: "",
+  //       }),
+  //       // Data: JSON.stringify({
+  //       //   FilterDisplayName: filterKeyword,
+  //       // }),
+  //     };
+  //     const response = await apiHandler(apiUrl, params);
+  //     const responseData = JSON.parse(response.Data);
+  //     console.log(responseData);
+  //     // Map API data to fit DataTable format
+  //     const formattedRows = responseData.map(
+  //       (
+  //         item: {
+  //           Index: any;
+  //           Currency: string;
+  //           BankCode: any;
+  //           BankAccNumber: any;
+  //           BankAccName: any;
+  //           BankAccLoginID: any;
+  //           MinTransAmount: any;
+  //           MaxTransAmount: any;
+  //           DailyInAmount: any;
+  //           DailyInTrans: any;
+  //           DailyOutAmount: any;
+  //           DailyOutTrans: any;
+  //           Status: any;
+  //         },
+  //         index: number
+  //       ) => ({
+  //         id: index + 1, // Generate an ID based on index
+  //         index: item.Index,
+  //         currency: item.Currency,
+  //         bank_code: item.BankCode,
+  //         acc_name: item.BankAccNumber,
+  //         acc_number: item.BankAccName,
+  //         running_in_1: item.DailyInAmount,
+  //         running_in_2: item.DailyInTrans,
+  //         running_out_1: item.DailyOutAmount,
+  //         running_out_2: item.DailyOutTrans,
+  //         running: (
+  //           <div style={{ paddingLeft: "12px" }}>
+  //             <Icon style={{ cursor: "pointer", fontSize: 20 }} onClick={handleHorizClickOpen}>
+  //               more_horiz
+  //             </Icon>
+  //           </div>
+  //         ),
+  //         // updated_on: item.UpdatedOnUTC,
+  //         status: <Switch checked={item.Status === "1"} />,
+  //         action: (
+  //           <div style={{ paddingLeft: "12px" }}>
+  //             <Icon
+  //               style={{ cursor: "pointer", fontSize: 20 }}
+  //               onClick={() => handleEditClickOpen(item.Index)}
+  //             >
+  //               edit
+  //             </Icon>
+  //           </div>
+  //         ),
+  //       })
+  //     );
+  //     setTableData((prev) => ({
+  //       ...prev,
+  //       rows: formattedRows,
+  //     }));
+  //   } catch (error) {
+  //     console.error("Error during API call:", error);
+  //   }
+  // };
+
+  const fetchThresholdList = async (FilterStatus = "", searchValue = "") => {
+    setLoading(true);
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
 
@@ -121,11 +209,11 @@ function AccountThresholdList(): JSX.Element {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          FilterCurrency: "",
-          FilterBankCode: "",
-          FilterBankAccNumber: "",
-          FilterBankAccName: "",
-          FilterStatus: "",
+          FilterCurrency: searchValue || "",
+          FilterBankCode: searchValue || "",
+          FilterBankAccNumber: searchValue || "",
+          FilterBankAccName: searchValue || "",
+          FilterStatus: FilterStatus || "",
         }),
         // Data: JSON.stringify({
         //   FilterDisplayName: filterKeyword,
@@ -191,12 +279,14 @@ function AccountThresholdList(): JSX.Element {
       }));
     } catch (error) {
       console.error("Error during API call:", error);
+    } finally {
+      setLoading(false); // Set loading to false after the API call finishes
     }
   };
 
   useEffect(() => {
-    fetchThresholdList();
-  }, []);
+    fetchThresholdList(filterSwitchStatus ? "1" : "0", filterKeyword);
+  }, [filterKeyword, filterSwitchStatus]);
 
   return (
     <DashboardLayout>
@@ -220,10 +310,20 @@ function AccountThresholdList(): JSX.Element {
                 fullWidth
                 variant="standard"
                 label="Filter Keyword"
+                value={filterKeyword}
+                onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
+                  setFilterKeyword(e.target.value)
+                }
                 sx={{ width: 200, marginRight: 3 }}
               />
               <MDBox display="flex" alignItems="center">
-                {/* <TextField margin="dense" label="Status" sx={{ width: 200 }} /> */}
+                <MDBox display="flex" alignItems="center" sx={{ marginRight: 2 }}>
+                  <Switch
+                    color="primary"
+                    checked={filterSwitchStatus} // Bind the state to the switch
+                    onChange={(e) => setFilterSwitchStatus(e.target.checked)}
+                  />
+                </MDBox>
                 <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
               </MDBox>
             </MDBox>
