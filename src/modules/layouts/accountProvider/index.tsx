@@ -69,8 +69,6 @@ const AccountProviderList = () => {
   const [pendingStatusChange, setPendingStatusChange] = useState({ userId: "", newStatus: "" });
   const [pendingUserId, setPendingUserId] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const [filterKeyword, setFilterKeyword] = useState(""); // State for filter keyword
   const [filterUserId, setFilterUserId] = useState("");
   const [filterSwitchStatus, setFilterSwitchStatus] = useState(null); // State for switch (on/off)
 
@@ -269,7 +267,7 @@ const AccountProviderList = () => {
     fetchTableData();
   };
 
-  const fetchTableData = async (FilterStatus = "", FilterUserId = "", searchValue = "") => {
+  const fetchTableData = async (FilterStatus = "", filterUserId = "", searchValue = "") => {
     setLoading(true);
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
@@ -282,8 +280,8 @@ const AccountProviderList = () => {
         Token: storedToken,
         Data: JSON.stringify({
           FilterClass: "acp",
-          FilterName: searchValue || filterKeyword,
-          FilterUid: FilterUserId || "",
+          FilterName: filterUserId,
+          FilterUid: searchValue || "",
           FilterStatus: FilterStatus || "",
         }),
       };
@@ -365,17 +363,13 @@ const AccountProviderList = () => {
     }
   };
 
-  // useEffect(() => {
-  //   fetchTableData(filterSwitchStatus ? "1" : "0", filterUserId, filterKeyword);
-  // }, [filterKeyword, filterUserId, filterSwitchStatus]);
-
   useEffect(() => {
     if (filterSwitchStatus === null) {
-      fetchTableData("", filterKeyword, filterUserId); // No filter applied
+      fetchTableData("", searchValue, filterUserId); // No filter applied
     } else {
-      fetchTableData(filterSwitchStatus ? "1" : "0", filterKeyword, filterUserId); // Apply the filter based on On/Off
+      fetchTableData(filterSwitchStatus ? "1" : "0", searchValue, filterUserId); // Apply the filter based on On/Off
     }
-  }, [filterKeyword, filterUserId, filterSwitchStatus]);
+  }, [searchValue, filterUserId, filterSwitchStatus]);
 
   const handleStatusHeaderClick = () => {
     let newFilterStatus = "";
@@ -393,17 +387,6 @@ const AccountProviderList = () => {
     setStatusClickCount(newClickCount);
     setFilterStatus(newFilterStatus);
     fetchTableData(newFilterStatus, searchValue);
-  };
-
-  const handleSearchChange = (e: { target: { value: any } }) => {
-    const value = e.target.value;
-    setSearchValue(value);
-    // fetchTableData(filterStatus, value);
-    if (value.trim() === "") {
-      fetchTableData(); // Fetch without the search value
-    } else {
-      fetchTableData(filterStatus, value); // Fetch with the search value
-    }
   };
 
   const getSnackbarColor = () => {
@@ -462,40 +445,6 @@ const AccountProviderList = () => {
       setConfirmationOpen(false);
     }
   };
-
-  // const handleStatusChange = async (userId: string, newStatus: string) => {
-  //   const storedToken = localStorage.getItem("token");
-  //   const storedUsername = localStorage.getItem("username");
-
-  //   try {
-  //     const apiUrl = "http://18.138.168.43:10311/api/execmem";
-  //     const params = {
-  //       EXECF: "SETAUTHDATA",
-  //       Uid: storedUsername,
-  //       Token: storedToken,
-  //       Data: JSON.stringify({
-  //         Uid: userId,
-  //         Status: newStatus, // Update the status based on switch toggle
-  //       }),
-  //     };
-
-  //     const response = await apiHandler(apiUrl, params);
-  //     if (response.Status === "1") {
-  //       // alert("User status updated successfully.");
-  //       setSnackBarTitle("User status updated successfully.");
-  //       setSuccess(true);
-  //       setTimeout(() => fetchTableData(), 1000); // Refresh the table data after status change
-  //     } else {
-  //       // alert("Error updating user status.");
-  //       setSnackBarTitle("Error updating user status.");
-  //       setSuccess(true);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error during status update:", error);
-  //     setSnackBarTitle("Error updating user status.");
-  //     setSuccess(true);
-  //   }
-  // };
 
   const fetchUserData = async (userId: string) => {
     const storedToken = localStorage.getItem("token");
@@ -737,9 +686,9 @@ const AccountProviderList = () => {
               fullWidth
               variant="standard"
               label="Filter Username"
-              value={filterKeyword}
+              value={searchValue}
               onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
-                setFilterKeyword(e.target.value)
+                setSearchValue(e.target.value)
               }
               sx={{ width: 200, marginRight: 3 }}
             />

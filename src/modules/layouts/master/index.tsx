@@ -76,7 +76,6 @@ const MasterList = () => {
   const [pendingUserId, setPendingUserId] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [filterKeyword, setFilterKeyword] = useState(""); // State for filter keyword
   const [filterUserId, setFilterUserId] = useState(""); // State for filter keyword
   const [filterSwitchStatus, setFilterSwitchStatus] = useState(null); // State for switch (on/off)
 
@@ -347,8 +346,8 @@ const MasterList = () => {
         Token: storedToken,
         Data: JSON.stringify({
           FilterClass: "mtr",
-          FilterName: searchValue || filterKeyword,
-          FilterUid: filterUserId || "",
+          FilterName: filterUserId || "",
+          FilterUid: searchValue || "",
           FilterStatus: FilterStatus || "",
         }),
       };
@@ -430,17 +429,13 @@ const MasterList = () => {
     }
   };
 
-  // useEffect(() => {
-  //   fetchTableData(filterSwitchStatus ? "1" : "0", filterUserId, filterKeyword);
-  // }, [filterKeyword, filterUserId, filterSwitchStatus]);
-
   useEffect(() => {
     if (filterSwitchStatus === null) {
-      fetchTableData("", filterKeyword, filterUserId); // No filter applied
+      fetchTableData("", searchValue, filterUserId); // No filter applied
     } else {
-      fetchTableData(filterSwitchStatus ? "1" : "0", filterKeyword, filterUserId); // Apply the filter based on On/Off
+      fetchTableData(filterSwitchStatus ? "1" : "0", searchValue, filterUserId); // Apply the filter based on On/Off
     }
-  }, [filterKeyword, filterUserId, filterSwitchStatus]);
+  }, [searchValue, filterUserId, filterSwitchStatus]);
 
   const handleStatusHeaderClick = () => {
     let newFilterStatus = "";
@@ -581,7 +576,6 @@ const MasterList = () => {
             }),
           };
           const response = await apiHandler(apiUrl, params);
-          // alert("2FA Reset Successfully.");
           setSnackBarTitle("2FA Reset Successfully.");
           setSuccess(true);
         } catch (error) {
@@ -590,7 +584,6 @@ const MasterList = () => {
           setSuccess(true);
         }
       } else {
-        // alert("Please make sure you enable 2FA.");
         setSnackBarTitle("Please make sure you enable 2FA.");
         setSuccess(true);
       }
@@ -640,7 +633,6 @@ const MasterList = () => {
       };
       const response = await apiHandler(apiUrl, params);
       console.log("API Response:", response);
-      // alert("Details Updated Successfully.");
       setSnackBarTitle("Details Updated Successfully.");
       setSuccess(true);
       setNewPassword("");
@@ -755,9 +747,9 @@ const MasterList = () => {
               fullWidth
               variant="standard"
               label="Filter Username"
-              value={filterKeyword}
+              value={searchValue}
               onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
-                setFilterKeyword(e.target.value)
+                setSearchValue(e.target.value)
               }
               sx={{ width: 200, marginRight: 3 }}
             />

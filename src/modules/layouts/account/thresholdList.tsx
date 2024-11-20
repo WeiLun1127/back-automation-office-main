@@ -37,7 +37,10 @@ function AccountThresholdList(): JSX.Element {
   const [editOpen, setEditOpen] = useState(false);
   const [selectedData, setSelectedData] = useState<AccountThresholdData | {}>({});
   const [loading, setLoading] = useState(false);
-  const [filterKeyword, setFilterKeyword] = useState(""); // State for filter keyword
+  const [filterCurrency, setFilterCurrency] = useState(""); // State for filter keyword
+  const [searchValue, setSearchValue] = useState("");
+  const [filterBankCode, setFilterBankCode] = useState(""); // State for filter keyword
+  const [filterBankNum, setFilterBankNum] = useState(""); // State for filter keyword
   const [filterSwitchStatus, setFilterSwitchStatus] = useState(null);
 
   interface AccountThresholdData {
@@ -115,7 +118,13 @@ function AccountThresholdList(): JSX.Element {
     rows: [],
   });
 
-  const fetchThresholdList = async (FilterStatus = "", searchValue = "") => {
+  const fetchThresholdList = async (
+    FilterStatus = "",
+    searchValue = "",
+    filterBankCode = "",
+    filterBankNum = "",
+    filterCurrency = ""
+  ) => {
     setLoading(true);
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
@@ -127,9 +136,9 @@ function AccountThresholdList(): JSX.Element {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          FilterCurrency: searchValue || "",
-          FilterBankCode: searchValue || "",
-          FilterBankAccNumber: searchValue || "",
+          FilterCurrency: filterCurrency || "",
+          FilterBankCode: filterBankCode || "",
+          FilterBankAccNumber: filterBankNum || "",
           FilterBankAccName: searchValue || "",
           FilterStatus: FilterStatus || "",
         }),
@@ -199,20 +208,19 @@ function AccountThresholdList(): JSX.Element {
     }
   };
 
-  // useEffect(() => {
-  //   fetchThresholdList(filterSwitchStatus ? "1" : "0", filterKeyword);
-  // }, [filterKeyword, filterSwitchStatus]);
-
   useEffect(() => {
-    console.log("filterSwitchStatus:", filterSwitchStatus); // Log the state
-    console.log("filterKeyword:", filterKeyword); // Log the filter keyword
-
     if (filterSwitchStatus === null) {
-      fetchThresholdList("", filterKeyword); // No filter applied
+      fetchThresholdList("", searchValue, filterBankCode, filterBankNum, filterCurrency); // No filter applied
     } else {
-      fetchThresholdList(filterSwitchStatus ? "1" : "0", filterKeyword); // Apply the filter based on On/Off
+      fetchThresholdList(
+        filterSwitchStatus ? "1" : "0",
+        searchValue,
+        filterBankCode,
+        filterBankNum,
+        filterCurrency
+      ); // Apply the filter based on On/Off
     }
-  }, [filterKeyword, filterSwitchStatus]);
+  }, [searchValue, filterBankCode, filterBankNum, filterCurrency, filterSwitchStatus]);
 
   return (
     <DashboardLayout>
@@ -235,10 +243,40 @@ function AccountThresholdList(): JSX.Element {
               <MDInput
                 fullWidth
                 variant="standard"
-                label="Filter Keyword"
-                value={filterKeyword}
+                label="Filter Account Name"
+                value={searchValue}
                 onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
-                  setFilterKeyword(e.target.value)
+                  setSearchValue(e.target.value)
+                }
+                sx={{ width: 200, marginRight: 3 }}
+              />
+              <MDInput
+                fullWidth
+                variant="standard"
+                label="Filter Account Number"
+                value={filterBankNum}
+                onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
+                  setFilterBankNum(e.target.value)
+                }
+                sx={{ width: 200, marginRight: 3 }}
+              />
+              <MDInput
+                fullWidth
+                variant="standard"
+                label="Filter Currency"
+                value={filterCurrency}
+                onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
+                  setFilterCurrency(e.target.value)
+                }
+                sx={{ width: 200, marginRight: 3 }}
+              />
+              <MDInput
+                fullWidth
+                variant="standard"
+                label="Filter Bank Code"
+                value={filterBankCode}
+                onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
+                  setFilterBankCode(e.target.value)
                 }
                 sx={{ width: 200, marginRight: 3 }}
               />

@@ -73,7 +73,6 @@ const AgentList = () => {
   const [pendingUserId, setPendingUserId] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [filterKeyword, setFilterKeyword] = useState(""); // State for filter keyword
   const [filterUserId, setFilterUserId] = useState("");
   const [filterSwitchStatus, setFilterSwitchStatus] = useState(null); // State for switch (on/off)
 
@@ -331,8 +330,8 @@ const AgentList = () => {
         Token: storedToken,
         Data: JSON.stringify({
           FilterClass: "agt", //agt
-          FilterName: searchValue || filterKeyword,
-          FilterUid: filterUserId || "",
+          FilterName: filterUserId || "",
+          FilterUid: searchValue || "",
           FilterStatus: FilterStatus,
         }),
       };
@@ -433,17 +432,13 @@ const AgentList = () => {
     }
   };
 
-  // useEffect(() => {
-  //   fetchTableData(filterSwitchStatus ? "1" : "0", filterUserId, filterKeyword);
-  // }, [filterKeyword, filterUserId, filterSwitchStatus]);
-
   useEffect(() => {
     if (filterSwitchStatus === null) {
-      fetchTableData("", filterKeyword, filterUserId); // No filter applied
+      fetchTableData("", searchValue, filterUserId); // No filter applied
     } else {
-      fetchTableData(filterSwitchStatus ? "1" : "0", filterKeyword, filterUserId); // Apply the filter based on On/Off
+      fetchTableData(filterSwitchStatus ? "1" : "0", searchValue, filterUserId); // Apply the filter based on On/Off
     }
-  }, [filterKeyword, filterUserId, filterSwitchStatus]);
+  }, [searchValue, filterUserId, filterSwitchStatus]);
 
   const handleStatusHeaderClick = () => {
     let newFilterStatus = "";
@@ -463,17 +458,6 @@ const AgentList = () => {
     fetchTableData(newFilterStatus, searchValue);
   };
 
-  const handleSearchChange = (e: { target: { value: any } }) => {
-    const value = e.target.value;
-    setSearchValue(value);
-    // fetchTableData(filterStatus, value);
-    if (value.trim() === "") {
-      fetchTableData(); // Fetch without the search value
-    } else {
-      fetchTableData(filterStatus, value); // Fetch with the search value
-    }
-  };
-
   const getSnackbarColor = () => {
     return snackBarTitle.toLowerCase().includes("error") ? "error" : "success";
   };
@@ -487,40 +471,6 @@ const AgentList = () => {
       return () => clearTimeout(timer); // Cleanup the timer on component unmount or when success changes
     }
   }, [success]);
-
-  // const handleStatusChange = async (userId: string, newStatus: string) => {
-  //   const storedToken = localStorage.getItem("token");
-  //   const storedUsername = localStorage.getItem("username");
-
-  //   try {
-  //     const apiUrl = "http://18.138.168.43:10311/api/execmem";
-  //     const params = {
-  //       EXECF: "SETAUTHDATA",
-  //       Uid: storedUsername,
-  //       Token: storedToken,
-  //       Data: JSON.stringify({
-  //         Uid: userId,
-  //         Status: newStatus, // Update the status based on switch toggle
-  //       }),
-  //     };
-
-  //     const response = await apiHandler(apiUrl, params);
-  //     if (response.Status === "1") {
-  //       // alert("User status updated successfully.");
-  //       setSnackBarTitle("User status updated successfully.");
-  //       setSuccess(true);
-  //       setTimeout(() => fetchTableData(), 1000); // Refresh the table data after status change
-  //     } else {
-  //       // alert("Error updating user status.");
-  //       setSnackBarTitle("Error updating user status.");
-  //       setSuccess(true);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error during status update:", error);
-  //     setSnackBarTitle("Error updating user status.");
-  //     setSuccess(true);
-  //   }
-  // };
 
   const handleStatusChange = (userId: string, newStatus: string) => {
     setPendingUserId(userId);
@@ -716,11 +666,10 @@ const AgentList = () => {
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setConfirmPassword(value);
-    // Check for password match
     if (value !== newPassword) {
       setPasswordError("New password and confirm password must match.");
     } else {
-      setPasswordError(""); // Clear error if passwords match
+      setPasswordError("");
     }
   };
 
@@ -804,9 +753,9 @@ const AgentList = () => {
               fullWidth
               variant="standard"
               label="Filter Username"
-              value={filterKeyword}
+              value={searchValue}
               onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
-                setFilterKeyword(e.target.value)
+                setSearchValue(e.target.value)
               }
               sx={{ width: 200, marginRight: 3 }}
             />
