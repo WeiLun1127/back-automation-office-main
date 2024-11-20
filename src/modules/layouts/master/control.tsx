@@ -57,7 +57,12 @@ function ProductControl(): JSX.Element {
       { Header: "Currency", accessor: "currency", width: "7%" },
       { Header: "Allow", accessor: "allow", width: "7%" },
     ],
-    rows: [{ currency: "MYR", allow: <Checkbox checked={allowChecked1} onChange={handleAllowCheckboxChange1} />, }],
+    rows: [
+      {
+        currency: "MYR",
+        allow: <Checkbox checked={allowChecked1} onChange={handleAllowCheckboxChange1} />,
+      },
+    ],
   };
 
   const tableData2 = {
@@ -67,7 +72,14 @@ function ProductControl(): JSX.Element {
       { Header: "Type", accessor: "type", width: "7%" },
       { Header: "Allow", accessor: "allow", width: "7%" },
     ],
-    rows: [{ currency: "MYR", product: "DUITNOW", type: "Web", allow: <Checkbox checked={allowChecked2} onChange={handleAllowCheckboxChange2} />, }],
+    rows: [
+      {
+        currency: "MYR",
+        product: "DUITNOW",
+        type: "Web",
+        allow: <Checkbox checked={allowChecked2} onChange={handleAllowCheckboxChange2} />,
+      },
+    ],
   };
 
   const [tableData, setTableData] = useState({

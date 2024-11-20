@@ -331,7 +331,7 @@ const MasterList = () => {
     fetchTableData();
   };
 
-  const fetchTableData = async (FilterStatus = "", filterUserId = "" ,searchValue = "") => {
+  const fetchTableData = async (FilterStatus = "", filterUserId = "", searchValue = "") => {
     setLoading(true);
 
     const storedToken = localStorage.getItem("token");
@@ -346,7 +346,7 @@ const MasterList = () => {
         Data: JSON.stringify({
           FilterClass: "mtr",
           FilterName: searchValue || filterKeyword,
-          FilterUid: filterUserId ||"",
+          FilterUid: filterUserId || "",
           FilterStatus: filterSwitchStatus ? "1" : "0",
         }),
       };
