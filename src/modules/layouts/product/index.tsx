@@ -16,6 +16,8 @@ import {
   SelectChangeEvent,
   Switch,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import Card from "@mui/material/Card";
 import { apiHandler } from "api/apiHandler";
@@ -49,7 +51,7 @@ function ProductTables(): JSX.Element {
   const [snackBarTitle, setSnackBarTitle] = useState("");
   const [filterKeyword, setFilterKeyword] = useState(""); // State for filter keyword
   const [filterCurrency, setFilterCurrency] = useState(""); // State for filter keyword
-  const [filterSwitchStatus, setFilterSwitchStatus] = useState(true); // State for switch (on/off)
+  const [filterSwitchStatus, setFilterSwitchStatus] = useState(null); // State for switch (on/off)
   const [loading, setLoading] = useState(false);
 
   const handleEditClickOpen = (product: any) => {
@@ -205,7 +207,7 @@ function ProductTables(): JSX.Element {
     }
   };
 
-  const fetchProductData = async (FilterStatus = "", FilterCurrency = "", searchValue = "") => {
+  const fetchProductData = async (FilterStatus = "", filterCurrency = "", searchValue = "") => {
     setLoading(true);
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
@@ -269,11 +271,15 @@ function ProductTables(): JSX.Element {
   };
 
   // useEffect(() => {
-  //   fetchProductData();
-  // }, []);
+  //   fetchProductData(filterSwitchStatus ? "1" : "0", filterCurrency, filterKeyword);
+  // }, [filterKeyword, filterCurrency, filterSwitchStatus]);
 
   useEffect(() => {
-    fetchProductData(filterSwitchStatus ? "1" : "0", filterCurrency, filterKeyword);
+    if (filterSwitchStatus === null) {
+      fetchProductData("", filterKeyword, filterCurrency); // No filter applied
+    } else {
+      fetchProductData(filterSwitchStatus ? "1" : "0", filterKeyword, filterCurrency); // Apply the filter based on On/Off
+    }
   }, [filterKeyword, filterCurrency, filterSwitchStatus]);
 
   useEffect(() => {
@@ -350,11 +356,28 @@ function ProductTables(): JSX.Element {
               />
               <MDBox display="flex" alignItems="center">
                 <MDBox display="flex" alignItems="center" sx={{ marginRight: 2 }}>
-                  <Switch
-                    color="primary"
-                    checked={filterSwitchStatus} // Bind the state to the switch
-                    onChange={(e) => setFilterSwitchStatus(e.target.checked)}
-                  />
+                  <ToggleButtonGroup
+                    value={filterSwitchStatus} // The value of the toggle button group is linked to the state
+                    exclusive
+                    onChange={(event, newValue) => {
+                      if (newValue !== null) {
+                        setFilterSwitchStatus(newValue);
+                      } else {
+                        setFilterSwitchStatus(null);
+                      }
+                    }}
+                    aria-label="filter toggle"
+                  >
+                    <ToggleButton value={true} aria-label="on">
+                      On
+                    </ToggleButton>
+                    <ToggleButton value={null} aria-label="no-filter">
+                      Status
+                    </ToggleButton>
+                    <ToggleButton value={false} aria-label="off">
+                      Off
+                    </ToggleButton>
+                  </ToggleButtonGroup>
                 </MDBox>
                 <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
               </MDBox>

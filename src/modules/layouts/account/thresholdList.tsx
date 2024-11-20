@@ -16,6 +16,8 @@ import {
   SelectChangeEvent,
   Switch,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import Card from "@mui/material/Card";
 import { apiHandler } from "api/apiHandler";
@@ -36,7 +38,7 @@ function AccountThresholdList(): JSX.Element {
   const [selectedData, setSelectedData] = useState<AccountThresholdData | {}>({});
   const [loading, setLoading] = useState(false);
   const [filterKeyword, setFilterKeyword] = useState(""); // State for filter keyword
-  const [filterSwitchStatus, setFilterSwitchStatus] = useState(true); // State for switch (on/off)
+  const [filterSwitchStatus, setFilterSwitchStatus] = useState(null);
 
   interface AccountThresholdData {
     Index: string;
@@ -113,90 +115,6 @@ function AccountThresholdList(): JSX.Element {
     rows: [],
   });
 
-  // const fetchThresholdList = async () => {
-  //   const storedToken = localStorage.getItem("token");
-  //   const storedUsername = localStorage.getItem("username");
-
-  //   try {
-  //     const apiUrl = "http://18.138.168.43:10312/api/execset";
-  //     const params = {
-  //       EXECF: "GETACCTHRESDATALIST",
-  //       Uid: storedUsername,
-  //       Token: storedToken,
-  //       Data: JSON.stringify({
-  //         FilterCurrency: "",
-  //         FilterBankCode: "",
-  //         FilterBankAccNumber: "",
-  //         FilterBankAccName: "",
-  //         FilterStatus: "",
-  //       }),
-  //       // Data: JSON.stringify({
-  //       //   FilterDisplayName: filterKeyword,
-  //       // }),
-  //     };
-  //     const response = await apiHandler(apiUrl, params);
-  //     const responseData = JSON.parse(response.Data);
-  //     console.log(responseData);
-  //     // Map API data to fit DataTable format
-  //     const formattedRows = responseData.map(
-  //       (
-  //         item: {
-  //           Index: any;
-  //           Currency: string;
-  //           BankCode: any;
-  //           BankAccNumber: any;
-  //           BankAccName: any;
-  //           BankAccLoginID: any;
-  //           MinTransAmount: any;
-  //           MaxTransAmount: any;
-  //           DailyInAmount: any;
-  //           DailyInTrans: any;
-  //           DailyOutAmount: any;
-  //           DailyOutTrans: any;
-  //           Status: any;
-  //         },
-  //         index: number
-  //       ) => ({
-  //         id: index + 1, // Generate an ID based on index
-  //         index: item.Index,
-  //         currency: item.Currency,
-  //         bank_code: item.BankCode,
-  //         acc_name: item.BankAccNumber,
-  //         acc_number: item.BankAccName,
-  //         running_in_1: item.DailyInAmount,
-  //         running_in_2: item.DailyInTrans,
-  //         running_out_1: item.DailyOutAmount,
-  //         running_out_2: item.DailyOutTrans,
-  //         running: (
-  //           <div style={{ paddingLeft: "12px" }}>
-  //             <Icon style={{ cursor: "pointer", fontSize: 20 }} onClick={handleHorizClickOpen}>
-  //               more_horiz
-  //             </Icon>
-  //           </div>
-  //         ),
-  //         // updated_on: item.UpdatedOnUTC,
-  //         status: <Switch checked={item.Status === "1"} />,
-  //         action: (
-  //           <div style={{ paddingLeft: "12px" }}>
-  //             <Icon
-  //               style={{ cursor: "pointer", fontSize: 20 }}
-  //               onClick={() => handleEditClickOpen(item.Index)}
-  //             >
-  //               edit
-  //             </Icon>
-  //           </div>
-  //         ),
-  //       })
-  //     );
-  //     setTableData((prev) => ({
-  //       ...prev,
-  //       rows: formattedRows,
-  //     }));
-  //   } catch (error) {
-  //     console.error("Error during API call:", error);
-  //   }
-  // };
-
   const fetchThresholdList = async (FilterStatus = "", searchValue = "") => {
     setLoading(true);
     const storedToken = localStorage.getItem("token");
@@ -215,9 +133,6 @@ function AccountThresholdList(): JSX.Element {
           FilterBankAccName: searchValue || "",
           FilterStatus: FilterStatus || "",
         }),
-        // Data: JSON.stringify({
-        //   FilterDisplayName: filterKeyword,
-        // }),
       };
       const response = await apiHandler(apiUrl, params);
       const responseData = JSON.parse(response.Data);
@@ -284,8 +199,19 @@ function AccountThresholdList(): JSX.Element {
     }
   };
 
+  // useEffect(() => {
+  //   fetchThresholdList(filterSwitchStatus ? "1" : "0", filterKeyword);
+  // }, [filterKeyword, filterSwitchStatus]);
+
   useEffect(() => {
-    fetchThresholdList(filterSwitchStatus ? "1" : "0", filterKeyword);
+    console.log("filterSwitchStatus:", filterSwitchStatus); // Log the state
+    console.log("filterKeyword:", filterKeyword); // Log the filter keyword
+
+    if (filterSwitchStatus === null) {
+      fetchThresholdList("", filterKeyword); // No filter applied
+    } else {
+      fetchThresholdList(filterSwitchStatus ? "1" : "0", filterKeyword); // Apply the filter based on On/Off
+    }
   }, [filterKeyword, filterSwitchStatus]);
 
   return (
@@ -318,11 +244,28 @@ function AccountThresholdList(): JSX.Element {
               />
               <MDBox display="flex" alignItems="center">
                 <MDBox display="flex" alignItems="center" sx={{ marginRight: 2 }}>
-                  <Switch
-                    color="primary"
-                    checked={filterSwitchStatus} // Bind the state to the switch
-                    onChange={(e) => setFilterSwitchStatus(e.target.checked)}
-                  />
+                  <ToggleButtonGroup
+                    value={filterSwitchStatus} // The value of the toggle button group is linked to the state
+                    exclusive
+                    onChange={(event, newValue) => {
+                      if (newValue !== null) {
+                        setFilterSwitchStatus(newValue);
+                      } else {
+                        setFilterSwitchStatus(null);
+                      }
+                    }}
+                    aria-label="filter toggle"
+                  >
+                    <ToggleButton value={true} aria-label="on">
+                      On
+                    </ToggleButton>
+                    <ToggleButton value={null} aria-label="no-filter">
+                      Status
+                    </ToggleButton>
+                    <ToggleButton value={false} aria-label="off">
+                      Off
+                    </ToggleButton>
+                  </ToggleButtonGroup>
                 </MDBox>
                 <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
               </MDBox>
