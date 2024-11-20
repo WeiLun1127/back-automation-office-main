@@ -17,6 +17,8 @@ import {
   SelectChangeEvent,
   Switch,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import Card from "@mui/material/Card";
 import { apiHandler } from "api/apiHandler";
@@ -50,7 +52,7 @@ function CurrencyTables(): JSX.Element {
   const [currencyToChangeStatus, setCurrencyToChangeStatus] = useState(null);
 
   const [filterKeyword, setFilterKeyword] = useState(""); // State for filter keyword
-  const [filterSwitchStatus, setFilterSwitchStatus] = useState(true); // State for switch (on/off)
+  const [filterSwitchStatus, setFilterSwitchStatus] = useState(null); // State for switch (on/off)
 
   const [tableData, setTableData] = useState({
     columns: [
@@ -158,51 +160,20 @@ function CurrencyTables(): JSX.Element {
   };
 
   // useEffect(() => {
-  //   fetchCurrencyData();
-  // }, []);
+  //   fetchCurrencyData(filterSwitchStatus ? "1" : "0", filterKeyword);
+  // }, [filterKeyword, filterSwitchStatus]);
 
   useEffect(() => {
-    fetchCurrencyData(filterSwitchStatus ? "1" : "0", filterKeyword);
+    if (filterSwitchStatus === null) {
+      fetchCurrencyData("", filterKeyword); // No filter applied
+    } else {
+      fetchCurrencyData(filterSwitchStatus ? "1" : "0", filterKeyword); // Apply the filter based on On/Off
+    }
   }, [filterKeyword, filterSwitchStatus]);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
-
-  // const handleStatusChangeCurrencyTable = async (currency: string, currentStatus: boolean) => {
-  //   const storedUsername = localStorage.getItem("username");
-  //   const storedToken = localStorage.getItem("token");
-
-  //   // Invert the current status
-  //   const updatedStatus = currentStatus ? "0" : "1";
-
-  //   try {
-  //     const apiUrl = "http://18.138.168.43:10312/api/execset";
-  //     const params = {
-  //       EXECF: "SETCURRDATA",
-  //       Uid: storedUsername,
-  //       Token: storedToken,
-  //       Data: JSON.stringify({
-  //         Currency: currency,
-  //         Status: updatedStatus,
-  //       }),
-  //     };
-
-  //     const response = await apiHandler(apiUrl, params);
-  //     console.log("API Response:", response);
-
-  //     if (response.Status === "1") {
-  //       // alert("Currency status updated successfully!");
-  //       setSnackBarTitle("Currency status updated successfully.");
-  //       setSuccess(true);
-  //       fetchCurrencyData(); // Refresh the table data
-  //     }
-  //   } catch (error) {
-  //     console.error("Error updating currency status:", error);
-  //     setSnackBarTitle("Error updating currency status.");
-  //     setSuccess(true);
-  //   }
-  // };
 
   const handleStatusChangeCurrencyTable = (currency: string, currentStatus: boolean) => {
     setCurrencyToChangeStatus({ currency, currentStatus });
@@ -472,11 +443,28 @@ function CurrencyTables(): JSX.Element {
               />
               <MDBox display="flex" alignItems="center">
                 <MDBox display="flex" alignItems="center" sx={{ marginRight: 2 }}>
-                  <Switch
-                    color="primary"
-                    checked={filterSwitchStatus} // Bind the state to the switch
-                    onChange={(e) => setFilterSwitchStatus(e.target.checked)}
-                  />
+                  <ToggleButtonGroup
+                    value={filterSwitchStatus} // The value of the toggle button group is linked to the state
+                    exclusive
+                    onChange={(event, newValue) => {
+                      if (newValue !== null) {
+                        setFilterSwitchStatus(newValue);
+                      } else {
+                        setFilterSwitchStatus(null);
+                      }
+                    }}
+                    aria-label="filter toggle"
+                  >
+                    <ToggleButton value={true} aria-label="on">
+                      On
+                    </ToggleButton>
+                    <ToggleButton value={null} aria-label="no-filter">
+                      Status
+                    </ToggleButton>
+                    <ToggleButton value={false} aria-label="off">
+                      Off
+                    </ToggleButton>
+                  </ToggleButtonGroup>
                 </MDBox>
                 <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
               </MDBox>
