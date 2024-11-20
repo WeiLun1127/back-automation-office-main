@@ -463,7 +463,7 @@ function CurrencyTables(): JSX.Element {
               <MDInput
                 fullWidth
                 variant="standard"
-                label="Filter Keyword"
+                label="Filter Currency"
                 value={filterKeyword}
                 onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
                   setFilterKeyword(e.target.value)

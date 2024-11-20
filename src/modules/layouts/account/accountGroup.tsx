@@ -176,7 +176,7 @@ function AccountGroupList(): JSX.Element {
                 Account Group
               </MDTypography>
             </MDBox>
-            <MDBox display="flex" justifyContent="flex-start" p={3}>
+            {/* <MDBox display="flex" justifyContent="flex-start" p={3}>
               <MDInput
                 fullWidth
                 variant="standard"
@@ -184,13 +184,12 @@ function AccountGroupList(): JSX.Element {
                 sx={{ width: 200, marginRight: 3 }}
               />
               <MDBox display="flex" alignItems="center">
-                {/* Switch for Status */}
                 <MDBox display="flex" alignItems="center" sx={{ marginRight: 2 }}>
                   <Switch color="primary" />
                 </MDBox>
                 <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
               </MDBox>
-            </MDBox>
+            </MDBox> */}
             <DataTable table={tableData} />
           </Card>
         </MDBox>

@@ -48,6 +48,7 @@ function ProductTables(): JSX.Element {
   const [success, setSuccess] = useState(false);
   const [snackBarTitle, setSnackBarTitle] = useState("");
   const [filterKeyword, setFilterKeyword] = useState(""); // State for filter keyword
+  const [filterCurrency, setFilterCurrency] = useState(""); // State for filter keyword
   const [filterSwitchStatus, setFilterSwitchStatus] = useState(true); // State for switch (on/off)
   const [loading, setLoading] = useState(false);
 
@@ -100,57 +101,6 @@ function ProductTables(): JSX.Element {
       console.error("Error during API call:", error);
     }
   };
-
-  // const handleCountryChange = async (event: SelectChangeEvent<string>) => {
-  //   const selectedCountry = event.target.value as CountryName;
-  //   setSelectedCountry(selectedCountry);
-  //   const selectedCountryCurrency = currencyMapping[selectedCountry];
-  //   setSelectedCurrency(selectedCountryCurrency);
-
-  //   if (selectedCountryCurrency) {
-  //     // Call the API with the necessary parameters
-  //     try {
-  //       const storedUsername = localStorage.getItem("username");
-  //       const storedToken = localStorage.getItem("token");
-  //       const response = await axios.post("http://18.138.168.43:10312/api/execset", {
-  //         EXECF: "GETPRODSBYCURR",
-  //         Uid: storedUsername,
-  //         Token: storedToken,
-  //         Data: JSON.stringify({ FilterCurrency: selectedCountryCurrency }),
-  //       });
-  //       console.log("API Response:", response.data);
-  //       // Extract the 'Data' string and manipulate it to remove the outer structure
-  //       const filteredDataString = response.data.Data; // Original string
-  //       let filteredData = filteredDataString.slice(filteredDataString.indexOf("[")); // Keep from the first '[' onward
-
-  //       // Check and remove the extra '}' at the end if it exists
-  //       if (filteredData.endsWith("}")) {
-  //         filteredData = filteredData.slice(0, -1); // Remove the last character
-  //       }
-
-  //       if (filteredData.endsWith('"')) {
-  //         filteredData = filteredData.slice(0, -1); // Remove the last character
-  //       }
-
-  //       // If you need to remove any trailing whitespace or newline characters:
-  //       filteredData = filteredData.trim(); // Clean up any whitespace
-
-  //       console.log("Filtered Data:", filteredData);
-  //       const dataArray = JSON.parse(filteredData);
-  //       setProducts(dataArray);
-
-  //       dataArray.forEach((item: { Code: any; Name: any; Type: any; Status: any }) => {
-  //         console.log("Code:", item.Code);
-  //         console.log("Name:", item.Name);
-  //         console.log("Type:", item.Type);
-  //         console.log("Status:", item.Status);
-  //         console.log("-----"); // Separator for readability
-  //       });
-  //     } catch (error) {
-  //       console.error("API call failed:", error);
-  //     }
-  //   }
-  // };
 
   const handleCountryChange = async (event: SelectChangeEvent<string>) => {
     const selectedCountry = event.target.value;
@@ -255,7 +205,7 @@ function ProductTables(): JSX.Element {
     }
   };
 
-  const fetchProductData = async (FilterStatus = "", searchValue = "") => {
+  const fetchProductData = async (FilterStatus = "", FilterCurrency = "", searchValue = "") => {
     setLoading(true);
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
@@ -267,7 +217,9 @@ function ProductTables(): JSX.Element {
         Uid: storedUsername,
         Token: storedToken,
         Data: JSON.stringify({
-          FilterDisplayName: filterKeyword,
+          FilterDisplayName: filterKeyword || searchValue,
+          FilterCurrency: filterCurrency || "",
+          FilterStatus: FilterStatus || "",
         }),
       };
       const response = await apiHandler(apiUrl, params);
@@ -321,8 +273,8 @@ function ProductTables(): JSX.Element {
   // }, []);
 
   useEffect(() => {
-    fetchProductData(filterSwitchStatus ? "1" : "0", filterKeyword);
-  }, [filterKeyword, filterSwitchStatus]);
+    fetchProductData(filterSwitchStatus ? "1" : "0", filterCurrency, filterKeyword);
+  }, [filterKeyword, filterCurrency, filterSwitchStatus]);
 
   useEffect(() => {
     if (success) {
@@ -379,11 +331,21 @@ function ProductTables(): JSX.Element {
               <MDInput
                 fullWidth
                 variant="standard"
-                label="Filter Keyword"
+                label="Filter Display Name"
                 sx={{ width: 200, marginRight: 3 }}
                 value={filterKeyword}
                 onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
                   setFilterKeyword(e.target.value)
+                }
+              />
+              <MDInput
+                fullWidth
+                variant="standard"
+                label="Filter Currency"
+                sx={{ width: 200, marginRight: 3 }}
+                value={filterCurrency}
+                onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
+                  setFilterCurrency(e.target.value)
                 }
               />
               <MDBox display="flex" alignItems="center">

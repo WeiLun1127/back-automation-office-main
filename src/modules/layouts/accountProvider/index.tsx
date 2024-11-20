@@ -69,6 +69,7 @@ const AccountProviderList = () => {
   const [loading, setLoading] = useState(false);
 
   const [filterKeyword, setFilterKeyword] = useState(""); // State for filter keyword
+  const [filterUserId, setFilterUserId] = useState("");
   const [filterSwitchStatus, setFilterSwitchStatus] = useState(true); // State for switch (on/off)
 
   const controlOptions = [
@@ -266,7 +267,7 @@ const AccountProviderList = () => {
     fetchTableData();
   };
 
-  const fetchTableData = async (FilterStatus = "", searchValue = "") => {
+  const fetchTableData = async (FilterStatus = "", FilterUserId = "", searchValue = "") => {
     setLoading(true);
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
@@ -280,7 +281,7 @@ const AccountProviderList = () => {
         Data: JSON.stringify({
           FilterClass: "acp",
           FilterName: searchValue || "",
-          FilterUid: "",
+          FilterUid: FilterUserId || "",
           FilterStatus: FilterStatus,
         }),
       };
@@ -367,8 +368,8 @@ const AccountProviderList = () => {
   // }, []);
 
   useEffect(() => {
-    fetchTableData(filterSwitchStatus ? "1" : "0", filterKeyword);
-  }, [filterKeyword, filterSwitchStatus]);
+    fetchTableData(filterSwitchStatus ? "1" : "0", filterUserId, filterKeyword);
+  }, [filterKeyword, filterUserId, filterSwitchStatus]);
 
   const handleStatusHeaderClick = () => {
     let newFilterStatus = "";
@@ -729,10 +730,20 @@ const AccountProviderList = () => {
             <MDInput
               fullWidth
               variant="standard"
-              label="Filter Keyword"
+              label="Filter Username"
               value={filterKeyword}
               onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
                 setFilterKeyword(e.target.value)
+              }
+              sx={{ width: 200, marginRight: 3 }}
+            />
+            <MDInput
+              fullWidth
+              variant="standard"
+              label="Filter UserID"
+              value={filterUserId}
+              onChange={(e: { target: { value: React.SetStateAction<string> } }) =>
+                setFilterUserId(e.target.value)
               }
               sx={{ width: 200, marginRight: 3 }}
             />

@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -30,6 +31,8 @@ import SearchIcon from "@mui/icons-material/Search";
 
 function ProductControl(): JSX.Element {
   const [addOpen, setAddOpen] = useState(false);
+  const [allowChecked1, setAllowChecked1] = useState(false); // Separate state for tableData1 checkbox
+  const [allowChecked2, setAllowChecked2] = useState(false); // Separate state for tableData2 checkbox
 
   const handleAddClickOpen = () => {
     setAddOpen(true);
@@ -39,12 +42,22 @@ function ProductControl(): JSX.Element {
     setAddOpen(false);
   };
 
+  // Handle checkbox change tableData1
+  const handleAllowCheckboxChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAllowChecked1(event.target.checked);
+  };
+
+  // Handle checkbox change for tableData2
+  const handleAllowCheckboxChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAllowChecked2(event.target.checked);
+  };
+
   const tableData1 = {
     columns: [
       { Header: "Currency", accessor: "currency", width: "7%" },
       { Header: "Allow", accessor: "allow", width: "7%" },
     ],
-    rows: [{ currency: "MYR", allow: "allow" }],
+    rows: [{ currency: "MYR", allow: <Checkbox checked={allowChecked1} onChange={handleAllowCheckboxChange1} />, }],
   };
 
   const tableData2 = {
@@ -54,7 +67,7 @@ function ProductControl(): JSX.Element {
       { Header: "Type", accessor: "type", width: "7%" },
       { Header: "Allow", accessor: "allow", width: "7%" },
     ],
-    rows: [{ currency: "MYR", product: "DUITNOW", type: "Web", allow: "allow" }],
+    rows: [{ currency: "MYR", product: "DUITNOW", type: "Web", allow: <Checkbox checked={allowChecked2} onChange={handleAllowCheckboxChange2} />, }],
   };
 
   const [tableData, setTableData] = useState({
@@ -101,20 +114,6 @@ function ProductControl(): JSX.Element {
                 Master Controls
               </MDTypography>
             </MDBox>
-            {/* <MDBox display="flex" justifyContent="flex-start" p={3}>
-              <MDInput
-                fullWidth
-                variant="standard"
-                label="Filter Keyword"
-                sx={{ width: 200, marginRight: 3 }}
-              />
-              <MDBox display="flex" alignItems="center">
-                <MDBox display="flex" alignItems="center" sx={{ marginRight: 2 }}>
-                  <Switch color="primary" />
-                </MDBox>
-                <SearchIcon sx={{ marginLeft: 1, cursor: "pointer" }} />
-              </MDBox>
-            </MDBox> */}
             <DataTable table={tableData} />
           </Card>
         </MDBox>
@@ -145,11 +144,26 @@ function ProductControl(): JSX.Element {
             }}
           />
           <Box style={{ marginBottom: "20px" }}></Box>
-          <Box display="flex" justifyContent="space-between">
-            <Box width="30%">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            flexWrap="wrap"
+            sx={{
+              overflow: "hidden", // Prevent scrolling
+              "& > div": {
+                minWidth: "100%", // Ensure proper wrapping on small screens
+                marginBottom: "20px", // Add spacing between tables
+                "@media (min-width: 600px)": {
+                  minWidth: "30%", // Adjust to original width for larger screens
+                  marginBottom: "0", // Remove spacing for larger screens
+                },
+              },
+            }}
+          >
+            <Box>
               <DataTable table={tableData1} showEntriesPerPage={false} />
             </Box>
-            <Box width="60%">
+            <Box>
               <DataTable table={tableData2} showEntriesPerPage={false} />
             </Box>
           </Box>
